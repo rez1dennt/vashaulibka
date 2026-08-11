@@ -1,4 +1,5 @@
 import { CLINIC, CONTACTS, HOURS, LICENSE } from '../data/clinic.js';
+import { renderHero } from './render-hero.js';
 import { renderFooter, renderHeader } from './site-chrome.js';
 
 const esc = (value) => String(value).replace(/[&<>"]/g, (char) => ({
@@ -58,7 +59,7 @@ export function renderPage(page) {
     `<script type="application/ld+json">${schema}</script></head><body data-page="${esc(page.file)}">`,
     '<a class="skip-link" href="#main-content">К основному содержимому</a>',
     renderHeader(page.file),
-    `<main id="main-content"><section class="page-hero page-hero--${esc(page.heroImage)}"><div class="container"><nav aria-label="Хлебные крошки"><a href="index.html">Главная</a><span aria-hidden="true">/</span><span>${esc(page.heading)}</span></nav><h1>${esc(page.heading)}</h1>${page.lead ? `<p>${esc(page.lead)}</p>` : ''}<span class="hero-visualization-label">Визуализация интерьера</span></div></section>${page.body}</main>`,
+    `<main id="main-content">${renderHero(page)}${page.body}</main>`,
     renderFooter(),
     `<a class="mobile-appointment button button-primary" href="${CONTACTS.phones[0].href}" data-appointment-open>Запись на приём</a>`,
     '<div id="appointment-dialog" class="dialog" role="dialog" aria-modal="true" aria-labelledby="appointment-title" hidden><div class="dialog__backdrop" data-dialog-backdrop aria-hidden="true"></div><div class="dialog__panel"><button type="button" data-dialog-close aria-label="Закрыть">×</button><h2 id="appointment-title">Запись на приём</h2><p>Онлайн-запись подключается. Пока запишитесь по телефону:</p>',

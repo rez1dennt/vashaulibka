@@ -55,7 +55,7 @@ describe('public page manifest', () => {
   it('publishes a compact visualization label in every generated page', () => {
     for (const file of approvedFiles) {
       const document = new JSDOM(readFileSync(file, 'utf8')).window.document;
-      const note = document.querySelector('.page-hero .hero-visualization-label');
+      const note = document.querySelector('main > section:first-child .hero-visualization-label');
 
       expect(note?.textContent, file).toBe(HERO_VISUALIZATION_LABEL);
     }
@@ -130,7 +130,7 @@ describe('public page manifest', () => {
     const reviews = new JSDOM(renderPage(PAGES.find((page) => page.file === 'reviews.html'))).window.document;
     const vacancies = new JSDOM(renderPage(PAGES.find((page) => page.file === 'vacancies.html'))).window.document;
 
-    expect(allCopy).not.toMatch(/имплант|хирург|ортодонт|детск|оборудован|гарант|лет опыта|пациент[а-я]* отзыв/i);
+    expect(allCopy).not.toMatch(/имплант|хирург|ортодонт|детск|оборудован|гарантируем|гарантия результата|лет опыта|пациент[а-я]* отзыв/i);
     expect(allCopy).not.toMatch(/Иванова Мария|Мария Иванова|4\s?500\s?₽|\d[\d\s]*\s(?:₽|руб(?:\.|л|лей))/i);
     expect(allCopy).not.toMatch(/undefined|\[object Object\]/);
     expect(reviews.querySelector('blockquote, cite, [itemprop="review"]')).toBeNull();

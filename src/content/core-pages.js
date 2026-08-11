@@ -1,4 +1,5 @@
 import { CLINIC, CONTACTS, HOURS, LICENSE } from '../data/clinic.js';
+import { HOME_PAGE } from './home-page.js';
 
 const phoneLinks = CONTACTS.phones
   .map((phone) => `<a class="button button-secondary" href="${phone.href}">${phone.label}</a>`)
@@ -9,16 +10,7 @@ const hoursList = [HOURS.weekdays, HOURS.saturday, HOURS.sunday]
   .join('');
 
 export const CORE_PAGES = Object.freeze([
-  {
-    file: 'index.html',
-    title: 'Стоматологическая клиника в Белгороде',
-    description: 'ООО «Стоматология Ваша улыбка»: лицензированная стоматологическая помощь в Белгороде.',
-    heading: 'Стоматология Ваша улыбка',
-    lead: `Медицинская помощь по лицензии ${LICENSE.number}.`,
-    heroImage: 'home',
-    noindex: false,
-    body: `<section class="section"><div class="container feature-grid"><article class="card"><h2>Направления помощи</h2><p>Три направления медицинской деятельности из действующей лицензии.</p><a href="services.html">Посмотреть услуги</a></article><article class="card"><h2>Сотрудники</h2><p>Опубликован подтверждённый список сотрудников и должностей.</p><a href="specialists.html">Посмотреть список</a></article><article class="card"><h2>Контакты</h2><p>${CLINIC.activityAddress}</p><a href="contacts.html">Адрес и режим работы</a></article></div></section><section class="section"><div class="container split"><article><h2>Подтверждённые сведения</h2><p>${CLINIC.legalName} зарегистрировано ${CLINIC.registeredSince}.</p><p>Лицензия ${LICENSE.number} от ${LICENSE.grantedAt}. Статус: ${LICENSE.status}.</p></article><aside class="card" aria-labelledby="home-appointment-title"><h2 id="home-appointment-title">Запись по телефону</h2><p>Выберите удобный номер в окне записи.</p><button class="button button-primary" type="button" data-appointment-open>Записаться на приём</button></aside></div></section>`,
-  },
+  HOME_PAGE,
   {
     file: 'about.html',
     title: 'О стоматологической клинике',

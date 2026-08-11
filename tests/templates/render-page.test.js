@@ -103,8 +103,8 @@ describe('renderPage', () => {
       const html = renderPage(publicPage);
       const document = new JSDOM(html).window.document;
 
-      expect(document.querySelectorAll('.hero-visualization-label')).toHaveLength(1);
-      expect(document.querySelector('.hero-visualization-label')?.textContent).toBe(HERO_VISUALIZATION_LABEL);
+      expect(document.querySelectorAll('main > section:first-child .hero-visualization-label')).toHaveLength(1);
+      expect(document.querySelector('main > section:first-child .hero-visualization-label')?.textContent).toBe(HERO_VISUALIZATION_LABEL);
       expect(html).not.toContain('Иллюстративное изображение — не фотография помещений клиники.');
     }
   });
