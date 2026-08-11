@@ -26,6 +26,14 @@ describe('renderPage', () => {
     expect(html).toContain('data-appointment-open');
   });
 
+  it('adds a page-level layout class only when the manifest requests one', () => {
+    const standard = new JSDOM(renderPage(page)).window.document;
+    const patient = new JSDOM(renderPage({ ...page, layout: 'patient' })).window.document;
+
+    expect(standard.querySelector('main')?.getAttribute('class')).toBeNull();
+    expect(patient.querySelector('main')?.classList.contains('main--patient')).toBe(true);
+  });
+
   it('renders complete mobile menu and phone-fallback appointment controls', () => {
     const html = renderPage(page);
 

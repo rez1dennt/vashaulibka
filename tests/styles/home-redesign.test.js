@@ -30,6 +30,8 @@ describe('premium light visual contract', () => {
   });
 
   it('morphs one stationary menu toggle into a cross', () => {
+    expect(tokens).toMatch(/--menu-toggle-line-offset:\s*var\(--primitive-menu-toggle-line-offset\)/);
+    expect(tokens).toMatch(/--primitive-menu-toggle-line-offset:\s*0\.375rem/);
     expect(layout).toMatch(/\.menu-toggle__icon\s*{[^}]*background:\s*currentColor[^}]*transition:\s*var\(--transition-interactive\)/s);
     expect(layout).toMatch(/\.menu-toggle__icon::before,\s*\.menu-toggle__icon::after\s*{/s);
     expect(layout).toMatch(/\.menu-toggle\[aria-expanded="true"\]\s+\.menu-toggle__icon\s*{[^}]*background:\s*transparent/s);
@@ -37,6 +39,15 @@ describe('premium light visual contract', () => {
     expect(layout).toMatch(/\.menu-toggle\[aria-expanded="true"\]\s+\.menu-toggle__icon::after\s*{[^}]*rotate\(calc\(var\(--menu-toggle-angle\)\s*\*\s*-1\)\)/s);
     expect(layout).not.toMatch(/\.menu-open\s+\.menu-toggle\s*{[^}]*visibility:\s*hidden/s);
     expect(layout).not.toContain('.menu-close {');
+    expect(layout).toMatch(/\.menu-toggle__icon::before\s*{[^}]*translateY\(calc\(var\(--menu-toggle-line-offset\) \* -1\)\)/s);
+    expect(layout).toMatch(/\.menu-toggle__icon::after\s*{[^}]*translateY\(var\(--menu-toggle-line-offset\)\)/s);
+  });
+
+  it('keeps only the short clinic name beside the burger before desktop', () => {
+    expect(layout).toMatch(/\.brand__short-name\s*{[^}]*display:\s*inline/s);
+    expect(layout).toMatch(/\.brand img\s*{[^}]*display:\s*none/s);
+    expect(layout).toMatch(/\.brand__full-name,\s*\.brand small\s*{[^}]*display:\s*none/s);
+    expect(layout).toMatch(/@media\s*\(min-width:\s*75rem\)[\s\S]*?\.brand__short-name\s*{[^}]*display:\s*none/s);
   });
 
   it('uses one icon-and-text grid for homepage contacts', () => {

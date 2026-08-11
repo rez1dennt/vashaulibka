@@ -77,6 +77,7 @@
   --primitive-size-hero-desktop: 26.875rem;
   --primitive-size-tab-column: 17.5rem;
   --primitive-size-screen-reader: 0.0625rem;
+  --primitive-menu-toggle-line-offset: 0.375rem;
   --primitive-container-max: 77.5rem;
   --primitive-container-gutter-mobile: 0.75rem;
   --primitive-container-gutter-desktop: 1.5rem;
@@ -254,6 +255,8 @@
   --dialog-close-line-height: var(--primitive-line-height-tight);
   --dialog-close-scale-active: var(--control-scale-active);
   --menu-toggle-angle: 45deg;
+  --menu-toggle-line-offset: var(--primitive-menu-toggle-line-offset);
+  --patient-content-padding: clamp(var(--space-6), 5vw, var(--space-12));
   --vision-scale: 120%;
 
   /* Mobile-first property tokens */

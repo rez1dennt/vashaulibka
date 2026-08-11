@@ -78,7 +78,7 @@ Expected: all focused tests pass.
 ```js
 expect(document.querySelector('main')?.classList.contains('main--patient')).toBe(true);
 expect(document.querySelectorAll('.patient-hub__group')).toHaveLength(3);
-expect(document.querySelectorAll('.patient-link-card .ui-icon')).toHaveLength(14);
+expect(document.querySelectorAll('.patient-link-card .ui-icon')).toHaveLength(13);
 expect(document.querySelector('.patient-related a[href="patients.html"]')).not.toBeNull();
 expect(document.querySelector('.table-scroll table')).not.toBeNull();
 ```
@@ -177,4 +177,3 @@ git commit -m "feat: polish patient information pages"
 Run: `pnpm verify; git diff --check; git diff --cached --check; git status --short`
 
 Expected: the full gate passes and the worktree is clean.
-

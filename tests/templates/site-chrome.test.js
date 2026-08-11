@@ -11,6 +11,9 @@ describe('premium light site chrome', () => {
     expect(document.querySelector('.brand-row')).not.toBeNull();
     expect(document.querySelector('.nav-row')).not.toBeNull();
     expect(document.querySelector('[data-vision-toggle]')).not.toBeNull();
+    expect(document.querySelector('[data-vision-toggle] .vision-icon')).not.toBeNull();
+    expect(document.querySelector('.brand__short-name')?.textContent).toBe('Ваша улыбка');
+    expect(document.querySelector('.brand__full-name')?.textContent).toBe(CLINIC.name);
     expect(document.querySelector('[data-menu-backdrop]')).not.toBeNull();
     const toggle = document.querySelector('.menu-toggle[aria-controls="main-menu"]');
     expect(toggle).not.toBeNull();

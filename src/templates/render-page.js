@@ -49,6 +49,7 @@ export function renderPage(page) {
   const appointmentHours = [HOURS.weekdays, HOURS.saturday, HOURS.sunday]
     .map((entry) => `<div><dt>${esc(entry.label)}</dt><dd>${esc(entry.value)}</dd></div>`)
     .join('');
+  const mainClass = page.layout === 'patient' ? ' class="main--patient"' : '';
 
   return [
     '<!doctype html><html class="no-js" lang="ru"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">',
@@ -59,7 +60,7 @@ export function renderPage(page) {
     `<script type="application/ld+json">${schema}</script></head><body data-page="${esc(page.file)}">`,
     '<a class="skip-link" href="#main-content">К основному содержимому</a>',
     renderHeader(page.file),
-    `<main id="main-content">${renderHero(page)}${page.body}</main>`,
+    `<main id="main-content"${mainClass}>${renderHero(page)}${page.body}</main>`,
     renderFooter(),
     `<a class="mobile-appointment button button-primary" href="${CONTACTS.phones[0].href}" data-appointment-open>Запись на приём</a>`,
     '<div id="appointment-dialog" class="dialog" role="dialog" aria-modal="true" aria-labelledby="appointment-title" hidden><div class="dialog__backdrop" data-dialog-backdrop aria-hidden="true"></div><div class="dialog__panel"><button type="button" data-dialog-close aria-label="Закрыть">×</button><h2 id="appointment-title">Запись на приём</h2><p>Онлайн-запись подключается. Пока запишитесь по телефону:</p>',

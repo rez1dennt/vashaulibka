@@ -72,6 +72,9 @@ body {
 
 .utility-bar button {
   min-block-size: var(--layout-topbar-button-min-block-size);
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
   padding: var(--space-0);
   border: var(--space-0);
   color: var(--color-primary-strong);
@@ -121,6 +124,7 @@ body {
 }
 
 .brand img {
+  display: none;
   inline-size: var(--brand-mark-size);
   block-size: var(--brand-mark-size);
   flex: none;
@@ -130,6 +134,15 @@ body {
   min-inline-size: var(--space-0);
   display: grid;
   gap: var(--space-0-5);
+}
+
+.brand__short-name {
+  display: inline;
+}
+
+.brand__full-name,
+.brand small {
+  display: none;
 }
 
 .brand strong {
@@ -207,11 +220,11 @@ body {
 }
 
 .menu-toggle__icon::before {
-  transform: translateY(calc(var(--space-1) * -1));
+  transform: translateY(calc(var(--menu-toggle-line-offset) * -1));
 }
 
 .menu-toggle__icon::after {
-  transform: translateY(var(--space-1));
+  transform: translateY(var(--menu-toggle-line-offset));
 }
 
 .menu-toggle:hover {
@@ -527,6 +540,19 @@ body {
   .brand-row__inner {
     min-block-size: calc(var(--control-block-size) + var(--space-8));
     padding-block: var(--space-3);
+  }
+
+  .brand img {
+    display: block;
+  }
+
+  .brand__short-name {
+    display: none;
+  }
+
+  .brand__full-name,
+  .brand small {
+    display: inline;
   }
 
   .brand-row__actions {

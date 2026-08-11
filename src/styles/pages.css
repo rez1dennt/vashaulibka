@@ -301,6 +301,146 @@
   block-size: auto;
 }
 
+.main--patient {
+  background: var(--color-surface-subtle);
+}
+
+.main--patient .section {
+  padding-block: var(--space-10);
+}
+
+.main--patient .section + .section {
+  border-block-start: var(--space-0);
+}
+
+.patient-content {
+  min-inline-size: var(--space-0);
+  display: grid;
+  gap: var(--space-6);
+  padding: var(--patient-content-padding);
+  border: var(--border-width) solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface-raised);
+  box-shadow: var(--shadow-card);
+}
+
+.patient-content > :last-child {
+  margin-block-end: var(--space-0);
+}
+
+.patient-content :where(p, li) {
+  max-inline-size: var(--text-body-measure);
+}
+
+.patient-content > :where(h2, h3, p, ul, ol, dl, .patient-notice, .table-scroll, .contact-actions) {
+  margin-block: var(--space-0);
+}
+
+.patient-hub .patient-content {
+  gap: var(--space-8);
+  padding: var(--space-0);
+  border: var(--space-0);
+  border-radius: var(--space-0);
+  background: transparent;
+  box-shadow: none;
+}
+
+.patient-hub__group {
+  min-inline-size: var(--space-0);
+  padding: var(--patient-content-padding);
+  border: var(--border-width) solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface-raised);
+}
+
+.patient-hub__group h2 {
+  max-inline-size: none;
+  margin-block-end: var(--space-6);
+}
+
+.patient-hub__grid {
+  min-inline-size: var(--space-0);
+  display: grid;
+  grid-template-columns: minmax(var(--space-0), 1fr);
+  gap: var(--space-3);
+}
+
+.patient-notice {
+  min-inline-size: var(--space-0);
+  display: grid;
+  grid-template-columns: minmax(var(--space-0), 1fr);
+  align-items: start;
+  gap: var(--space-4);
+  border-inline-start: var(--border-width-strong) solid var(--color-primary-strong);
+  background: var(--color-surface-brand-soft);
+}
+
+.patient-notice__icon {
+  inline-size: var(--control-block-size);
+  block-size: var(--control-block-size);
+  display: grid;
+  place-items: center;
+  border: var(--border-width) solid var(--color-border);
+  border-radius: var(--radius-sm);
+  color: var(--color-primary-strong);
+  background: var(--color-surface-raised);
+}
+
+.patient-notice__icon .ui-icon {
+  inline-size: var(--icon-size);
+  block-size: var(--icon-size);
+}
+
+.patient-notice__body {
+  min-inline-size: var(--space-0);
+}
+
+.patient-notice__body h2 {
+  max-inline-size: none;
+  margin-block-end: var(--space-3);
+  font-size: var(--text-h3-size);
+}
+
+.patient-notice__body > :last-child {
+  margin-block-end: var(--space-0);
+}
+
+.patient-content .table-scroll {
+  margin-block-start: var(--space-2);
+}
+
+.patient-related-section {
+  padding-block-start: var(--space-0);
+}
+
+.patient-related {
+  min-inline-size: var(--space-0);
+  display: grid;
+  align-items: center;
+  gap: var(--space-6);
+  padding: var(--patient-content-padding);
+  border: var(--border-width) solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface-brand-soft);
+}
+
+.patient-related h2,
+.patient-related .eyebrow {
+  max-inline-size: none;
+  margin-block-end: var(--space-0);
+}
+
+.patient-related > div {
+  display: grid;
+  gap: var(--space-2);
+}
+
+.patient-related nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+}
+
 .home-hero {
   overflow: hidden;
   border-block-end: var(--border-width) solid var(--color-border);
@@ -671,9 +811,9 @@
 
 .patient-link-card {
   min-inline-size: var(--space-0);
-  min-block-size: var(--control-block-size);
+  min-block-size: calc(var(--control-block-size) + var(--space-6));
   display: grid;
-  grid-template-columns: auto minmax(var(--space-0), 1fr) auto;
+  grid-template-columns: var(--control-block-size) minmax(var(--space-0), 1fr) var(--icon-size);
   align-items: center;
   gap: var(--space-3);
   padding: var(--space-4);
@@ -684,6 +824,62 @@
   font-weight: var(--text-label-weight);
   text-decoration: none;
   transition: var(--transition-interactive);
+}
+
+.patient-link-card__icon,
+.patient-link-card > .ui-icon:first-child {
+  inline-size: var(--control-block-size);
+  block-size: var(--control-block-size);
+  display: grid;
+  place-items: center;
+  padding: var(--space-3);
+  border: var(--border-width) solid var(--color-border);
+  border-radius: var(--radius-sm);
+  color: var(--color-primary-strong);
+  background: var(--color-surface-brand-soft);
+}
+
+.patient-link-card__icon .ui-icon {
+  inline-size: 100%;
+  block-size: 100%;
+}
+
+.patient-link-card__copy {
+  min-inline-size: var(--space-0);
+  display: grid;
+  gap: var(--space-1);
+}
+
+.patient-hub .patient-link-card__copy {
+  grid-column: 1 / -1;
+}
+
+.patient-hub .patient-link-card__arrow {
+  grid-column: 3;
+  grid-row: 1;
+}
+
+.patient-link-card__copy strong,
+.patient-link-card__copy small {
+  overflow-wrap: anywhere;
+}
+
+.patient-link-card__copy small {
+  color: var(--color-text-muted);
+  font-size: var(--text-caption-size);
+  font-weight: var(--text-body-weight);
+}
+
+.patient-link-card__arrow {
+  display: grid;
+  place-items: center;
+  color: var(--color-primary-strong);
+}
+
+.patient-link-card__arrow .ui-icon,
+.patient-link-card > .button-icon {
+  inline-size: var(--icon-size);
+  block-size: var(--icon-size);
 }
 
 .patient-link-card:hover {
@@ -1237,6 +1433,26 @@
 }
 
 @media (min-width: 48rem) {
+  .patient-notice {
+    grid-template-columns: var(--control-block-size) minmax(var(--space-0), 1fr);
+  }
+
+  .patient-hub .patient-link-card__copy {
+    grid-column: auto;
+  }
+
+  .patient-hub__grid {
+    grid-template-columns: repeat(2, minmax(var(--space-0), 1fr));
+  }
+
+  .patient-related {
+    grid-template-columns: minmax(var(--space-0), 1fr) auto;
+  }
+
+  .patient-related nav {
+    justify-content: flex-end;
+  }
+
   .about-values,
   .about-team__list,
   .about-legal__grid {
@@ -1285,6 +1501,14 @@
 }
 
 @media (min-width: 75rem) {
+  .main--patient .section {
+    padding-block: var(--space-14);
+  }
+
+  .patient-hub__grid {
+    grid-template-columns: repeat(3, minmax(var(--space-0), 1fr));
+  }
+
   .about-hours {
     grid-template-columns: repeat(4, minmax(var(--space-0), 1fr));
   }

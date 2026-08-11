@@ -17,7 +17,7 @@ Use an editorial medical layout rather than a dashboard or a narrow document col
 
 ## Patient Hub
 
-- Keep all 13 existing destinations and the services destination.
+- Keep all 12 existing patient child destinations plus the services destination (13 hub cards total).
 - Render the destinations as meaningful link cards with an inline SVG icon, title, compact descriptor, and arrow.
 - Group cards under three scannable headings: treatment and payment; documents and guarantees; rights and data.
 - Use one column at 320px, two columns from tablet width, and three columns on desktop. No card becomes a generic identical dashboard tile: selected cards may span two columns only when the grid has room and content length benefits.
@@ -44,4 +44,3 @@ Use an editorial medical layout rather than a dashboard or a narrow document col
 - Test exact header markup, eye icon registration, mobile-brand class contract, page-level legal layout marker, grouped hub links, notice icons, related navigation, and preserved tables.
 - Run focused tests in RED before implementation and GREEN afterward.
 - Regenerate all HTML, run the full `pnpm verify` gate, token/hardcode audits, diff checks, and browser QA at the target widths.
-

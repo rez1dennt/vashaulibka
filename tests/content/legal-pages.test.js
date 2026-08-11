@@ -70,6 +70,45 @@ describe('patient and legal page manifest', () => {
     expect(hub.querySelector('.patient-links a[href="services.html"]')?.textContent).toContain('Медицинская деятельность и услуги');
   });
 
+  it('groups the patient hub into scannable icon cards without losing destinations', () => {
+    const hub = pageDocument('patients.html');
+    const groups = [...hub.querySelectorAll('.patient-hub__group')];
+    const cards = [...hub.querySelectorAll('.patient-link-card')];
+
+    expect(groups).toHaveLength(3);
+    expect(groups.map((group) => group.querySelector('h2')?.textContent)).toEqual([
+      'Лечение и оплата',
+      'Документы и гарантии',
+      'Права и персональные данные',
+    ]);
+    expect(cards).toHaveLength(13);
+    expect(cards.every((card) => card.querySelector('.ui-icon') && card.querySelector('.patient-link-card__arrow'))).toBe(true);
+    expect(new Set(cards.map((card) => card.getAttribute('href'))).size).toBe(13);
+  });
+
+  it('uses one editorial layout and related navigation across every patient route', () => {
+    for (const page of LEGAL_PAGES) {
+      expect(page.layout, `${page.file} has the patient layout marker`).toBe('patient');
+      const document = pageDocument(page.file);
+
+      expect(document.querySelector('main')?.classList.contains('main--patient')).toBe(true);
+      expect(document.querySelector('.patient-content'), `${page.file} has an editorial content shell`).not.toBeNull();
+      expect(document.querySelector('.patient-related a[href="patients.html"]')).not.toBeNull();
+      expect(document.querySelector('.patient-related a[href="services.html"]')).not.toBeNull();
+      expect(document.querySelector(`.patient-related a[href="${CONTACTS.phones[0].href}"][data-appointment-open]`)).not.toBeNull();
+    }
+  });
+
+  it('adds a decorative SVG marker to every highlighted patient notice', () => {
+    for (const file of ['payment.html', 'benefits.html', 'waiting-periods.html', 'oms.html', 'guarantees.html', 'complaints.html', 'personal-data-consent.html']) {
+      const document = pageDocument(file);
+      const notices = [...document.querySelectorAll('.patient-notice')];
+
+      expect(notices.length, `${file} has a notice`).toBeGreaterThan(0);
+      expect(notices.every((notice) => notice.querySelector('.patient-notice__icon .ui-icon'))).toBe(true);
+    }
+  });
+
   it('publishes centralized registration and license facts plus only the approved originals', () => {
     const document = pageDocument('license.html');
     const text = normalizedText(document);

@@ -8,6 +8,7 @@ import {
   PUBLIC_DOCUMENTS,
   REGULATORS,
 } from '../data/legal.js';
+import { renderIcon } from '../templates/icons.js';
 
 const escapeHtml = (value) => String(value)
   .replaceAll('&', '&amp;')
@@ -23,21 +24,70 @@ const formatRussianDate = (date) => {
     .replace(/\sг\.$/, ' года');
 };
 
-const patientLinks = [
-  ['services.html', 'Медицинская деятельность и услуги'],
-  ['license.html', 'Лицензия и регистрационные документы'],
-  ['payment.html', 'Оплата услуг'],
-  ['benefits.html', 'Льготы и скидки клиники'],
-  ['waiting-periods.html', 'Сроки ожидания'],
-  ['oms.html', 'Участие в программе ОМС'],
-  ['informed-consent.html', 'Информированное добровольное согласие'],
-  ['guarantees.html', 'Гарантийные сроки'],
-  ['complaints.html', 'Обращения и жалобы'],
-  ['standards.html', 'Стандарты и нормативные источники'],
-  ['personal-data-consent.html', 'Образец согласия на обработку персональных данных'],
-  ['privacy.html', 'Политика конфиденциальности'],
-  ['cookies.html', 'Технические настройки и cookies'],
-];
+const PATIENT_LINK_GROUPS = Object.freeze([
+  Object.freeze({
+    title: 'Лечение и оплата',
+    links: Object.freeze([
+      Object.freeze({ href: 'services.html', label: 'Медицинская деятельность и услуги', description: 'Направления помощи в пределах действующей лицензии.', icon: 'tooth' }),
+      Object.freeze({ href: 'payment.html', label: 'Оплата услуг', description: 'Наличный и безналичный расчёт по выбору пациента.', icon: 'ruble' }),
+      Object.freeze({ href: 'benefits.html', label: 'Льготы и скидки клиники', description: 'Скидки, предоставляемые по приказу клиники.', icon: 'shield' }),
+      Object.freeze({ href: 'waiting-periods.html', label: 'Сроки ожидания', description: 'Максимальный и фактический сроки после записи.', icon: 'clock' }),
+      Object.freeze({ href: 'oms.html', label: 'Участие в программе ОМС', description: 'Официальный статус участия клиники в программе.', icon: 'info' }),
+    ]),
+  }),
+  Object.freeze({
+    title: 'Документы и гарантии',
+    links: Object.freeze([
+      Object.freeze({ href: 'license.html', label: 'Лицензия и регистрационные документы', description: 'Лицензия, ОГРН и предоставленные оригиналы.', icon: 'document' }),
+      Object.freeze({ href: 'informed-consent.html', label: 'Информированное добровольное согласие', description: 'Порядок оформления согласия до вмешательства.', icon: 'document' }),
+      Object.freeze({ href: 'guarantees.html', label: 'Гарантийные сроки', description: 'Условия, гарантийные сроки и сроки службы.', icon: 'shield' }),
+      Object.freeze({ href: 'standards.html', label: 'Стандарты и нормативные источники', description: 'Официальные публикации и базы рекомендаций.', icon: 'document' }),
+    ]),
+  }),
+  Object.freeze({
+    title: 'Права и персональные данные',
+    links: Object.freeze([
+      Object.freeze({ href: 'complaints.html', label: 'Обращения и жалобы', description: 'Контакты клиники и территориальных ведомств.', icon: 'mail' }),
+      Object.freeze({ href: 'personal-data-consent.html', label: 'Образец согласия на обработку данных', description: 'Информационный образец для возможной будущей формы.', icon: 'document' }),
+      Object.freeze({ href: 'privacy.html', label: 'Политика конфиденциальности', description: 'Фактическая обработка данных на текущем сайте.', icon: 'shield' }),
+      Object.freeze({ href: 'cookies.html', label: 'Технические настройки и cookies', description: 'Локальные технические предпочтения браузера.', icon: 'info' }),
+    ]),
+  }),
+]);
+
+const renderPatientLink = ({ href, label, description, icon }) => [
+  `<a class="patient-link-card" href="${escapeHtml(href)}">`,
+  `<span class="patient-link-card__icon">${renderIcon(icon)}</span>`,
+  `<span class="patient-link-card__copy"><strong>${escapeHtml(label)}</strong><small>${escapeHtml(description)}</small></span>`,
+  `<span class="patient-link-card__arrow">${renderIcon('arrow')}</span>`,
+  '</a>',
+].join('');
+
+const renderPatientHub = () => PATIENT_LINK_GROUPS
+  .map((group) => `<section class="patient-hub__group"><h2>${escapeHtml(group.title)}</h2><div class="patient-hub__grid">${group.links.map(renderPatientLink).join('')}</div></section>`)
+  .join('');
+
+const patientNotice = (title, content, icon = 'info') => [
+  '<article class="notice patient-notice">',
+  `<span class="patient-notice__icon">${renderIcon(icon)}</span>`,
+  `<div class="patient-notice__body"><h2>${escapeHtml(title)}</h2>${content}</div>`,
+  '</article>',
+].join('');
+
+const renderPatientRelated = () => [
+  '<section class="section patient-related-section"><div class="container patient-related">',
+  '<div><p class="eyebrow">Полезные разделы</p><h2>Продолжить знакомство с клиникой</h2></div>',
+  '<nav aria-label="Связанные разделы для пациентов">',
+  '<a class="button button-secondary" href="patients.html">Информация для пациентов</a>',
+  '<a class="button button-secondary" href="services.html">Наши услуги</a>',
+  `<a class="button button-primary" href="${escapeHtml(CONTACTS.phones[0].href)}" data-appointment-open>${renderIcon('calendar', 'button-icon')}Запись на приём</a>`,
+  '</nav></div></section>',
+].join('');
+
+const decoratePatientContent = (body) => body.replaceAll(
+  '<div class="container',
+  '<div class="container patient-content',
+);
 
 const benefitsList = BENEFITS
   .map((benefit) => `<li><span>${escapeHtml(benefit.category)}</span><strong>${escapeHtml(benefit.discount)}</strong></li>`)
@@ -51,7 +101,13 @@ const regulatorCards = REGULATORS
   .map((regulator) => `<article class="card"><h2>${escapeHtml(regulator.name)}</h2><p>${escapeHtml(regulator.address)}</p><p>${escapeHtml(regulator.phone)}</p><p><a href="${escapeHtml(regulator.url)}">Официальный сайт ведомства</a></p></article>`)
   .join('');
 
-const makePage = (page) => Object.freeze({ heroImage: 'about', noindex: false, ...page });
+const makePage = (page) => Object.freeze({
+  heroImage: 'about',
+  noindex: false,
+  ...page,
+  layout: 'patient',
+  body: `${decoratePatientContent(page.body)}${renderPatientRelated()}`,
+});
 
 export const LEGAL_PAGES = Object.freeze([
   makePage({
@@ -60,7 +116,7 @@ export const LEGAL_PAGES = Object.freeze([
     description: 'Документы, правила, гарантии, обращения и сведения о конфиденциальности для пациентов клиники.',
     heading: 'Информация для пациентов',
     lead: 'Проверенные сведения клиники, документы и официальные источники.',
-    body: `<section class="section"><div class="container"><h2>Разделы</h2><div class="info-grid patient-links">${patientLinks.map(([href, label]) => `<a class="card" href="${escapeHtml(href)}">${escapeHtml(label)}</a>`).join('')}</div></div></section>`,
+    body: `<section class="section patient-hub"><div class="container patient-content patient-links">${renderPatientHub()}</div></section>`,
   }),
   makePage({
     file: 'license.html',
@@ -76,7 +132,7 @@ export const LEGAL_PAGES = Object.freeze([
     description: 'Доступные способы оплаты платных медицинских услуг в клинике.',
     heading: 'Оплата услуг',
     lead: 'Способ расчёта выбирает потребитель.',
-    body: '<section class="section"><div class="container"><article class="notice"><h2>Способы оплаты</h2><p>Оплата платных медицинских услуг осуществляется наличным и безналичным расчётом по выбору потребителя.</p></article><p>Утверждённый прейскурант пока не опубликован. До его публикации стоимость услуг уточняйте по официальным телефонам клиники.</p></div></section>',
+    body: `<section class="section"><div class="container">${patientNotice('Способы оплаты', '<p>Оплата платных медицинских услуг осуществляется наличным и безналичным расчётом по выбору потребителя.</p>', 'ruble')}<p>Утверждённый прейскурант пока не опубликован. До его публикации стоимость услуг уточняйте по официальным телефонам клиники.</p></div></section>`,
   }),
   makePage({
     file: 'benefits.html',
@@ -84,7 +140,7 @@ export const LEGAL_PAGES = Object.freeze([
     description: 'Скидки, предоставляемые клиникой отдельным категориям пациентов по внутреннему приказу.',
     heading: 'Льготы и скидки',
     lead: 'Скидки клиники по приказу от 13 января 2025 года.',
-    body: `<section class="section"><div class="container"><div class="notice"><h2>Условия предоставления</h2><p>Это скидки, предоставляемые клиникой по её приказу от 13 января 2025 года, а не универсальные установленные законом скидки. Принадлежность к льготной категории и возможность применения скидки необходимо подтвердить в клинике до лечения.</p></div><h2>Категории пациентов</h2><ul class="benefit-list">${benefitsList}</ul></div></section>`,
+    body: `<section class="section"><div class="container">${patientNotice('Условия предоставления', '<p>Это скидки, предоставляемые клиникой по её приказу от 13 января 2025 года, а не универсальные установленные законом скидки. Принадлежность к льготной категории и возможность применения скидки необходимо подтвердить в клинике до лечения.</p>', 'shield')}<h2>Категории пациентов</h2><ul class="benefit-list">${benefitsList}</ul></div></section>`,
   }),
   makePage({
     file: 'waiting-periods.html',
@@ -92,7 +148,7 @@ export const LEGAL_PAGES = Object.freeze([
     description: 'Предельный и фактический сроки ожидания услуг после записи в клинику.',
     heading: 'Сроки ожидания',
     lead: 'Максимальный срок отсчитывается от момента записи.',
-    body: '<section class="section"><div class="container"><article class="notice"><h2>Максимальный срок</h2><p>Максимальный срок ожидания составляет 30 дней с момента записи на приём.</p></article><h2>От чего зависит фактический срок</h2><p>Фактический срок зависит от выбранной услуги, клинической ситуации и других обстоятельств, указанных в документе клиники. Уточнить доступную дату можно по официальным телефонам.</p></div></section>',
+    body: `<section class="section"><div class="container">${patientNotice('Максимальный срок', '<p>Максимальный срок ожидания составляет 30 дней с момента записи на приём.</p>', 'clock')}<h2>От чего зависит фактический срок</h2><p>Фактический срок зависит от выбранной услуги, клинической ситуации и других обстоятельств, указанных в документе клиники. Уточнить доступную дату можно по официальным телефонам.</p></div></section>`,
   }),
   makePage({
     file: 'oms.html',
@@ -100,7 +156,7 @@ export const LEGAL_PAGES = Object.freeze([
     description: 'Официальное уведомление об участии ООО «Стоматология Ваша улыбка» в территориальной программе.',
     heading: 'Участие в программе ОМС',
     lead: 'Сведения из предоставленного уведомления клиники.',
-    body: '<section class="section"><div class="container"><article class="notice"><h2>Статус участия</h2><p>ООО «Стоматология Ваша улыбка» не участвует в реализации территориальной программы государственных гарантий бесплатного оказания гражданам медицинской помощи.</p></article></div></section>',
+    body: `<section class="section"><div class="container">${patientNotice('Статус участия', '<p>ООО «Стоматология Ваша улыбка» не участвует в реализации территориальной программы государственных гарантий бесплатного оказания гражданам медицинской помощи.</p>')}</div></section>`,
   }),
   makePage({
     file: 'informed-consent.html',
@@ -116,7 +172,7 @@ export const LEGAL_PAGES = Object.freeze([
     description: 'Таблица гарантийных сроков и сроков службы по отдельным стоматологическим работам.',
     heading: 'Гарантийные сроки',
     lead: 'Сроки из положения клиники с важными условиями применения.',
-    body: `<section class="section"><div class="container"><div class="notice"><h2>Условия рассмотрения</h2><p>Указанные сроки могут быть сокращены или прекращены при документированных клинических условиях и при несоблюдении пациентом рекомендаций и иных обязанностей. Требования рассматриваются по письменному заявлению пациента. Таблица не обещает автоматическое покрытие во всех случаях: решение зависит от условий положения клиники и установленных обстоятельств.</p></div><h2>Таблица сроков</h2><div class="table-scroll" tabindex="0" role="region" aria-label="Гарантийные сроки и сроки службы"><table><thead><tr><th scope="col">Работа</th><th scope="col">Гарантийный срок</th><th scope="col">Срок службы</th></tr></thead><tbody>${guaranteeRows}</tbody></table></div></div></section>`,
+    body: `<section class="section"><div class="container">${patientNotice('Условия рассмотрения', '<p>Указанные сроки могут быть сокращены или прекращены при документированных клинических условиях и при несоблюдении пациентом рекомендаций и иных обязанностей. Требования рассматриваются по письменному заявлению пациента. Таблица не обещает автоматическое покрытие во всех случаях: решение зависит от условий положения клиники и установленных обстоятельств.</p>', 'shield')}<h2>Таблица сроков</h2><div class="table-scroll" tabindex="0" role="region" aria-label="Гарантийные сроки и сроки службы"><table><thead><tr><th scope="col">Работа</th><th scope="col">Гарантийный срок</th><th scope="col">Срок службы</th></tr></thead><tbody>${guaranteeRows}</tbody></table></div></div></section>`,
   }),
   makePage({
     file: 'complaints.html',
@@ -125,7 +181,7 @@ export const LEGAL_PAGES = Object.freeze([
     heading: 'Обращения и жалобы',
     lead: 'Контакты клиники и территориальных надзорных органов.',
     heroImage: 'contacts',
-    body: `<section class="section"><div class="container"><article class="notice"><h2>Обращение в клинику</h2><p>Почтовый адрес: ${escapeHtml(CLINIC.complaintsPostalAddress)}.</p><p>Электронная почта: <a href="${escapeHtml(CONTACTS.emailHref)}">${escapeHtml(CONTACTS.email)}</a>.</p><p>Если способ направления обращения не предусмотрен, потребитель или заказчик может направить жалобу в любой форме и любым способом.</p></article></div></section><section class="section"><div class="container info-grid">${regulatorCards}</div></section>`,
+    body: `<section class="section"><div class="container">${patientNotice('Обращение в клинику', `<p>Почтовый адрес: ${escapeHtml(CLINIC.complaintsPostalAddress)}.</p><p>Электронная почта: <a href="${escapeHtml(CONTACTS.emailHref)}">${escapeHtml(CONTACTS.email)}</a>.</p><p>Если способ направления обращения не предусмотрен, потребитель или заказчик может направить жалобу в любой форме и любым способом.</p>`, 'mail')}</div></section><section class="section"><div class="container info-grid">${regulatorCards}</div></section>`,
   }),
   makePage({
     file: 'standards.html',
@@ -141,7 +197,7 @@ export const LEGAL_PAGES = Object.freeze([
     description: 'Информационный образец будущего согласия для записи на приём без действующей веб-формы.',
     heading: 'Образец согласия на обработку данных',
     lead: 'Только информационный образец для возможной будущей формы.',
-    body: `<section class="section"><div class="container"><div class="notice"><h2>Статус образца</h2><p>Этот информационный образец не является акцептом или принятием согласия. На сайте нет действующей формы, которая использует этот текст или собирает персональные данные.</p></div><h2>Параметры возможной будущей формы</h2><dl class="definition-list"><div><dt>Категории данных</dt><dd>${PERSONAL_DATA_SAMPLE.categories.map(escapeHtml).join(', ')}</dd></div><div><dt>Цель</dt><dd>${escapeHtml(PERSONAL_DATA_SAMPLE.purpose)}</dd></div><div><dt>Допустимые операции</dt><dd>${PERSONAL_DATA_SAMPLE.operations.map(escapeHtml).join(', ')}</dd></div><div><dt>Срок хранения по образцу</dt><dd>До окончания обработки запроса, а при подтверждении записи — до заключения договора.</dd></div><div><dt>Отзыв</dt><dd>Отзыв согласия направляется оператору письменным заявлением.</dd></div></dl><p>Поставщик МИС и получатели данных не указываются, поскольку МИС не подключена.</p></div></section>`,
+    body: `<section class="section"><div class="container">${patientNotice('Статус образца', '<p>Этот информационный образец не является акцептом или принятием согласия. На сайте нет действующей формы, которая использует этот текст или собирает персональные данные.</p>', 'document')}<h2>Параметры возможной будущей формы</h2><dl class="definition-list"><div><dt>Категории данных</dt><dd>${PERSONAL_DATA_SAMPLE.categories.map(escapeHtml).join(', ')}</dd></div><div><dt>Цель</dt><dd>${escapeHtml(PERSONAL_DATA_SAMPLE.purpose)}</dd></div><div><dt>Допустимые операции</dt><dd>${PERSONAL_DATA_SAMPLE.operations.map(escapeHtml).join(', ')}</dd></div><div><dt>Срок хранения по образцу</dt><dd>До окончания обработки запроса, а при подтверждении записи — до заключения договора.</dd></div><div><dt>Отзыв</dt><dd>Отзыв согласия направляется оператору письменным заявлением.</dd></div></dl><p>Поставщик МИС и получатели данных не указываются, поскольку МИС не подключена.</p></div></section>`,
   }),
   makePage({
     file: 'privacy.html',

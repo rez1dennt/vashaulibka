@@ -11,6 +11,7 @@ const ICONS = Object.freeze({
   clock: '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/>',
   mail: '<rect x="3" y="5" width="18" height="14" rx="2"/><path d="m4 7 8 6 8-6"/>',
   arrow: '<path d="M5 12h14M14 7l5 5-5 5"/>',
+  eye: '<path d="M2.5 12s3.5-5.5 9.5-5.5 9.5 5.5 9.5 5.5-3.5 5.5-9.5 5.5S2.5 12 2.5 12z"/><circle cx="12" cy="12" r="2.5"/>',
 });
 
 const SAFE_CLASS_NAMES = /^[a-z][a-z0-9_-]*(?:\s+[a-z][a-z0-9_-]*)*$/i;
