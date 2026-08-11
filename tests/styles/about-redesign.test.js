@@ -25,4 +25,9 @@ describe('about page visual contract', () => {
     expect(pages).toMatch(/\.about-gallery\s*{[^}]*grid-template-columns:\s*repeat\(2,\s*minmax\(var\(--space-0\),\s*1fr\)\)/s);
     expect(pages).toMatch(/\.about-gallery__item--primary\s*{[^}]*grid-column:\s*1\s*\/\s*-1/s);
   });
+
+  it('lets long Russian headings reflow in vision mode without widening the page', () => {
+    expect(pages).toMatch(/\.about-section__heading\s*>\s*div\s*{[^}]*min-inline-size:\s*var\(--space-0\)/s);
+    expect(pages).toMatch(/\.about-section__heading\s+h2\s*{[^}]*overflow-wrap:\s*anywhere/s);
+  });
 });

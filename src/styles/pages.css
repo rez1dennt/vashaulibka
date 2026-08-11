@@ -1020,8 +1020,13 @@
 }
 
 .about-section__heading > div {
+  min-inline-size: var(--space-0);
   display: grid;
   gap: var(--space-3);
+}
+
+.about-section__heading h2 {
+  overflow-wrap: anywhere;
 }
 
 .about-service {
