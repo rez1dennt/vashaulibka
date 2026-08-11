@@ -1,0 +1,21 @@
+{
+  "name": "stomatologiya-vasha-ulybka",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "generate": "node scripts/generate-pages.mjs",
+    "dev": "pnpm generate && vite",
+    "build": "pnpm generate && vite build",
+    "preview": "vite preview",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "verify:site": "node scripts/verify-site.mjs dist",
+    "verify": "pnpm test && pnpm build && pnpm verify:site"
+  },
+  "devDependencies": {
+    "jsdom": "^26.1.0",
+    "vite": "^8.1.0",
+    "vitest": "^4.0.0"
+  }
+}
