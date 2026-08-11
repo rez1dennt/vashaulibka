@@ -183,22 +183,34 @@ body {
   transition: var(--transition-interactive);
 }
 
-.menu-toggle::before,
-.menu-toggle::after {
-  content: "";
-  position: absolute;
+.menu-toggle__icon {
+  position: relative;
   inline-size: var(--icon-size);
   block-size: var(--border-width-strong);
   border-radius: var(--radius-pill);
+  color: inherit;
   background: currentColor;
   transition: var(--transition-interactive);
 }
 
-.menu-toggle::before {
+.menu-toggle__icon::before,
+.menu-toggle__icon::after {
+  content: "";
+  position: absolute;
+  inset-block-start: var(--space-0);
+  inset-inline-start: var(--space-0);
+  inline-size: 100%;
+  block-size: 100%;
+  border-radius: inherit;
+  background: currentColor;
+  transition: var(--transition-interactive);
+}
+
+.menu-toggle__icon::before {
   transform: translateY(calc(var(--space-1) * -1));
 }
 
-.menu-toggle::after {
+.menu-toggle__icon::after {
   transform: translateY(var(--space-1));
 }
 
@@ -215,18 +227,16 @@ body {
   cursor: not-allowed;
 }
 
-.menu-toggle[aria-expanded="true"]::before {
-  transform: rotate(var(--menu-toggle-angle));
+.menu-toggle[aria-expanded="true"] .menu-toggle__icon {
+  background: transparent;
 }
 
-.menu-toggle[aria-expanded="true"]::after {
-  transform: rotate(calc(var(--menu-toggle-angle) * -1));
+.menu-toggle[aria-expanded="true"] .menu-toggle__icon::before {
+  transform: translateY(var(--space-0)) rotate(var(--menu-toggle-angle));
 }
 
-.menu-open .menu-toggle {
-  visibility: hidden;
-  opacity: 0;
-  pointer-events: none;
+.menu-toggle[aria-expanded="true"] .menu-toggle__icon::after {
+  transform: translateY(var(--space-0)) rotate(calc(var(--menu-toggle-angle) * -1));
 }
 
 .menu-backdrop {
@@ -245,22 +255,6 @@ body {
   opacity: 1;
   pointer-events: auto;
   transition: var(--transition-navigation-open);
-}
-
-.menu-close {
-  position: absolute;
-  inset-block-start: var(--space-4);
-  inset-inline-end: var(--space-4);
-  inline-size: var(--control-block-size);
-  block-size: var(--control-block-size);
-  padding: var(--space-0);
-  border: var(--border-width) solid var(--color-border-strong);
-  border-radius: var(--radius-pill);
-  color: var(--color-primary-strong);
-  background: var(--color-surface-raised);
-  font-size: var(--dialog-close-font-size);
-  line-height: var(--dialog-close-line-height);
-  cursor: pointer;
 }
 
 .nav-row {
@@ -328,8 +322,7 @@ body {
 }
 
 .no-js .menu-toggle,
-.no-js .menu-backdrop,
-.no-js .menu-close {
+.no-js .menu-backdrop {
   display: none;
 }
 
@@ -556,8 +549,7 @@ body {
   }
 
   a.nav-appointment,
-  .menu-backdrop,
-  .menu-close {
+  .menu-backdrop {
     display: none;
   }
 }

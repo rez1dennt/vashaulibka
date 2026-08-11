@@ -216,7 +216,7 @@ describe('progressive interactions', () => {
   });
 
   it('keeps the production menu open behind its telephone appointment dialog', () => {
-    document.body.innerHTML = '<button class="menu-toggle" aria-expanded="false" aria-controls="main-menu"><span data-menu-toggle-label>Открыть меню</span></button><div data-menu-backdrop></div><nav id="main-menu"><button data-menu-close>Закрыть меню</button><a href="index.html">Главная</a><a href="tel:+74722215356" data-appointment-open>Запись на приём</a></nav><div id="appointment-dialog" role="dialog" hidden><div data-dialog-backdrop></div><button data-dialog-close>Закрыть диалог</button><a href="tel:+74722215356">Позвонить</a></div>';
+    document.body.innerHTML = '<button class="menu-toggle" aria-expanded="false" aria-controls="main-menu"><span class="menu-toggle__icon" aria-hidden="true"></span><span data-menu-toggle-label>Открыть меню</span></button><div data-menu-backdrop></div><nav id="main-menu"><a href="index.html">Главная</a><a href="tel:+74722215356" data-appointment-open>Запись на приём</a></nav><div id="appointment-dialog" role="dialog" hidden><div data-dialog-backdrop></div><button data-dialog-close>Закрыть диалог</button><a href="tel:+74722215356">Позвонить</a></div>';
     initMobileMenu();
     initDialog({ provider: createAppointmentProvider() });
     const toggle = document.querySelector('.menu-toggle');

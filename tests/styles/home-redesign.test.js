@@ -21,7 +21,7 @@ describe('premium light visual contract', () => {
     expect(layout).toMatch(/\.brand-row\s*{/);
     expect(layout).toMatch(/\.nav-row\s*{/);
     expect(layout).toMatch(/@media\s*\(min-width:\s*75rem\)[\s\S]*?\.nav-row/);
-    expect(layout).toMatch(/@media\s*\(min-width:\s*75rem\)[\s\S]*?a\.nav-appointment,\s*\.menu-backdrop,\s*\.menu-close\s*{[^}]*display:\s*none/s);
+    expect(layout).toMatch(/@media\s*\(min-width:\s*75rem\)[\s\S]*?a\.nav-appointment,\s*\.menu-backdrop\s*{[^}]*display:\s*none/s);
   });
 
   it('aligns utility metadata inline and separates quick links from the hero', () => {
@@ -29,8 +29,14 @@ describe('premium light visual contract', () => {
     expect(pages).toMatch(/@media\s*\(min-width:\s*75rem\)[\s\S]*?\.quick-links\s*{[^}]*margin-block-start:\s*var\(--space-0\)[^}]*padding-block-start:\s*var\(--space-6\)/s);
   });
 
-  it('shows only the in-panel close control while the mobile menu is open', () => {
-    expect(layout).toMatch(/\.menu-open\s+\.menu-toggle\s*{[^}]*visibility:\s*hidden[^}]*pointer-events:\s*none/s);
+  it('morphs one stationary menu toggle into a cross', () => {
+    expect(layout).toMatch(/\.menu-toggle__icon\s*{[^}]*background:\s*currentColor[^}]*transition:\s*var\(--transition-interactive\)/s);
+    expect(layout).toMatch(/\.menu-toggle__icon::before,\s*\.menu-toggle__icon::after\s*{/s);
+    expect(layout).toMatch(/\.menu-toggle\[aria-expanded="true"\]\s+\.menu-toggle__icon\s*{[^}]*background:\s*transparent/s);
+    expect(layout).toMatch(/\.menu-toggle\[aria-expanded="true"\]\s+\.menu-toggle__icon::before\s*{[^}]*rotate\(var\(--menu-toggle-angle\)\)/s);
+    expect(layout).toMatch(/\.menu-toggle\[aria-expanded="true"\]\s+\.menu-toggle__icon::after\s*{[^}]*rotate\(calc\(var\(--menu-toggle-angle\)\s*\*\s*-1\)\)/s);
+    expect(layout).not.toMatch(/\.menu-open\s+\.menu-toggle\s*{[^}]*visibility:\s*hidden/s);
+    expect(layout).not.toContain('.menu-close {');
   });
 
   it('uses one icon-and-text grid for homepage contacts', () => {
