@@ -126,6 +126,17 @@ describe('design system contract', () => {
     expect(layout).toMatch(/\.topbar\s+span\s*{[^}]*display:\s*var\(--layout-topbar-info-display\)/s);
   });
 
+  it('gives the mobile vision toggle a 48px target without enlarging desktop', () => {
+    const css = readStyle('tokens');
+    const layout = readStyle('layout');
+    const tokens = tokenValues(css);
+
+    expect(resolveColor(tokens, '--control-block-size')).toBe('3rem');
+    expect(css).toMatch(/:root\s*{[\s\S]*?--layout-topbar-button-min-block-size:\s*var\(--control-block-size\)/);
+    expect(css).toMatch(/@media\s*\(min-width:\s*61\.25rem\)[\s\S]*?--layout-topbar-button-min-block-size:\s*var\(--control-target-min\)/);
+    expect(layout).toMatch(/\.topbar\s+button\s*{[^}]*min-block-size:\s*var\(--layout-topbar-button-min-block-size\)/s);
+  });
+
   it('keeps primitive tokens private to the token layer', () => {
     const consumingLayers = ['base', 'layout', 'components', 'pages']
       .map(readStyle)

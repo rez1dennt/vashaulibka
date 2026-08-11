@@ -45,6 +45,7 @@ body.is-locked {
 }
 
 .topbar button {
+  min-block-size: var(--layout-topbar-button-min-block-size);
   border: var(--space-0);
   color: var(--color-primary-strong);
   background: transparent;

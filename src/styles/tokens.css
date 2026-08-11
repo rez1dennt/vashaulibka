@@ -244,6 +244,7 @@
   /* Mobile-first property tokens */
   --layout-topbar-display: flex;
   --layout-topbar-info-display: none;
+  --layout-topbar-button-min-block-size: var(--control-block-size);
   --layout-menu-toggle-display: inline-grid;
   --layout-header-block-size: var(--primitive-size-header-mobile);
   --layout-navigation-position: fixed;
@@ -286,6 +287,7 @@
   :root {
     --layout-topbar-display: flex;
     --layout-topbar-info-display: inline;
+    --layout-topbar-button-min-block-size: var(--control-target-min);
     --layout-menu-toggle-display: none;
     --layout-header-block-size: var(--primitive-size-header-desktop);
     --layout-navigation-position: static;
