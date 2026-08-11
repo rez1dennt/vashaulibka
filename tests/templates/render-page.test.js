@@ -30,7 +30,8 @@ describe('renderPage', () => {
     const html = renderPage(page);
 
     expect(html).toContain('data-menu-backdrop');
-    expect(html).toContain('data-menu-close');
+    expect(html).not.toContain('data-menu-close');
+    expect(html).toContain('<span class="menu-toggle__icon" aria-hidden="true"></span>');
     expect(html).toContain('<span class="sr-only" data-menu-toggle-label>Открыть меню</span>');
     expect(html).toContain('class="mobile-appointment button button-primary"');
     expect(html).toContain('href="tel:+74722215356"');

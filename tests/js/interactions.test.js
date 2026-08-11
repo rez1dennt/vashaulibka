@@ -52,16 +52,19 @@ describe('progressive interactions', () => {
     document.querySelector('[data-dialog-close]').click();
   });
 
-  it('updates the menu label and closes from the in-panel control or backdrop', () => {
-    document.body.innerHTML = '<button class="menu-toggle" aria-expanded="false" aria-controls="main-menu"><span data-menu-toggle-label>Открыть меню</span></button><div data-menu-backdrop></div><nav id="main-menu"><button data-menu-close>Закрыть меню</button><a href="#page">Страница</a></nav>';
+  it('opens and closes the mobile menu with the same toggle', () => {
+    document.body.innerHTML = '<button class="menu-toggle" aria-expanded="false" aria-controls="main-menu"><span class="menu-toggle__icon" aria-hidden="true"></span><span data-menu-toggle-label>Открыть меню</span></button><div data-menu-backdrop></div><nav id="main-menu"><a href="#page">Страница</a></nav>';
     initMobileMenu();
     const toggle = document.querySelector('.menu-toggle');
     const label = document.querySelector('[data-menu-toggle-label]');
 
     toggle.click();
+    expect(toggle.getAttribute('aria-expanded')).toBe('true');
     expect(label.textContent).toBe('Закрыть меню');
-    expect(document.activeElement).toBe(document.querySelector('[data-menu-close]'));
-    document.querySelector('[data-menu-close]').click();
+    expect(document.activeElement).toBe(document.querySelector('#main-menu a'));
+
+    toggle.click();
+    expect(toggle.getAttribute('aria-expanded')).toBe('false');
     expect(label.textContent).toBe('Открыть меню');
     expect(document.activeElement).toBe(toggle);
 

@@ -5,7 +5,6 @@ export function initMobileMenu() {
   const toggle = document.querySelector('.menu-toggle');
   const menu = document.querySelector('#main-menu');
   const backdrop = document.querySelector('[data-menu-backdrop]');
-  const closeButton = menu?.querySelector('[data-menu-close]');
   const toggleLabel = toggle?.querySelector('[data-menu-toggle-label]');
   if (!toggle || !menu) return;
 
@@ -36,7 +35,6 @@ export function initMobileMenu() {
 
   toggle.addEventListener('click', () => (isOpen ? close() : open()));
   backdrop?.addEventListener('click', close);
-  closeButton?.addEventListener('click', close);
   document.addEventListener('keydown', (event) => {
     if (event.key === 'Escape') close();
   });

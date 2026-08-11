@@ -12,8 +12,11 @@ describe('premium light site chrome', () => {
     expect(document.querySelector('.nav-row')).not.toBeNull();
     expect(document.querySelector('[data-vision-toggle]')).not.toBeNull();
     expect(document.querySelector('[data-menu-backdrop]')).not.toBeNull();
-    expect(document.querySelector('[data-menu-close]')).not.toBeNull();
-    expect(document.querySelector('.menu-toggle[aria-controls="main-menu"]')).not.toBeNull();
+    const toggle = document.querySelector('.menu-toggle[aria-controls="main-menu"]');
+    expect(toggle).not.toBeNull();
+    expect(document.querySelectorAll('.menu-toggle')).toHaveLength(1);
+    expect(toggle.querySelector('.menu-toggle__icon')?.getAttribute('aria-hidden')).toBe('true');
+    expect(document.querySelector('[data-menu-close]')).toBeNull();
 
     const navLinks = [...document.querySelectorAll('#main-menu > a:not([data-appointment-open])')];
     expect(navLinks.map((link) => link.textContent.trim())).toEqual(NAV_ITEMS.map((item) => item.label));

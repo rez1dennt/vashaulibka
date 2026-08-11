@@ -50,11 +50,11 @@ export function renderHeader(activeFile) {
     '<div class="brand-row"><div class="header-shell brand-row__inner">',
     `<a class="brand" href="index.html" aria-label="${escapeHtml(CLINIC.name)}, главная"><img src="assets/icons/logo.svg" alt="" width="56" height="56"><span><strong>${escapeHtml(CLINIC.name)}</strong><small>стоматологическая клиника</small></span></a>`,
     `<div class="brand-row__actions"><div class="brand-phone-group">${phoneLinks}</div><a class="button button-primary header-appointment" href="${primaryPhone.href}" data-appointment-open>${renderIcon('calendar', 'button-icon')}Запись на приём</a></div>`,
-    '<button class="menu-toggle" type="button" aria-expanded="false" aria-controls="main-menu"><span class="sr-only" data-menu-toggle-label>Открыть меню</span></button>',
+    '<button class="menu-toggle" type="button" aria-expanded="false" aria-controls="main-menu"><span class="menu-toggle__icon" aria-hidden="true"></span><span class="sr-only" data-menu-toggle-label>Открыть меню</span></button>',
     '</div></div>',
     '<div class="menu-backdrop" data-menu-backdrop aria-hidden="true"></div>',
     '<div class="nav-row"><div class="header-shell nav-row__inner">',
-    `<nav id="main-menu" aria-label="Основная навигация"><button class="menu-close" type="button" data-menu-close aria-label="Закрыть меню">×</button>${renderNavigationLinks(activeFile)}<a class="button button-primary nav-appointment" href="${primaryPhone.href}" data-appointment-open>${renderIcon('calendar', 'button-icon')}Запись на приём</a></nav>`,
+    `<nav id="main-menu" aria-label="Основная навигация">${renderNavigationLinks(activeFile)}<a class="button button-primary nav-appointment" href="${primaryPhone.href}" data-appointment-open>${renderIcon('calendar', 'button-icon')}Запись на приём</a></nav>`,
     '</div></div>',
     '</header>',
   ].join('');
