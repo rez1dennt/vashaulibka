@@ -17,6 +17,8 @@ import { generateSeo } from './generate-seo.mjs';
 
 const LOCAL_ORIGIN = 'https://local.test';
 const PASSIVE_SCHEMES = /^(?:mailto|tel|data):/i;
+const UNSAFE_SCHEMES = /^(?:javascript|vbscript):/i;
+const ABSOLUTE_SCHEME = /^[a-z][a-z\d+.-]*:/i;
 const ACTIVE_LINK_RELS = new Set(['stylesheet', 'icon', 'preload', 'modulepreload', 'manifest']);
 
 const normalizeNewlines = (value) => value.replaceAll('\r\n', '\n');
@@ -35,7 +37,9 @@ const error = (code, message, details = {}) => ({ code, message, ...details });
 
 const resolveReference = (reference, fromFile) => {
   const value = String(reference ?? '').trim();
+  if (UNSAFE_SCHEMES.test(value)) return { kind: 'unsafe' };
   if (PASSIVE_SCHEMES.test(value)) return { kind: 'passive' };
+  if (value.startsWith('//') || ABSOLUTE_SCHEME.test(value)) return { kind: 'external' };
 
   let url;
   try {
@@ -60,12 +64,39 @@ const resolveReference = (reference, fromFile) => {
 };
 
 const srcsetReferences = (srcset) => {
-  const value = String(srcset ?? '').trim();
-  if (!value || value.startsWith('data:')) return [];
-  return value
-    .split(',')
-    .map((candidate) => candidate.trim().split(/\s+/, 1)[0])
-    .filter(Boolean);
+  const value = String(srcset ?? '');
+  const references = [];
+  let position = 0;
+
+  while (position < value.length) {
+    while (position < value.length && /[\t\n\f\r ,]/.test(value[position])) position += 1;
+    if (position >= value.length) break;
+
+    const urlStart = position;
+    while (position < value.length && !/[\t\n\f\r ]/.test(value[position])) position += 1;
+    let url = value.slice(urlStart, position);
+
+    if (url.endsWith(',')) {
+      url = url.replace(/,+$/, '');
+      if (url) references.push(url);
+      continue;
+    }
+    if (url) references.push(url);
+
+    let parentheses = 0;
+    while (position < value.length) {
+      const character = value[position];
+      if (character === '(') parentheses += 1;
+      else if (character === ')' && parentheses > 0) parentheses -= 1;
+      else if (character === ',' && parentheses === 0) {
+        position += 1;
+        break;
+      }
+      position += 1;
+    }
+  }
+
+  return references;
 };
 
 const cssReferences = (contents) => {
@@ -115,6 +146,11 @@ export function verifyDirectory(directory, { pages = PAGES, origin } = {}) {
   const checkLocalReference = (reference, fromFile, kind, { validateFragment = false } = {}) => {
     const resolvedReference = resolveReference(reference, fromFile);
     if (resolvedReference.kind === 'passive') return;
+    if (resolvedReference.kind === 'unsafe') {
+      const code = kind === 'link' ? 'link.unsafe-scheme' : 'resource.external';
+      add(code, `unsafe executable reference is not allowed: ${reference}`, { file: fromFile, reference });
+      return;
+    }
     if (resolvedReference.kind === 'invalid') {
       add(`${kind}.invalid`, `invalid local reference: ${reference}`, { file: fromFile, reference });
       return;
@@ -149,6 +185,10 @@ export function verifyDirectory(directory, { pages = PAGES, origin } = {}) {
     const manifestPage = expectedPages.get(file);
     const isIndexable = !manifestPage?.noindex;
 
+    if (document.querySelector('base')) {
+      add('html.base', 'base elements are not allowed because they can redirect local references', { file });
+    }
+
     if (document.documentElement.lang.trim().toLowerCase() !== 'ru') {
       add('html.lang', 'html lang must be "ru"', { file });
     }
@@ -176,8 +216,15 @@ export function verifyDirectory(directory, { pages = PAGES, origin } = {}) {
       indexableMetadata.push({ file, title, description });
     }
 
-    const robots = document.querySelector('meta[name="robots"]')?.content.toLowerCase() ?? '';
-    const hasNoindex = robots.split(/[\s,]+/).includes('noindex');
+    const robotsMeta = [...document.querySelectorAll('meta[name]')]
+      .filter((meta) => meta.getAttribute('name').trim().toLowerCase() === 'robots');
+    if (robotsMeta.length !== 1) {
+      add('seo.robots-meta.count', 'expected exactly one robots meta directive', { file });
+    }
+    const hasNoindex = robotsMeta.some((meta) => meta.content
+      .toLowerCase()
+      .split(/[\s,]+/)
+      .includes('noindex'));
     if (manifestPage?.noindex && !hasNoindex) {
       add('seo.noindex.missing', 'manifest noindex page lacks a noindex directive', { file });
     } else if (manifestPage && !manifestPage.noindex && hasNoindex) {

@@ -118,6 +118,18 @@ describe('SEO output generation', () => {
     'http://localhost:4173',
     'https://clinic.invalid',
     'https://example.com',
+    'https://printer.local',
+    'https://localhost.localdomain',
+    'http://10.0.0.1',
+    'http://172.16.0.1',
+    'http://172.31.255.255',
+    'http://192.168.1.1',
+    'http://169.254.1.1',
+    'http://[::ffff:127.0.0.1]',
+    'http://[::ffff:192.168.1.10]',
+    'http://[fc00::1]',
+    'http://[fd12::1]',
+    'http://[fe80::1]',
   ])('rejects an invalid explicit origin: %s', (origin) => {
     expect(() => generateSeo([INDEXABLE_PAGE], { origin })).toThrow(/origin/i);
   });
@@ -241,6 +253,20 @@ describe('production site verifier', () => {
     expect(verifyDirectory(directory, { pages: [INDEXABLE_PAGE] }).errors).toEqual([]);
   });
 
+  it('rejects unsafe executable anchor schemes', () => {
+    const directory = writeValidFixture({
+      htmlByFile: {
+        'index.html': pageHtml({ body: '<a href="javascript:alert(1)">Опасная ссылка</a>' }),
+      },
+    });
+
+    const result = verifyDirectory(directory, { pages: [INDEXABLE_PAGE] });
+
+    expect(result.errors).toEqual(expect.arrayContaining([
+      expect.objectContaining({ code: 'link.unsafe-scheme', reference: 'javascript:alert(1)' }),
+    ]));
+  });
+
   it('resolves local images, srcset, stylesheets, scripts, favicon, PDFs, and downloads', () => {
     const directory = writeValidFixture({
       htmlByFile: {
@@ -261,6 +287,21 @@ describe('production site verifier', () => {
     ]) write(directory, file);
 
     expect(verifyDirectory(directory, { pages: [INDEXABLE_PAGE] }).errors).toEqual([]);
+  });
+
+  it('parses a mixed data and remote srcset candidate-by-candidate', () => {
+    const directory = writeValidFixture({
+      htmlByFile: {
+        'index.html': pageHtml({
+          body: '<picture><source srcset="data:image/gif;base64,R0lGODlhAQABAIAAAAUEBA== 1x, https://cdn.example.test/photo.webp 2x"></picture>',
+        }),
+      },
+    });
+
+    const errors = verifyDirectory(directory, { pages: [INDEXABLE_PAGE] }).errors;
+
+    expect(errors.filter((error) => error.code === 'resource.external')).toHaveLength(1);
+    expect(errors.filter((error) => error.code === 'resource.missing')).toHaveLength(0);
   });
 
   it('reports missing local active resources', () => {
@@ -291,6 +332,40 @@ describe('production site verifier', () => {
     const errors = verifyDirectory(directory, { pages: [INDEXABLE_PAGE] }).errors;
 
     expect(errors.filter((error) => error.code === 'resource.external')).toHaveLength(5);
+  });
+
+  it('rejects base elements that can redirect otherwise relative resources', () => {
+    const directory = writeValidFixture({
+      htmlByFile: {
+        'index.html': pageHtml({
+          head: '<base href="https://cdn.example.test/subdirectory/"><script src="assets/app.js"></script>',
+        }),
+      },
+    });
+    write(directory, 'assets/app.js');
+
+    const result = verifyDirectory(directory, { pages: [INDEXABLE_PAGE] });
+
+    expect(result.errors).toEqual(expect.arrayContaining([
+      expect.objectContaining({ code: 'html.base', file: 'index.html' }),
+    ]));
+  });
+
+  it('treats raw absolute sentinel-origin resources as external', () => {
+    const directory = writeValidFixture({
+      htmlByFile: {
+        'index.html': pageHtml({
+          head: '<link rel="stylesheet" href="https://local.test/assets/site.css">',
+        }),
+      },
+    });
+    write(directory, 'assets/site.css');
+
+    const errors = verifyDirectory(directory, { pages: [INDEXABLE_PAGE] }).errors;
+
+    expect(errors).toEqual(expect.arrayContaining([
+      expect.objectContaining({ code: 'resource.external', reference: 'https://local.test/assets/site.css' }),
+    ]));
   });
 
   it('rejects remote imports and URLs inside local stylesheets', () => {
@@ -358,6 +433,24 @@ describe('production site verifier', () => {
     expect(errors).toEqual(expect.arrayContaining([
       expect.objectContaining({ code: 'seo.noindex.unexpected', file: 'index.html' }),
       expect.objectContaining({ code: 'seo.noindex.missing', file: 'prices.html' }),
+    ]));
+  });
+
+  it('rejects duplicate and conflicting robots meta directives', () => {
+    const directory = writeValidFixture({
+      htmlByFile: {
+        'index.html': pageHtml().replace(
+          '</head>',
+          '<meta name="ROBOTS" content="noindex, follow"></head>',
+        ),
+      },
+    });
+
+    const errors = verifyDirectory(directory, { pages: [INDEXABLE_PAGE] }).errors;
+
+    expect(errors).toEqual(expect.arrayContaining([
+      expect.objectContaining({ code: 'seo.robots-meta.count', file: 'index.html' }),
+      expect.objectContaining({ code: 'seo.noindex.unexpected', file: 'index.html' }),
     ]));
   });
 
