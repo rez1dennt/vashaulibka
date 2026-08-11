@@ -30,4 +30,9 @@ describe('about page visual contract', () => {
     expect(pages).toMatch(/\.about-section__heading\s*>\s*div\s*{[^}]*min-inline-size:\s*var\(--space-0\)/s);
     expect(pages).toMatch(/\.about-section__heading\s+h2\s*{[^}]*overflow-wrap:\s*anywhere/s);
   });
+
+  it('lays the appointment schedule out as two mobile columns and four desktop columns', () => {
+    expect(pages).toMatch(/\.about-hours\s*{[^}]*grid-template-columns:\s*repeat\(2,\s*minmax\(var\(--space-0\),\s*1fr\)\)/s);
+    expect(pages).toMatch(/@media\s*\(min-width:\s*75rem\)[\s\S]*?\.about-hours\s*{[^}]*grid-template-columns:\s*repeat\(4,\s*minmax\(var\(--space-0\),\s*1fr\)\)/s);
+  });
 });

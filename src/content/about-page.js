@@ -64,7 +64,8 @@ const staffMarkup = STAFF.map((person) => [
 
 const hoursMarkup = [HOURS.weekdays, HOURS.saturday, HOURS.sunday]
   .map((entry) => `<div><dt>${escapeHtml(entry.label)}</dt><dd>${escapeHtml(entry.value)}</dd></div>`)
-  .join('');
+  .join('')
+  + `<div class="about-hours__note"><dt>Режим</dt><dd>${escapeHtml(HOURS.breakNote)}</dd></div>`;
 
 const body = [
   '<section class="about-section about-mission"><div class="container about-mission__grid">',
@@ -83,7 +84,7 @@ const body = [
   '<section class="about-section about-legal"><div class="container"><div class="about-section__heading"><div><p class="eyebrow">Реквизиты</p><h2>Юридические сведения</h2></div></div>',
   `<dl class="about-legal__grid"><div><dt>Полное наименование</dt><dd>${escapeHtml(CLINIC.legalName)}</dd></div><div><dt>ОГРН</dt><dd>${escapeHtml(CLINIC.ogrn)}</dd></div><div><dt>ИНН</dt><dd>${escapeHtml(CLINIC.inn)}</dd></div><div><dt>Адрес регистрации</dt><dd>${escapeHtml(CLINIC.registryAddress)}</dd></div><div><dt>Адрес клиники</dt><dd>${escapeHtml(CLINIC.activityAddress)}</dd></div></dl></div></section>`,
   '<section class="about-section about-cta"><div class="container about-cta__panel"><div><p class="eyebrow">Запись на приём</p><h2>Выберите удобный способ связи</h2><p>Онлайн-запись подключается. Пока запишитесь по телефону.</p>',
-  `<div class="about-actions"><a class="button button-primary" href="${CONTACTS.phones[0].href}" data-appointment-open>${renderIcon('calendar', 'button-icon')}Записаться на приём</a>${CONTACTS.phones.map((phone) => `<a class="button button-secondary" href="${phone.href}">${escapeHtml(phone.label)}</a>`).join('')}</div></div><div><h3>Режим работы</h3><dl class="definition-list definition-list--compact">${hoursMarkup}</dl><p><strong>${escapeHtml(HOURS.breakNote)}</strong></p></div></div></section>`,
+  `<div class="about-actions"><a class="button button-primary" href="${CONTACTS.phones[0].href}" data-appointment-open>${renderIcon('calendar', 'button-icon')}Записаться на приём</a>${CONTACTS.phones.map((phone) => `<a class="button button-secondary" href="${phone.href}">${escapeHtml(phone.label)}</a>`).join('')}</div></div><div class="about-cta__schedule"><div class="about-cta__schedule-heading">${renderIcon('clock')}<h3>Режим работы</h3></div><dl class="about-hours">${hoursMarkup}</dl></div></div></section>`,
 ].join('');
 
 export const ABOUT_PAGE = Object.freeze({

@@ -18,7 +18,7 @@
 - Browser regression RED: at 320 px with vision mode enabled, the long Russian service heading produced `scrollWidth 308` against `clientWidth 305`.
 - Root cause: the flex child in `.about-section__heading` retained its intrinsic minimum width, and the long heading could not break at the enlarged text size.
 - Regression GREEN: the flex child now permits shrinking and the heading can wrap anywhere. Browser recheck measured `scrollWidth 305`, `clientWidth 305`.
-- Final project gate: 16 files, 179 tests passed; Vite built 35 modules; the production verifier approved all 21 HTML pages.
+- Final project gate after the compact schedule update: 16 files, 181 tests passed; Vite built 35 modules; the production verifier approved all 21 HTML pages.
 
 ## Design-system evidence
 
@@ -45,6 +45,7 @@ Fresh reloads were inspected on `http://127.0.0.1:4173/about.html`.
 - At 390 px the mobile menu opens with scroll lock, the burger morphs into a cross in place, and closing restores the unlocked state.
 - The page appointment opener opens the shared dialog, focuses its close control, exposes exactly two telephone links and no form fields. Closing returns focus to the original page opener.
 - At 320 px vision mode remains usable with no horizontal overflow or clipped controls.
+- The final appointment schedule renders four semantic cells. It uses a 2×2 grid at 320 px and one four-cell row at 1280 px; both layouts measured equal document and client widths.
 - Browser console error log: 0 entries.
 - Page asset inventory: 0 remote origins and 0 remote fonts; all active resources are same-origin.
 

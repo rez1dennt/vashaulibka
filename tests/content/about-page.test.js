@@ -1,6 +1,6 @@
 import { JSDOM } from 'jsdom';
 import { describe, expect, it } from 'vitest';
-import { CLINIC, CONTACTS, LICENSE } from '../../src/data/clinic.js';
+import { CLINIC, CONTACTS, HOURS, LICENSE } from '../../src/data/clinic.js';
 import { SERVICES } from '../../src/data/services.js';
 import { STAFF } from '../../src/data/staff.js';
 import { ABOUT_PAGE } from '../../src/content/about-page.js';
@@ -83,6 +83,26 @@ describe('patient-oriented about page', () => {
     expect(document.querySelector('.about-cta [data-appointment-open]')?.getAttribute('href')).toBe(CONTACTS.phones[0].href);
     expect(document.querySelectorAll('.about-cta a[href^="tel:"]')).toHaveLength(CONTACTS.phones.length + 1);
     expect(document.querySelector('.about-cta form, .about-cta input, .about-cta textarea')).toBeNull();
+  });
+
+  it('renders the confirmed schedule as four compact semantic cells', () => {
+    const document = render();
+    const cells = [...document.querySelectorAll('.about-hours > div')];
+
+    expect(cells).toHaveLength(4);
+    expect(cells.map((cell) => cell.querySelector('dt')?.textContent)).toEqual([
+      HOURS.weekdays.label,
+      HOURS.saturday.label,
+      HOURS.sunday.label,
+      'Режим',
+    ]);
+    expect(cells.map((cell) => cell.querySelector('dd')?.textContent)).toEqual([
+      HOURS.weekdays.value,
+      HOURS.saturday.value,
+      HOURS.sunday.value,
+      HOURS.breakNote,
+    ]);
+    expect(document.querySelector('.about-cta__schedule-heading .ui-icon')).not.toBeNull();
   });
 
   it('does not publish unsupported claims', () => {
