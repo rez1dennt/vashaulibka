@@ -100,6 +100,7 @@
   --primitive-shadow-header: 0 0.5rem 2rem var(--primitive-color-shadow);
   --primitive-z-header: 40;
   --primitive-z-menu: 100;
+  --primitive-z-menu-toggle: 110;
   --primitive-z-cookie: 250;
   --primitive-z-dialog: 300;
   --primitive-z-skip-link: 400;
@@ -137,6 +138,7 @@
   --text-label-weight: var(--primitive-font-weight-semibold);
   --text-heading-weight: var(--primitive-font-weight-medium);
   --text-heading-line-height: var(--primitive-line-height-tight);
+  --text-heading-letter-spacing: var(--primitive-letter-spacing-tight);
   --text-h1-size: clamp(var(--primitive-font-size-4xl), 9vw, var(--primitive-font-size-6xl));
   --text-h2-size: clamp(var(--primitive-font-size-3xl), 6vw, var(--primitive-font-size-5xl));
   --text-h3-size: clamp(var(--primitive-font-size-xl), 4vw, var(--primitive-font-size-2xl));
@@ -166,6 +168,7 @@
   --container-gutter: var(--primitive-container-gutter-mobile);
   --control-target-min: var(--primitive-size-target-min);
   --control-block-size: var(--primitive-size-control);
+  --control-scale-active: var(--primitive-scale-pressed);
   --icon-size: var(--primitive-size-icon);
   --brand-mark-size: var(--primitive-size-brand-mark);
   --border-width: var(--primitive-border-width);
@@ -180,16 +183,22 @@
   --focus-ring-width: var(--primitive-border-width-focus);
   --focus-ring-offset: var(--space-1);
   --opacity-disabled: var(--primitive-opacity-disabled);
+  --screen-reader-size: var(--primitive-size-screen-reader);
+  --screen-reader-clip: var(--primitive-clip-screen-reader);
+  --skip-link-hidden-offset: var(--primitive-skip-offset);
   --motion-duration-instant: var(--primitive-motion-instant);
   --motion-duration-fast: var(--primitive-motion-fast);
   --motion-duration-panel: var(--primitive-motion-panel);
   --motion-delay-none: var(--primitive-motion-delay-none);
   --motion-iteration-once: var(--primitive-motion-iteration-once);
   --motion-easing-standard: var(--primitive-easing-standard);
-  --transition-interactive: color var(--motion-duration-fast) var(--motion-easing-standard), background-color var(--motion-duration-fast) var(--motion-easing-standard), border-color var(--motion-duration-fast) var(--motion-easing-standard), box-shadow var(--motion-duration-fast) var(--motion-easing-standard), opacity var(--motion-duration-fast) var(--motion-easing-standard), transform var(--motion-duration-fast) var(--motion-easing-standard);
+  --transition-interactive: color var(--motion-duration-fast) var(--motion-easing-standard), background-color var(--motion-duration-fast) var(--motion-easing-standard), border-color var(--motion-duration-fast) var(--motion-easing-standard), opacity var(--motion-duration-fast) var(--motion-easing-standard), transform var(--motion-duration-fast) var(--motion-easing-standard);
   --transition-panel: transform var(--motion-duration-panel) var(--motion-easing-standard), opacity var(--motion-duration-fast) var(--motion-easing-standard);
+  --transition-navigation-close: transform var(--motion-duration-panel) var(--motion-easing-standard), visibility var(--motion-duration-instant) linear var(--motion-duration-panel);
+  --transition-navigation-open: transform var(--motion-duration-panel) var(--motion-easing-standard), visibility var(--motion-duration-instant) linear var(--motion-delay-none);
   --z-header: var(--primitive-z-header);
   --z-menu: var(--primitive-z-menu);
+  --z-menu-toggle: var(--primitive-z-menu-toggle);
   --z-cookie: var(--primitive-z-cookie);
   --z-dialog: var(--primitive-z-dialog);
   --z-skip-link: var(--primitive-z-skip-link);
@@ -206,6 +215,7 @@
   --button-radius: var(--radius-sm);
   --button-padding-inline: var(--space-5);
   --button-padding-block: var(--space-3);
+  --button-line-height: var(--primitive-line-height-heading);
   --card-background: var(--color-surface-raised);
   --card-border: var(--color-border);
   --card-radius: var(--radius-md);
@@ -215,11 +225,25 @@
   --cookie-max-inline-size: var(--primitive-size-cookie);
   --notice-background: var(--color-surface-warm);
   --tab-selected-border: var(--color-primary-strong);
+  --tab-font-weight: var(--primitive-font-weight-medium);
   --avatar-size: var(--primitive-size-avatar-sm);
+  --avatar-font-size: var(--primitive-font-size-xl);
+  --topbar-min-block-size: var(--primitive-size-topbar);
+  --brand-font-weight: var(--primitive-font-weight-bold);
+  --brand-line-height: var(--primitive-line-height-heading);
+  --brand-text-measure: var(--primitive-measure-heading);
+  --navigation-link-weight: var(--primitive-font-weight-medium);
+  --hero-lead-font-size: var(--primitive-font-size-lg);
+  --footer-heading-font-size: var(--primitive-font-size-lg);
+  --dialog-close-font-size: var(--primitive-font-size-2xl);
+  --dialog-close-line-height: var(--primitive-line-height-tight);
+  --dialog-close-scale-active: var(--control-scale-active);
+  --menu-toggle-angle: 45deg;
   --vision-scale: 120%;
 
   /* Mobile-first property tokens */
-  --layout-topbar-display: none;
+  --layout-topbar-display: flex;
+  --layout-topbar-info-display: none;
   --layout-menu-toggle-display: inline-grid;
   --layout-header-block-size: var(--primitive-size-header-mobile);
   --layout-navigation-position: fixed;
@@ -261,6 +285,7 @@
 @media (min-width: 61.25rem) {
   :root {
     --layout-topbar-display: flex;
+    --layout-topbar-info-display: inline;
     --layout-menu-toggle-display: none;
     --layout-header-block-size: var(--primitive-size-header-desktop);
     --layout-navigation-position: static;

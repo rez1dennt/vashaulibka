@@ -95,7 +95,7 @@ h3 {
   color: var(--color-text);
   font-family: var(--font-heading);
   font-weight: var(--text-heading-weight);
-  letter-spacing: var(--primitive-letter-spacing-tight);
+  letter-spacing: var(--text-heading-letter-spacing);
   line-height: var(--text-heading-line-height);
   text-wrap: balance;
 }
@@ -133,13 +133,13 @@ ol {
 
 .sr-only {
   position: absolute;
-  inline-size: var(--primitive-size-screen-reader);
-  block-size: var(--primitive-size-screen-reader);
-  margin: calc(var(--primitive-size-screen-reader) * -1);
+  inline-size: var(--screen-reader-size);
+  block-size: var(--screen-reader-size);
+  margin: calc(var(--screen-reader-size) * -1);
   padding: var(--space-0);
   overflow: hidden;
   border: var(--space-0);
-  clip-path: inset(var(--primitive-clip-screen-reader));
+  clip-path: inset(var(--screen-reader-clip));
   white-space: nowrap;
 }
 
@@ -150,7 +150,7 @@ ol {
   inset-inline-start: var(--space-4);
   min-block-size: var(--control-block-size);
   padding: var(--space-3) var(--space-4);
-  transform: translateY(var(--primitive-skip-offset));
+  transform: translateY(var(--skip-link-hidden-offset));
   border-radius: var(--radius-sm);
   color: var(--color-text-on-primary);
   background: var(--color-primary-active);

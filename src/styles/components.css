@@ -12,7 +12,7 @@
   border: var(--border-width) solid var(--button-border);
   border-radius: var(--button-radius);
   font-weight: var(--text-label-weight);
-  line-height: var(--primitive-line-height-heading);
+  line-height: var(--button-line-height);
   text-align: center;
   text-decoration: none;
   cursor: pointer;
@@ -107,7 +107,7 @@ button.card:active {
   border-radius: var(--radius-sm);
   color: var(--color-text-muted);
   background: var(--color-surface-raised);
-  font-weight: var(--primitive-font-weight-medium);
+  font-weight: var(--tab-font-weight);
   text-align: start;
   cursor: pointer;
 }
@@ -205,8 +205,8 @@ button.card:active {
   border-radius: var(--radius-pill);
   color: var(--color-text);
   background: var(--color-surface-subtle);
-  font-size: var(--primitive-font-size-2xl);
-  line-height: var(--primitive-line-height-tight);
+  font-size: var(--dialog-close-font-size);
+  line-height: var(--dialog-close-line-height);
   cursor: pointer;
 }
 
@@ -218,7 +218,7 @@ button.card:active {
 
 .dialog__panel [data-dialog-close]:active {
   color: var(--color-primary-active);
-  transform: scale(var(--primitive-scale-pressed));
+  transform: scale(var(--dialog-close-scale-active));
 }
 
 .dialog__panel h2 {

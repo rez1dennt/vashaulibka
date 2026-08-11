@@ -97,6 +97,72 @@ describe('design system contract', () => {
     expect(css).toMatch(/\.vision-mode/);
   });
 
+  it('keeps the mobile menu toggle above the open drawer', () => {
+    const tokens = tokenValues(readStyle('tokens'));
+    const layout = readStyle('layout');
+    const layer = (name) => Number(resolveColor(tokens, name));
+
+    expect(layer('--z-menu-toggle')).toBeGreaterThan(layer('--z-menu'));
+    expect(layout).toMatch(/\.menu-toggle\s*{[^}]*z-index:\s*var\(--z-menu-toggle\)/s);
+  });
+
+  it('delays drawer visibility only while the exit transform finishes', () => {
+    const tokens = readStyle('tokens');
+    const layout = readStyle('layout');
+
+    expect(tokens).toMatch(/--transition-navigation-close:[^;]*visibility\s+var\(--motion-duration-instant\)[^;]*var\(--motion-duration-panel\)/);
+    expect(tokens).toMatch(/--transition-navigation-open:[^;]*visibility\s+var\(--motion-duration-instant\)[^;]*var\(--motion-delay-none\)/);
+    expect(layout).toMatch(/\.site-header\s+nav\s*{[^}]*transition:\s*var\(--transition-navigation-close\)/s);
+    expect(layout).toMatch(/\.menu-open\s+\.site-header\s+nav\s*{[^}]*transition:\s*var\(--transition-navigation-open\)/s);
+  });
+
+  it('keeps the existing vision toggle reachable on mobile', () => {
+    const tokens = readStyle('tokens');
+    const layout = readStyle('layout');
+
+    expect(tokens).toMatch(/:root\s*{[\s\S]*?--layout-topbar-display:\s*flex/);
+    expect(tokens).toMatch(/:root\s*{[\s\S]*?--layout-topbar-info-display:\s*none/);
+    expect(tokens).toMatch(/@media\s*\(min-width:\s*61\.25rem\)[\s\S]*?--layout-topbar-info-display:\s*inline/);
+    expect(layout).toMatch(/\.topbar\s+span\s*{[^}]*display:\s*var\(--layout-topbar-info-display\)/s);
+  });
+
+  it('keeps primitive tokens private to the token layer', () => {
+    const consumingLayers = ['base', 'layout', 'components', 'pages']
+      .map(readStyle)
+      .join('\n');
+
+    expect(consumingLayers).not.toMatch(/var\(--primitive-/);
+    expect(consumingLayers).not.toMatch(/\b45deg\b/);
+    expect(readStyle('tokens')).toMatch(/--menu-toggle-angle:\s*45deg/);
+  });
+
+  it('gives standalone footer links a tokenized minimum target', () => {
+    const layout = readStyle('layout');
+    const tokens = tokenValues(readStyle('tokens'));
+    const minimumTarget = resolveColor(tokens, '--control-target-min');
+
+    expect(minimumTarget).toMatch(/rem$/);
+    expect(Number.parseFloat(minimumTarget)).toBeGreaterThanOrEqual(1.5);
+    expect(layout).toMatch(/\.site-footer\s+a\s*{[^}]*min-block-size:\s*var\(--control-target-min\)[^}]*display:\s*inline-flex[^}]*align-items:\s*center/s);
+  });
+
+  it('defines hover and active feedback for utility buttons', () => {
+    const layout = readStyle('layout');
+
+    expect(layout).toMatch(/\.topbar\s+button:hover\s*{[^}]*(color|background|transform):/s);
+    expect(layout).toMatch(/\.topbar\s+button:active\s*{[^}]*(color|background|transform):/s);
+    expect(layout).toMatch(/\.site-footer\s+button:hover\s*{[^}]*(color|background|transform):/s);
+    expect(layout).toMatch(/\.site-footer\s+button:active\s*{[^}]*(color|background|transform):/s);
+  });
+
+  it('keeps shared interactive transitions free of shadow animation', () => {
+    const transition = tokenValues(readStyle('tokens')).get('--transition-interactive');
+
+    expect(transition).toContain('transform');
+    expect(transition).toContain('border-color');
+    expect(transition).not.toContain('box-shadow');
+  });
+
   it('enhances a mobile-first layout at wider viewports', () => {
     const css = `${readStyle('tokens')}\n${readStyle('layout')}\n${readStyle('pages')}`;
 

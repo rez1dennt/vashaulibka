@@ -92,7 +92,7 @@
   color: var(--color-primary-strong);
   background: var(--color-surface-brand-soft);
   font-family: var(--font-heading);
-  font-size: var(--primitive-font-size-xl);
+  font-size: var(--avatar-font-size);
   text-align: center;
 }
 
