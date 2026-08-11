@@ -268,6 +268,10 @@
   --layout-staff-columns: var(--avatar-size) minmax(var(--space-0), 1fr);
   --layout-review-columns: minmax(var(--space-0), 1fr);
   --layout-card-columns: minmax(var(--space-0), 1fr);
+  --layout-feature-columns: minmax(var(--space-0), 1fr);
+  --layout-split-columns: minmax(var(--space-0), 1fr);
+  --layout-services-tabs-display: none;
+  --layout-services-disclosures-display: grid;
 }
 
 @media (min-width: 48rem) {
@@ -280,6 +284,10 @@
     --avatar-size: var(--primitive-size-avatar-lg);
     --layout-review-columns: repeat(2, minmax(var(--space-0), 1fr));
     --layout-card-columns: repeat(2, minmax(var(--space-0), 1fr));
+    --layout-feature-columns: repeat(2, minmax(var(--space-0), 1fr));
+    --layout-split-columns: minmax(var(--space-0), 7fr) minmax(var(--space-0), 5fr);
+    --layout-services-tabs-display: grid;
+    --layout-services-disclosures-display: none;
   }
 }
 
@@ -306,5 +314,6 @@
     --layout-hero-min-block-size: var(--primitive-size-hero-desktop);
     --layout-hero-scrim: linear-gradient(90deg, var(--color-surface-page) 0 42%, rgb(255 253 251 / 28%) 72%);
     --layout-card-columns: repeat(3, minmax(var(--space-0), 1fr));
+    --layout-feature-columns: repeat(3, minmax(var(--space-0), 1fr));
   }
 }

@@ -10,6 +10,10 @@
   --hero-image: image-set(url("/assets/images/hero-services.avif") type("image/avif"), url("/assets/images/hero-services.webp") type("image/webp"));
 }
 
+.page-hero--prices {
+  --hero-image: image-set(url("/assets/images/hero-prices.avif") type("image/avif"), url("/assets/images/hero-prices.webp") type("image/webp"));
+}
+
 .page-hero--specialists {
   --hero-image: image-set(url("/assets/images/hero-specialists.avif") type("image/avif"), url("/assets/images/hero-specialists.webp") type("image/webp"));
 }
@@ -24,6 +28,36 @@
 
 .page-hero--contacts {
   --hero-image: image-set(url("/assets/images/hero-contacts.avif") type("image/avif"), url("/assets/images/hero-contacts.webp") type("image/webp"));
+}
+
+.split,
+.feature-grid {
+  min-inline-size: var(--space-0);
+  display: grid;
+  align-items: start;
+  gap: var(--space-8);
+}
+
+.split {
+  grid-template-columns: var(--layout-split-columns);
+}
+
+.feature-grid {
+  grid-template-columns: var(--layout-feature-columns);
+}
+
+.feature-grid article,
+.split > * {
+  min-inline-size: var(--space-0);
+}
+
+.services-tabs-view {
+  display: var(--layout-services-tabs-display);
+}
+
+.services-disclosures-view {
+  display: var(--layout-services-disclosures-display);
+  gap: var(--space-5);
 }
 
 .service-tabs {
@@ -47,6 +81,7 @@
 .service-grid,
 .info-grid,
 .price-list,
+.price-disclosures,
 .vacancy-list,
 .contact-grid,
 .staff-list,
@@ -54,6 +89,27 @@
   min-inline-size: var(--space-0);
   display: grid;
   gap: var(--space-5);
+}
+
+.service-disclosure h2,
+.price-disclosure h2 {
+  margin-block-end: var(--space-0);
+  font-family: var(--font-body);
+  font-size: var(--text-body-size);
+  letter-spacing: normal;
+}
+
+.service-disclosure [data-disclosure-button],
+.price-disclosure [data-disclosure-button] {
+  inline-size: 100%;
+}
+
+.disclosure-panel {
+  padding-block-start: var(--space-5);
+}
+
+.disclosure-panel > :last-child {
+  margin-block-end: var(--space-0);
 }
 
 .service-grid,
@@ -106,6 +162,56 @@
 .staff-card > :last-child,
 .service-tabs [role="tabpanel"] > :last-child {
   margin-block-end: var(--space-0);
+}
+
+.staff-role {
+  color: var(--color-text-muted);
+  font-weight: var(--text-label-weight);
+}
+
+.staff-list > .notice {
+  margin-block-end: var(--space-5);
+}
+
+.definition-list {
+  display: grid;
+  gap: var(--space-5);
+  margin: var(--space-0);
+}
+
+.definition-list--compact {
+  gap: var(--space-3);
+}
+
+.definition-list > div {
+  min-inline-size: var(--space-0);
+}
+
+.definition-list dt {
+  color: var(--color-text-muted);
+  font-size: var(--text-small-size);
+  font-weight: var(--text-label-weight);
+}
+
+.definition-list dd {
+  margin-inline-start: var(--space-0);
+  overflow-wrap: anywhere;
+}
+
+.contact-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+}
+
+.empty-state {
+  max-inline-size: var(--text-body-measure);
+  margin-inline: auto;
+}
+
+.empty-state .contact-actions,
+.empty-state > .button {
+  margin-block-start: var(--space-5);
 }
 
 .price-list {
