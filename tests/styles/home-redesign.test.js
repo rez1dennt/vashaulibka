@@ -24,6 +24,11 @@ describe('premium light visual contract', () => {
     expect(layout).toMatch(/@media\s*\(min-width:\s*75rem\)[\s\S]*?a\.nav-appointment,\s*\.menu-backdrop,\s*\.menu-close\s*{[^}]*display:\s*none/s);
   });
 
+  it('aligns utility metadata inline and separates quick links from the hero', () => {
+    expect(tokens).toMatch(/@media\s*\(min-width:\s*75rem\)[\s\S]*?--layout-topbar-info-display:\s*inline-flex/s);
+    expect(pages).toMatch(/@media\s*\(min-width:\s*75rem\)[\s\S]*?\.quick-links\s*{[^}]*margin-block-start:\s*var\(--space-0\)[^}]*padding-block-start:\s*var\(--space-6\)/s);
+  });
+
   it('shows only the in-panel close control while the mobile menu is open', () => {
     expect(layout).toMatch(/\.menu-open\s+\.menu-toggle\s*{[^}]*visibility:\s*hidden[^}]*pointer-events:\s*none/s);
   });

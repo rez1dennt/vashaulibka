@@ -326,7 +326,7 @@
 @media (min-width: 75rem) {
   :root {
     --layout-topbar-display: flex;
-    --layout-topbar-info-display: inline;
+    --layout-topbar-info-display: inline-flex;
     --layout-topbar-button-min-block-size: var(--control-target-min);
     --layout-menu-toggle-display: none;
     --layout-header-main-display: grid;

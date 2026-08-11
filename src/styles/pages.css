@@ -830,9 +830,9 @@
 
 @media (min-width: 75rem) {
   .quick-links {
-    margin-block-start: calc(var(--space-12) * -1);
-    padding-block-start: var(--space-0);
-    background: transparent;
+    margin-block-start: var(--space-0);
+    padding-block-start: var(--space-6);
+    background: var(--color-surface-page);
   }
 
   .quick-links__grid {
