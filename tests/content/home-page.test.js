@@ -58,6 +58,16 @@ describe('premium light homepage', () => {
     expect(document.querySelector('.home-contact [data-appointment-open]')?.getAttribute('href')).toBe(CONTACTS.phones[0].href);
   });
 
+  it('renders contacts as aligned icon-and-text rows', () => {
+    const document = render();
+    const rows = [...document.querySelectorAll('.home-contact__row')];
+
+    expect(rows).toHaveLength(5);
+    expect(document.querySelectorAll('.home-contact__phones .home-contact__row')).toHaveLength(CONTACTS.phones.length);
+    expect(document.querySelector('.home-contact__schedule > .ui-icon')).not.toBeNull();
+    expect(document.querySelector('.home-contact__schedule .definition-list')).not.toBeNull();
+  });
+
   it('uses only verified clinic facts and explicitly labels generated interiors', () => {
     const document = render();
 

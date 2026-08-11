@@ -764,34 +764,45 @@
   background: var(--color-surface-page);
 }
 
-.home-contact__address,
-.home-contact__phones,
-.home-contact__email {
-  display: flex;
-  align-items: flex-start;
+.home-contact__row {
+  min-inline-size: var(--space-0);
+  display: grid;
+  grid-template-columns: var(--icon-size) minmax(var(--space-0), 1fr);
+  align-items: start;
   gap: var(--space-3);
-}
-
-.home-contact__phones {
-  flex-direction: column;
   margin-block-end: var(--space-4);
 }
 
-.home-contact__phones a,
+.home-contact__row > .ui-icon {
+  margin-block-start: var(--space-0-5);
+}
+
+.home-contact__phones {
+  display: grid;
+  gap: var(--space-2);
+}
+
+.home-contact__phones .home-contact__row,
 .home-contact__email {
   min-block-size: var(--control-target-min);
+  align-items: center;
+  margin-block-end: var(--space-0);
   color: var(--color-text);
   font-weight: var(--text-label-weight);
   text-decoration: none;
 }
 
 .home-contact__email {
-  margin-block-end: var(--space-5);
+  margin-block-end: var(--space-4);
 }
 
-.home-contact .definition-list {
+.home-contact__schedule .definition-list {
   max-inline-size: var(--text-heading-measure);
-  margin-block-end: var(--space-4);
+  margin-block-end: var(--space-0);
+}
+
+.home-contact__break {
+  margin-block-end: var(--space-0);
 }
 
 @media (min-width: 48rem) {

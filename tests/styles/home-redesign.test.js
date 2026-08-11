@@ -33,6 +33,11 @@ describe('premium light visual contract', () => {
     expect(layout).toMatch(/\.menu-open\s+\.menu-toggle\s*{[^}]*visibility:\s*hidden[^}]*pointer-events:\s*none/s);
   });
 
+  it('uses one icon-and-text grid for homepage contacts', () => {
+    expect(pages).toMatch(/\.home-contact__row\s*{[^}]*display:\s*grid[^}]*grid-template-columns:\s*var\(--icon-size\)\s+minmax\(var\(--space-0\),\s*1fr\)/s);
+    expect(pages).toMatch(/\.home-contact__schedule\s+\.definition-list\s*{[^}]*margin-block-end:\s*var\(--space-0\)/s);
+  });
+
   it('styles all rich homepage sections and local icons', () => {
     for (const selector of [
       'home-hero',
