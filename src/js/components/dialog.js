@@ -38,6 +38,10 @@ export function initDialog({ provider } = {}) {
   });
   dialog.addEventListener('keydown', trap);
   document.addEventListener('keydown', (event) => {
-    if (event.key === 'Escape') close();
-  });
+    if (event.key !== 'Escape' || !isOpen) return;
+
+    // The dialog is the topmost overlay, so it consumes Escape before the menu.
+    event.stopImmediatePropagation();
+    close();
+  }, true);
 }

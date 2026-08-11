@@ -46,6 +46,13 @@ describe('progressive interactions', () => {
     expect(document.querySelector('[data-cookie-banner]').hidden).toBe(true);
   });
 
+  it('shows the cookie banner for an unrecognized stored value', () => {
+    document.body.innerHTML = '<div data-cookie-banner hidden><button data-cookie-reject>Нет</button><button data-cookie-accept>Да</button></div>';
+    initCookieConsent({ storage: { get: () => 'legacy-accepted', set: vi.fn() } });
+
+    expect(document.querySelector('[data-cookie-banner]').hidden).toBe(false);
+  });
+
   it('switches service tabs with the expected ARIA state', () => {
     document.body.innerHTML = '<div role="tablist"><button role="tab" aria-selected="true" aria-controls="therapy">Терапия</button><button role="tab" aria-selected="false" aria-controls="orthopedics">Ортопедия</button></div><section id="therapy" role="tabpanel"></section><section id="orthopedics" role="tabpanel" hidden></section>';
     initTabs();
@@ -114,6 +121,30 @@ describe('progressive interactions', () => {
 
     expect(document.body.classList.contains('is-locked')).toBe(true);
     expect(document.querySelector('#appointment-dialog').hidden).toBe(false);
+    document.querySelector('[data-dialog-close]').click();
+  });
+
+  it('closes the topmost dialog before the mobile menu on Escape', () => {
+    document.body.innerHTML = '<button class="menu-toggle" aria-expanded="false" aria-controls="main-menu">Меню</button><nav id="main-menu"><button data-appointment-open>Запись</button></nav><div id="appointment-dialog" role="dialog" hidden><button data-dialog-close>Закрыть</button></div>';
+    initMobileMenu();
+    initDialog({ provider: createAppointmentProvider() });
+    const toggle = document.querySelector('.menu-toggle');
+    const opener = document.querySelector('[data-appointment-open]');
+    toggle.click();
+    opener.click();
+
+    document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
+
+    expect(document.querySelector('#appointment-dialog').hidden).toBe(true);
+    expect(toggle.getAttribute('aria-expanded')).toBe('true');
+    expect(document.body.classList.contains('is-locked')).toBe(true);
+    expect(document.activeElement).toBe(opener);
+
+    document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
+
+    expect(toggle.getAttribute('aria-expanded')).toBe('false');
+    expect(document.body.classList.contains('is-locked')).toBe(false);
+    expect(document.activeElement).toBe(toggle);
   });
 
   it('wraps keyboard focus inside an open appointment dialog', () => {
@@ -126,5 +157,6 @@ describe('progressive interactions', () => {
     last.dispatchEvent(new KeyboardEvent('keydown', { key: 'Tab', bubbles: true, cancelable: true }));
 
     expect(document.activeElement).toBe(document.querySelector('[data-dialog-close]'));
+    document.querySelector('[data-dialog-close]').click();
   });
 });
