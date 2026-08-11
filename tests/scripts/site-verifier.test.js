@@ -125,11 +125,18 @@ describe('SEO output generation', () => {
     'http://172.31.255.255',
     'http://192.168.1.1',
     'http://169.254.1.1',
+    'http://100.64.0.1',
+    'http://100.127.255.254',
+    'http://192.0.2.1',
+    'http://198.51.100.10',
+    'http://203.0.113.254',
     'http://[::ffff:127.0.0.1]',
     'http://[::ffff:192.168.1.10]',
+    'http://[::ffff:192.0.2.1]',
     'http://[fc00::1]',
     'http://[fd12::1]',
     'http://[fe80::1]',
+    'http://[2001:db8::1]',
   ])('rejects an invalid explicit origin: %s', (origin) => {
     expect(() => generateSeo([INDEXABLE_PAGE], { origin })).toThrow(/origin/i);
   });

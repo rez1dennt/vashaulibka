@@ -10,14 +10,20 @@ const escapeXml = (value) => String(value)
   .replaceAll('"', '&quot;')
   .replaceAll("'", '&apos;');
 
-const isPrivateIpv4 = (address) => {
-  const [first, second] = address.split('.').map(Number);
+const isNonProductionIpv4 = (address) => {
+  const [first, second, third] = address.split('.').map(Number);
   return first === 0
     || first === 10
     || first === 127
+    || (first === 100 && second >= 64 && second <= 127)
     || (first === 169 && second === 254)
     || (first === 172 && second >= 16 && second <= 31)
-    || (first === 192 && second === 168);
+    || (first === 192 && second === 0 && third === 2)
+    || (first === 192 && second === 168)
+    || (first === 198 && second >= 18 && second <= 19)
+    || (first === 198 && second === 51 && third === 100)
+    || (first === 203 && second === 0 && third === 113)
+    || first >= 224;
 };
 
 const expandIpv6 = (address) => {
@@ -32,10 +38,10 @@ const expandIpv6 = (address) => {
   ].map((part) => Number.parseInt(part || '0', 16));
 };
 
-const isPrivateIp = (hostname) => {
+const isNonProductionIp = (hostname) => {
   const address = hostname.replace(/^\[|\]$/g, '');
   const version = isIP(address);
-  if (version === 4) return isPrivateIpv4(address);
+  if (version === 4) return isNonProductionIpv4(address);
   if (version !== 6) return false;
 
   const words = expandIpv6(address);
@@ -43,6 +49,7 @@ const isPrivateIp = (hostname) => {
   const isLoopback = words.slice(0, 7).every((word) => word === 0) && words[7] === 1;
   const isUniqueLocal = (words[0] & 0xfe00) === 0xfc00;
   const isLinkLocal = (words[0] & 0xffc0) === 0xfe80;
+  const isDocumentation = words[0] === 0x2001 && words[1] === 0x0db8;
   const isMappedIpv4 = words.slice(0, 5).every((word) => word === 0) && words[5] === 0xffff;
   if (isMappedIpv4) {
     const mapped = [
@@ -51,10 +58,10 @@ const isPrivateIp = (hostname) => {
       words[7] >> 8,
       words[7] & 0xff,
     ].join('.');
-    return isPrivateIpv4(mapped);
+    return isNonProductionIpv4(mapped);
   }
 
-  return isUnspecified || isLoopback || isUniqueLocal || isLinkLocal;
+  return isUnspecified || isLoopback || isUniqueLocal || isLinkLocal || isDocumentation;
 };
 
 const normalizeOrigin = (origin) => {
@@ -85,7 +92,7 @@ const normalizeOrigin = (origin) => {
     || hostname.endsWith('.local')
     || hostname === 'localdomain'
     || hostname.endsWith('.localdomain')
-    || isPrivateIp(hostname);
+    || isNonProductionIp(hostname);
   if (isReserved) {
     throw new TypeError('SITE_ORIGIN must be a real production origin, not localhost or a placeholder domain');
   }
