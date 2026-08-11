@@ -14,6 +14,8 @@ const HERO_NAMES = [
 ];
 const IMAGE_ROOT = 'public/assets/images';
 const ICON_ROOT = 'public/assets/icons';
+const DOCUMENT_ASSET_ROOT = 'public/assets/documents';
+const DOCUMENT_PREVIEWS = ['license-registry-extract', 'ogrn-certificate'];
 
 const imagePath = (name, format) => `${IMAGE_ROOT}/hero-${name}.${format}`;
 const sha256 = (file) => createHash('sha256').update(readFileSync(file)).digest('hex');
@@ -71,5 +73,18 @@ describe('original clinic visual assets', () => {
         expect(existsSync(`public${publicPath}`), `${publicPath} should resolve`).toBe(true);
       }
     }
+  });
+
+  it.each(DOCUMENT_PREVIEWS)('provides a real WebP preview for %s', (name) => {
+    const source = `public/documents/${name}.pdf`;
+    const preview = `${DOCUMENT_ASSET_ROOT}/${name}.webp`;
+
+    expect(existsSync(source), `${source} should exist`).toBe(true);
+    expect(existsSync(preview), `${preview} should exist`).toBe(true);
+    expect(statSync(preview).size, `${preview} should exceed 20 KB`).toBeGreaterThan(20 * 1024);
+
+    const webp = readFileSync(preview);
+    expect(webp.subarray(0, 4).toString('ascii')).toBe('RIFF');
+    expect(webp.subarray(8, 12).toString('ascii')).toBe('WEBP');
   });
 });
