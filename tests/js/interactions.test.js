@@ -15,7 +15,7 @@ afterEach(() => {
 
 describe('progressive interactions', () => {
   it('opens and closes the appointment dialog without submitting data', () => {
-    document.body.innerHTML = '<button data-appointment-open>Запись</button><div id="appointment-dialog" role="dialog" hidden><button data-dialog-close>Закрыть</button></div>';
+    document.body.innerHTML = '<button data-appointment-open>Запись</button><div id="appointment-dialog" role="dialog" hidden><div data-dialog-backdrop></div><button data-dialog-close>Закрыть</button></div>';
     const provider = createAppointmentProvider();
     initDialog({ provider });
 
@@ -25,6 +25,50 @@ describe('progressive interactions', () => {
     expect(provider.submit).toBeUndefined();
     document.querySelector('[data-dialog-close]').click();
     expect(document.querySelector('#appointment-dialog').hidden).toBe(true);
+  });
+
+  it('closes the appointment dialog from its real backdrop and returns focus', () => {
+    document.body.innerHTML = '<button data-appointment-open>Запись</button><div id="appointment-dialog" role="dialog" hidden><div data-dialog-backdrop></div><button data-dialog-close>Закрыть</button></div>';
+    initDialog({ provider: createAppointmentProvider() });
+    const opener = document.querySelector('[data-appointment-open]');
+    opener.click();
+
+    document.querySelector('[data-dialog-backdrop]').click();
+
+    expect(document.querySelector('#appointment-dialog').hidden).toBe(true);
+    expect(document.activeElement).toBe(opener);
+  });
+
+  it('intercepts the mobile telephone fallback only after dialog enhancement', () => {
+    document.body.innerHTML = '<a href="tel:+74722215356" data-appointment-open>Запись</a><div id="appointment-dialog" role="dialog" hidden><button data-dialog-close>Закрыть</button></div>';
+    initDialog({ provider: createAppointmentProvider() });
+    const opener = document.querySelector('[data-appointment-open]');
+    const event = new MouseEvent('click', { bubbles: true, cancelable: true });
+
+    opener.dispatchEvent(event);
+
+    expect(event.defaultPrevented).toBe(true);
+    expect(document.querySelector('#appointment-dialog').hidden).toBe(false);
+    document.querySelector('[data-dialog-close]').click();
+  });
+
+  it('updates the menu label and closes from the in-panel control or backdrop', () => {
+    document.body.innerHTML = '<button class="menu-toggle" aria-expanded="false" aria-controls="main-menu"><span data-menu-toggle-label>Открыть меню</span></button><div data-menu-backdrop></div><nav id="main-menu"><button data-menu-close>Закрыть меню</button><a href="#page">Страница</a></nav>';
+    initMobileMenu();
+    const toggle = document.querySelector('.menu-toggle');
+    const label = document.querySelector('[data-menu-toggle-label]');
+
+    toggle.click();
+    expect(label.textContent).toBe('Закрыть меню');
+    expect(document.activeElement).toBe(document.querySelector('[data-menu-close]'));
+    document.querySelector('[data-menu-close]').click();
+    expect(label.textContent).toBe('Открыть меню');
+    expect(document.activeElement).toBe(toggle);
+
+    toggle.click();
+    document.querySelector('[data-menu-backdrop]').click();
+    expect(toggle.getAttribute('aria-expanded')).toBe('false');
+    expect(document.activeElement).toBe(toggle);
   });
 
   it('provides only the phone-based appointment mode', () => {
@@ -64,14 +108,35 @@ describe('progressive interactions', () => {
     expect(document.querySelectorAll('[role="tab"]')[1].getAttribute('aria-selected')).toBe('true');
   });
 
+  it('establishes the collapsed tab state when enhancing raw visible panels', () => {
+    document.body.innerHTML = '<div role="tablist"><button role="tab" aria-selected="true" aria-controls="therapy">Терапия</button><button role="tab" aria-selected="false" aria-controls="orthopedics">Ортопедия</button></div><section id="therapy" role="tabpanel"></section><section id="orthopedics" role="tabpanel"></section>';
+
+    initTabs();
+
+    expect(document.querySelector('#therapy').hidden).toBe(false);
+    expect(document.querySelector('#orthopedics').hidden).toBe(true);
+    expect(document.querySelectorAll('[role="tab"]')[0].tabIndex).toBe(0);
+    expect(document.querySelectorAll('[role="tab"]')[1].tabIndex).toBe(-1);
+  });
+
   it('toggles a disclosure and its controlled panel', () => {
-    document.body.innerHTML = '<button data-disclosure-button aria-expanded="false" aria-controls="details">Подробнее</button><section id="details" hidden>Сведения</section>';
+    document.body.innerHTML = '<button data-disclosure-button aria-expanded="true" aria-controls="details">Подробнее</button><section id="details">Сведения</section>';
     initDisclosures();
 
     document.querySelector('[data-disclosure-button]').click();
 
-    expect(document.querySelector('[data-disclosure-button]').getAttribute('aria-expanded')).toBe('true');
-    expect(document.querySelector('#details').hidden).toBe(false);
+    expect(document.querySelector('[data-disclosure-button]').getAttribute('aria-expanded')).toBe('false');
+    expect(document.querySelector('#details').hidden).toBe(true);
+  });
+
+  it('establishes one expanded disclosure when enhancing raw visible panels', () => {
+    document.body.innerHTML = '<button data-disclosure-button aria-expanded="true" aria-controls="first">Первое</button><section id="first"></section><button data-disclosure-button aria-expanded="true" aria-controls="second">Второе</button><section id="second"></section>';
+
+    initDisclosures();
+
+    expect(document.querySelector('#first').hidden).toBe(false);
+    expect(document.querySelector('#second').hidden).toBe(true);
+    expect(document.querySelectorAll('[data-disclosure-button]')[1].getAttribute('aria-expanded')).toBe('false');
   });
 
   it('persists the vision-mode setting and reflects it in ARIA', () => {

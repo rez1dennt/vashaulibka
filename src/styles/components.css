@@ -178,11 +178,18 @@ button.card:active {
   place-items: center;
   padding: var(--container-gutter);
   overflow-y: auto;
+  background: transparent;
+}
+
+.dialog__backdrop {
+  position: fixed;
+  inset: var(--space-0);
   background: var(--color-overlay);
 }
 
 .dialog__panel {
   position: relative;
+  z-index: 1;
   inline-size: 100%;
   max-inline-size: var(--dialog-max-inline-size);
   max-block-size: var(--dialog-max-block-size);
@@ -234,7 +241,7 @@ button.card:active {
   position: fixed;
   z-index: var(--z-cookie);
   inset-inline: var(--container-gutter);
-  inset-block-end: var(--container-gutter);
+  inset-block-end: max(var(--container-gutter), calc(var(--mobile-appointment-reserve) + env(safe-area-inset-bottom)));
   inline-size: auto;
   max-inline-size: var(--cookie-max-inline-size);
   margin-inline-start: auto;

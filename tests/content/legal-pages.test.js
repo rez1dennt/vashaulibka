@@ -67,6 +67,7 @@ describe('patient and legal page manifest', () => {
     for (const target of legalFiles.filter((file) => file !== 'patients.html')) {
       expect(hub.querySelector(`a[href="${target}"]`), `${target} is linked from patients.html`).not.toBeNull();
     }
+    expect(hub.querySelector('.patient-links a[href="services.html"]')?.textContent).toContain('Медицинская деятельность и услуги');
   });
 
   it('publishes centralized registration and license facts plus only the approved originals', () => {
@@ -94,6 +95,8 @@ describe('patient and legal page manifest', () => {
     const consent = normalizedText(pageDocument('informed-consent.html'));
 
     expect(payment).toContain('Оплата платных медицинских услуг осуществляется наличным и безналичным расчётом по выбору потребителя.');
+    expect(payment).toMatch(/прейскурант.*пока не опубликован.*стоимость.*телефон/i);
+    expect(payment).not.toContain('CONTENT_CHECKLIST.md');
     expect(waiting).toContain('30 дней');
     expect(waiting).toMatch(/фактическ.*зависит.*услуг.*клиническ.*ситуац/i);
     expect(oms).toContain('ООО «Стоматология Ваша улыбка» не участвует в реализации территориальной программы государственных гарантий бесплатного оказания гражданам медицинской помощи.');
@@ -190,7 +193,9 @@ describe('patient and legal page manifest', () => {
     expect(privacy).toMatch(/нет.*МИС|МИС.*не.*подключ/i);
     expect(privacy).toMatch(/телефон.*диалог/i);
     expect(privacy).toMatch(/серверн.*журнал|техническ.*лог/i);
-    expect(privacy).toContain('CONTENT_CHECKLIST.md');
+    expect(privacy).not.toContain('CONTENT_CHECKLIST.md');
+    expect(privacy).toMatch(/поставщик хостинга.*реальн.*домен.*серверн.*журнал/i);
+    expect(privacy).toMatch(/будут.*уточнены.*до публикации/i);
 
     expect(cookies).toContain('localStorage');
     expect(cookies).toContain('cookie-consent');

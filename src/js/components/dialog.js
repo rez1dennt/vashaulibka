@@ -5,6 +5,7 @@ export function initDialog({ provider } = {}) {
   const dialog = document.querySelector('#appointment-dialog');
   const openers = [...document.querySelectorAll('[data-appointment-open]')];
   const closer = dialog?.querySelector('[data-dialog-close]');
+  const backdrop = dialog?.querySelector('[data-dialog-backdrop]');
   if (!dialog || !openers.length || !provider) return;
 
   let isOpen = false;
@@ -21,6 +22,7 @@ export function initDialog({ provider } = {}) {
   };
 
   const open = (event) => {
+    event.preventDefault();
     if (isOpen) return;
 
     provider.open?.();
@@ -33,9 +35,7 @@ export function initDialog({ provider } = {}) {
 
   openers.forEach((button) => button.addEventListener('click', open));
   closer?.addEventListener('click', close);
-  dialog.addEventListener('click', (event) => {
-    if (event.target === dialog) close();
-  });
+  backdrop?.addEventListener('click', close);
   dialog.addEventListener('keydown', trap);
   document.addEventListener('keydown', (event) => {
     if (event.key !== 'Escape' || !isOpen) return;

@@ -71,6 +71,7 @@
   --primitive-size-cookie: 35rem;
   --primitive-size-header-mobile: 4.5rem;
   --primitive-size-header-desktop: 5.75rem;
+  --primitive-size-header-container: 85rem;
   --primitive-size-topbar: 2.625rem;
   --primitive-size-hero-mobile: 23.75rem;
   --primitive-size-hero-desktop: 26.875rem;
@@ -80,7 +81,8 @@
   --primitive-container-gutter-mobile: 0.75rem;
   --primitive-container-gutter-desktop: 1.5rem;
   --primitive-breakpoint-tablet: 48rem;
-  --primitive-breakpoint-desktop: 61.25rem;
+  --primitive-breakpoint-desktop: 75rem;
+  --primitive-breakpoint-wide: 85rem;
   --primitive-viewport-full: 100dvh;
   --primitive-panel-inset: 12%;
   --primitive-dialog-max-block: 90dvh;
@@ -99,6 +101,8 @@
   --primitive-shadow-card-hover: 0 1.5rem 3.5rem var(--primitive-color-shadow-hover);
   --primitive-shadow-header: 0 0.5rem 2rem var(--primitive-color-shadow);
   --primitive-z-header: 40;
+  --primitive-z-mobile-appointment: 30;
+  --primitive-z-menu-backdrop: 90;
   --primitive-z-menu: 100;
   --primitive-z-menu-toggle: 110;
   --primitive-z-cookie: 250;
@@ -165,6 +169,7 @@
   --space-30: var(--primitive-space-30);
   --section-space: clamp(var(--space-16), 10vw, var(--space-30));
   --container-max: var(--primitive-container-max);
+  --header-container-max: var(--primitive-size-header-container);
   --container-gutter: var(--primitive-container-gutter-mobile);
   --control-target-min: var(--primitive-size-target-min);
   --control-block-size: var(--primitive-size-control);
@@ -194,9 +199,11 @@
   --motion-easing-standard: var(--primitive-easing-standard);
   --transition-interactive: color var(--motion-duration-fast) var(--motion-easing-standard), background-color var(--motion-duration-fast) var(--motion-easing-standard), border-color var(--motion-duration-fast) var(--motion-easing-standard), opacity var(--motion-duration-fast) var(--motion-easing-standard), transform var(--motion-duration-fast) var(--motion-easing-standard);
   --transition-panel: transform var(--motion-duration-panel) var(--motion-easing-standard), opacity var(--motion-duration-fast) var(--motion-easing-standard);
-  --transition-navigation-close: transform var(--motion-duration-panel) var(--motion-easing-standard), visibility var(--motion-duration-instant) linear var(--motion-duration-panel);
-  --transition-navigation-open: transform var(--motion-duration-panel) var(--motion-easing-standard), visibility var(--motion-duration-instant) linear var(--motion-delay-none);
+  --transition-navigation-close: transform var(--motion-duration-panel) var(--motion-easing-standard), opacity var(--motion-duration-fast) var(--motion-easing-standard), visibility var(--motion-duration-instant) linear var(--motion-duration-panel);
+  --transition-navigation-open: transform var(--motion-duration-panel) var(--motion-easing-standard), opacity var(--motion-duration-fast) var(--motion-easing-standard), visibility var(--motion-duration-instant) linear var(--motion-delay-none);
   --z-header: var(--primitive-z-header);
+  --z-mobile-appointment: var(--primitive-z-mobile-appointment);
+  --z-menu-backdrop: var(--primitive-z-menu-backdrop);
   --z-menu: var(--primitive-z-menu);
   --z-menu-toggle: var(--primitive-z-menu-toggle);
   --z-cookie: var(--primitive-z-cookie);
@@ -246,10 +253,15 @@
   --layout-topbar-info-display: none;
   --layout-topbar-button-min-block-size: var(--control-block-size);
   --layout-menu-toggle-display: inline-grid;
+  --layout-header-main-display: flex;
+  --layout-header-main-padding: var(--space-0);
+  --mobile-appointment-reserve: var(--space-24);
   --layout-header-block-size: var(--primitive-size-header-mobile);
   --layout-navigation-position: fixed;
   --layout-navigation-inset: var(--space-0) var(--space-0) var(--space-0) var(--primitive-panel-inset);
   --layout-navigation-display: grid;
+  --layout-navigation-flex-wrap: nowrap;
+  --layout-navigation-gap: var(--space-4);
   --layout-navigation-align-content: start;
   --layout-navigation-justify-content: stretch;
   --layout-navigation-block-size: var(--primitive-viewport-full);
@@ -291,18 +303,28 @@
   }
 }
 
-@media (min-width: 61.25rem) {
+@media (min-width: 48.0625rem) {
+  :root {
+    --mobile-appointment-reserve: var(--space-0);
+  }
+}
+
+@media (min-width: 75rem) {
   :root {
     --layout-topbar-display: flex;
     --layout-topbar-info-display: inline;
     --layout-topbar-button-min-block-size: var(--control-target-min);
     --layout-menu-toggle-display: none;
-    --layout-header-block-size: var(--primitive-size-header-desktop);
+    --layout-header-main-display: grid;
+    --layout-header-main-padding: var(--space-4);
+    --layout-header-block-size: auto;
     --layout-navigation-position: static;
     --layout-navigation-inset: auto;
     --layout-navigation-display: flex;
+    --layout-navigation-flex-wrap: wrap;
+    --layout-navigation-gap: var(--space-2);
     --layout-navigation-align-content: normal;
-    --layout-navigation-justify-content: flex-end;
+    --layout-navigation-justify-content: flex-start;
     --layout-navigation-block-size: auto;
     --layout-navigation-padding: var(--space-0);
     --layout-navigation-background: transparent;
@@ -315,5 +337,15 @@
     --layout-hero-scrim: linear-gradient(90deg, var(--color-surface-page) 0 42%, rgb(255 253 251 / 28%) 72%);
     --layout-card-columns: repeat(3, minmax(var(--space-0), 1fr));
     --layout-feature-columns: repeat(3, minmax(var(--space-0), 1fr));
+  }
+}
+
+@media (min-width: 85rem) {
+  :root {
+    --layout-header-main-display: flex;
+    --layout-header-main-padding: var(--space-0);
+    --layout-header-block-size: var(--primitive-size-header-desktop);
+    --layout-navigation-flex-wrap: nowrap;
+    --layout-navigation-justify-content: flex-end;
   }
 }

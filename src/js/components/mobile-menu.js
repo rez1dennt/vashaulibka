@@ -4,6 +4,9 @@ import { lockScroll, unlockScroll } from '../core/scroll-lock.js';
 export function initMobileMenu() {
   const toggle = document.querySelector('.menu-toggle');
   const menu = document.querySelector('#main-menu');
+  const backdrop = document.querySelector('[data-menu-backdrop]');
+  const closeButton = menu?.querySelector('[data-menu-close]');
+  const toggleLabel = toggle?.querySelector('[data-menu-toggle-label]');
   if (!toggle || !menu) return;
 
   let isOpen = toggle.getAttribute('aria-expanded') === 'true';
@@ -14,6 +17,7 @@ export function initMobileMenu() {
 
     isOpen = false;
     toggle.setAttribute('aria-expanded', 'false');
+    if (toggleLabel) toggleLabel.textContent = 'Открыть меню';
     document.body.classList.remove('menu-open');
     unlockScroll();
     toggle.focus();
@@ -24,12 +28,15 @@ export function initMobileMenu() {
 
     isOpen = true;
     toggle.setAttribute('aria-expanded', 'true');
+    if (toggleLabel) toggleLabel.textContent = 'Закрыть меню';
     document.body.classList.add('menu-open');
     lockScroll();
     menu.querySelector('a[href], button:not([disabled])')?.focus();
   };
 
   toggle.addEventListener('click', () => (isOpen ? close() : open()));
+  backdrop?.addEventListener('click', close);
+  closeButton?.addEventListener('click', close);
   document.addEventListener('keydown', (event) => {
     if (event.key === 'Escape') close();
   });

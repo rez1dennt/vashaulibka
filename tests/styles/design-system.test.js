@@ -106,14 +106,40 @@ describe('design system contract', () => {
     expect(layout).toMatch(/\.menu-toggle\s*{[^}]*z-index:\s*var\(--z-menu-toggle\)/s);
   });
 
+  it('layers real backdrops below their panels and reserves the fixed mobile appointment action', () => {
+    const tokens = tokenValues(readStyle('tokens'));
+    const layout = readStyle('layout');
+    const components = readStyle('components');
+    const layer = (name) => Number(resolveColor(tokens, name));
+
+    expect(layer('--z-menu-backdrop')).toBeLessThan(layer('--z-menu'));
+    expect(layer('--z-mobile-appointment')).toBeLessThan(layer('--z-cookie'));
+    expect(components).toMatch(/\.dialog__backdrop\s*{[^}]*position:\s*fixed[^}]*background:\s*var\(--color-overlay\)/s);
+    expect(layout).toMatch(/\.menu-backdrop\s*{[^}]*z-index:\s*var\(--z-menu-backdrop\)/s);
+    expect(layout).toMatch(/\.mobile-appointment\s*{[^}]*position:\s*fixed[^}]*env\(safe-area-inset-bottom\)/s);
+    expect(layout).toMatch(/@media\s*\(min-width:\s*48\.0625rem\)[\s\S]*?a\.mobile-appointment\s*{[^}]*display:\s*none/s);
+    expect(components).toMatch(/\.cookie-banner\s*{[^}]*inset-block-end:\s*max\(var\(--container-gutter\),\s*calc\(var\(--mobile-appointment-reserve\)\s*\+\s*env\(safe-area-inset-bottom\)\)\)/s);
+  });
+
   it('delays drawer visibility only while the exit transform finishes', () => {
     const tokens = readStyle('tokens');
     const layout = readStyle('layout');
 
     expect(tokens).toMatch(/--transition-navigation-close:[^;]*visibility\s+var\(--motion-duration-instant\)[^;]*var\(--motion-duration-panel\)/);
     expect(tokens).toMatch(/--transition-navigation-open:[^;]*visibility\s+var\(--motion-duration-instant\)[^;]*var\(--motion-delay-none\)/);
+    expect(tokens).toMatch(/--transition-navigation-close:[^;]*opacity\s+var\(--motion-duration-fast\)/);
+    expect(tokens).toMatch(/--transition-navigation-open:[^;]*opacity\s+var\(--motion-duration-fast\)/);
     expect(layout).toMatch(/\.site-header\s+nav\s*{[^}]*transition:\s*var\(--transition-navigation-close\)/s);
     expect(layout).toMatch(/\.menu-open\s+\.site-header\s+nav\s*{[^}]*transition:\s*var\(--transition-navigation-open\)/s);
+  });
+
+  it('keeps the complete navigation reachable when JavaScript is disabled', () => {
+    const layout = readStyle('layout');
+
+    expect(layout).toMatch(/\.no-js\s+\.menu-toggle[^}]*{[^}]*display:\s*none/s);
+    expect(layout).toMatch(/\.no-js\s+\.site-header\s+nav\s*{[^}]*position:\s*static[^}]*visibility:\s*visible[^}]*transform:\s*none[^}]*pointer-events:\s*auto/s);
+    expect(layout).toMatch(/\.no-js\s+\.site-header\s+nav\s*{[^}]*flex-wrap:\s*wrap/s);
+    expect(layout).toMatch(/\.no-js\s+\.site-header\s+nav\s*{[^}]*transition:\s*none/s);
   });
 
   it('keeps the existing vision toggle reachable on mobile', () => {
@@ -122,7 +148,7 @@ describe('design system contract', () => {
 
     expect(tokens).toMatch(/:root\s*{[\s\S]*?--layout-topbar-display:\s*flex/);
     expect(tokens).toMatch(/:root\s*{[\s\S]*?--layout-topbar-info-display:\s*none/);
-    expect(tokens).toMatch(/@media\s*\(min-width:\s*61\.25rem\)[\s\S]*?--layout-topbar-info-display:\s*inline/);
+    expect(tokens).toMatch(/@media\s*\(min-width:\s*75rem\)[\s\S]*?--layout-topbar-info-display:\s*inline/);
     expect(layout).toMatch(/\.topbar\s+span\s*{[^}]*display:\s*var\(--layout-topbar-info-display\)/s);
   });
 
@@ -133,7 +159,7 @@ describe('design system contract', () => {
 
     expect(resolveColor(tokens, '--control-block-size')).toBe('3rem');
     expect(css).toMatch(/:root\s*{[\s\S]*?--layout-topbar-button-min-block-size:\s*var\(--control-block-size\)/);
-    expect(css).toMatch(/@media\s*\(min-width:\s*61\.25rem\)[\s\S]*?--layout-topbar-button-min-block-size:\s*var\(--control-target-min\)/);
+    expect(css).toMatch(/@media\s*\(min-width:\s*75rem\)[\s\S]*?--layout-topbar-button-min-block-size:\s*var\(--control-target-min\)/);
     expect(layout).toMatch(/\.topbar\s+button\s*{[^}]*min-block-size:\s*var\(--layout-topbar-button-min-block-size\)/s);
   });
 
@@ -182,6 +208,17 @@ describe('design system contract', () => {
     expect(css).not.toMatch(/@media\s*\(max-width:/);
     expect(css).toMatch(/--layout-tablist-overflow:\s*auto/);
     expect(css).toMatch(/\.service-tabs\s+\[role=['"]tablist['"]\][^{]*{[^}]*overflow-x:\s*var\(--layout-tablist-overflow\)/s);
+  });
+
+  it('uses a two-row intermediate header and a wider single-row desktop header', () => {
+    const tokens = readStyle('tokens');
+    const layout = readStyle('layout');
+
+    expect(tokens).toMatch(/--header-container-max:\s*var\(--primitive-size-header-container\)/);
+    expect(tokens).toMatch(/@media\s*\(min-width:\s*75rem\)[\s\S]*?--layout-header-main-display:\s*grid/);
+    expect(tokens).toMatch(/@media\s*\(min-width:\s*85rem\)[\s\S]*?--layout-header-main-display:\s*flex/);
+    expect(layout).toMatch(/\.header-main\s*{[^}]*width:\s*min\([^;]*var\(--header-container-max\)[^;]*\)[^}]*display:\s*var\(--layout-header-main-display\)/s);
+    expect(layout).toMatch(/\.site-header\s+nav\s*{[^}]*flex-wrap:\s*var\(--layout-navigation-flex-wrap\)/s);
   });
 
   it('reserves hero space and references every planned image format', () => {

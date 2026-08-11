@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+import { JSDOM } from 'jsdom';
 import { PAGES } from '../../src/content/page-manifest.js';
 import { renderPage } from '../../src/templates/render-page.js';
 
@@ -23,6 +24,65 @@ describe('renderPage', () => {
     expect(html).toContain('<main id="main-content"');
     expect(html).toContain('<h1>О клинике</h1>');
     expect(html).toContain('data-appointment-open');
+  });
+
+  it('renders complete mobile menu and phone-fallback appointment controls', () => {
+    const html = renderPage(page);
+
+    expect(html).toContain('data-menu-backdrop');
+    expect(html).toContain('data-menu-close');
+    expect(html).toContain('<span class="sr-only" data-menu-toggle-label>Открыть меню</span>');
+    expect(html).toContain('class="mobile-appointment button button-primary"');
+    expect(html).toContain('href="tel:+74722215356"');
+    expect(html).toContain('data-dialog-backdrop');
+    const document = new JSDOM(html).window.document;
+    expect(document.querySelector('#main-menu a[data-appointment-open]')?.getAttribute('href')).toBe('tel:+74722215356');
+  });
+
+  it('marks the raw document as no-js and switches the class before styles load', () => {
+    const html = renderPage(page);
+
+    expect(html).toContain('<html class="no-js" lang="ru">');
+    expect(html).toMatch(/<script>document\.documentElement\.classList\.replace\('no-js','js'\)<\/script><link rel="stylesheet"/);
+  });
+
+  it('publishes the complete primary information architecture', () => {
+    const document = new JSDOM(renderPage(page)).window.document;
+    const labels = [...document.querySelectorAll('#main-menu > a:not([data-appointment-open])')].map((link) => link.textContent);
+
+    expect(labels).toEqual([
+      'Главная',
+      'О клинике',
+      'Наши услуги',
+      'Специалисты',
+      'Цены',
+      'Отзывы',
+      'Вакансии',
+      'Информация для пациентов',
+      'Контакты',
+    ]);
+  });
+
+  it('describes the pending online booking and verified structured opening hours', () => {
+    const document = new JSDOM(renderPage(page)).window.document;
+    const dialog = document.querySelector('#appointment-dialog');
+    const schema = JSON.parse(document.querySelector('script[type="application/ld+json"]').textContent);
+
+    expect(dialog.textContent).toContain('Онлайн-запись подключается');
+    expect(schema.openingHoursSpecification).toEqual([
+      {
+        '@type': 'OpeningHoursSpecification',
+        dayOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'],
+        opens: '10:00',
+        closes: '19:00',
+      },
+      {
+        '@type': 'OpeningHoursSpecification',
+        dayOfWeek: 'Saturday',
+        opens: '10:00',
+        closes: '14:00',
+      },
+    ]);
   });
 
   it('adds robots noindex only for controlled incomplete pages', () => {

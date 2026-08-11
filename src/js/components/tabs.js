@@ -24,5 +24,8 @@ export function initTabs() {
         activate(tabs[targetIndex], true);
       });
     });
+
+    const initialTab = tabs.find((tab) => tab.getAttribute('aria-selected') === 'true') || tabs[0];
+    if (initialTab) activate(initialTab);
   });
 }

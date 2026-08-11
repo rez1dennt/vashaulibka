@@ -156,6 +156,17 @@ describe('public page accessibility and safety', () => {
     }
   });
 
+  it('keeps every service and price panel visible in raw generated HTML', () => {
+    for (const file of ['services.html', 'prices.html']) {
+      const page = PAGES.find((item) => item.file === file);
+      const document = new JSDOM(renderPage(page)).window.document;
+      const panels = [...document.querySelectorAll('[role="tabpanel"], .disclosure-panel')];
+
+      expect(panels.length).toBeGreaterThan(0);
+      expect(panels.every((panel) => panel.hidden === false)).toBe(true);
+    }
+  });
+
   it('derives contacts, hours, phones, and email from verified data', () => {
     const page = PAGES.find((item) => item.file === 'contacts.html');
     const html = renderPage(page);
