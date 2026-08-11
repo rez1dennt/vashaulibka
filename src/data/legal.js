@@ -50,7 +50,7 @@ export const REGULATORS = Object.freeze([
   }),
   Object.freeze({
     name: 'Территориальный орган Росздравнадзора по Белгородской области',
-    address: '308000, г. Белгород, ул. Мичурина, д. 56, 5 этаж',
+    address: '308007, г. Белгород, ул. Мичурина, д. 56',
     phone: '+7 (4722) 31-05-11',
     phoneHref: 'tel:+74722310511',
     url: 'https://31reg.roszdravnadzor.gov.ru/',

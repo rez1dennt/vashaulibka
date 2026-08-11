@@ -4,6 +4,7 @@ import { describe, expect, it } from 'vitest';
 import { LEGAL_PAGES } from '../../src/content/legal-pages.js';
 import { PAGES } from '../../src/content/page-manifest.js';
 import { CLINIC, CONTACTS, LICENSE } from '../../src/data/clinic.js';
+import { BENEFITS, GUARANTEES } from '../../src/data/legal.js';
 import { renderPage } from '../../src/templates/render-page.js';
 
 const legalFiles = [
@@ -20,6 +21,32 @@ const legalFiles = [
   'personal-data-consent.html',
   'privacy.html',
   'cookies.html',
+];
+
+const expectedBenefits = [
+  { category: 'Инвалиды войны', discount: '10 %' },
+  { category: 'Участники Великой Отечественной войны', discount: '10 %' },
+  { category: 'Ветераны боевых действий в категориях, указанных в приказе клиники', discount: '10 %' },
+  { category: 'Военнослужащие 1941–1945 годов в категориях, указанных в приказе клиники', discount: '10 %' },
+  { category: 'Жители блокадного Ленинграда и осаждённого Севастополя', discount: '10 %' },
+  { category: 'Работники объектов обороны и члены экипажей транспортного флота в категориях, указанных в приказе клиники', discount: '10 %' },
+  { category: 'Члены семей погибших инвалидов войны, участников Великой Отечественной войны и ветеранов боевых действий в категориях, указанных в приказе клиники', discount: '10 %' },
+  { category: 'Лица с инвалидностью', discount: '5 %' },
+  { category: 'Ветераны и участники специальной военной операции', discount: '10 %' },
+];
+
+const expectedGuarantees = [
+  { work: 'Стеклоиономерная пломба, I класс по Блэку', warranty: '6 месяцев', serviceLife: '1 год' },
+  { work: 'Стеклоиономерная пломба, II–V классы по Блэку', warranty: '9 месяцев', serviceLife: '1 год' },
+  { work: 'Светоотверждаемая пломба, I класс по Блэку', warranty: '1 год', serviceLife: '2 года' },
+  { work: 'Светоотверждаемая пломба, II–V классы по Блэку', warranty: '9 месяцев', serviceLife: '1 год' },
+  { work: 'Керамические виниры', warranty: '1 год', serviceLife: '2 года' },
+  { work: 'Временные пластмассовые коронки', warranty: '3 месяца', serviceLife: '6 месяцев' },
+  { work: 'Керамические коронки, коронки и вкладки E-max', warranty: '1 год', serviceLife: '2 года' },
+  { work: 'Металлокерамические коронки и мостовидные протезы', warranty: '2 года', serviceLife: '5 лет' },
+  { work: 'Циркониевые коронки и мостовидные протезы', warranty: '2 года', serviceLife: '5 лет' },
+  { work: 'Съёмный пластиночный протез', warranty: '1 год', serviceLife: '2 года' },
+  { work: 'Бюгельные и условно-съёмные протезы', warranty: '2 года', serviceLife: '5 лет' },
 ];
 
 const pageDocument = (file) => {
@@ -62,7 +89,8 @@ describe('patient and legal page manifest', () => {
     const payment = normalizedText(pageDocument('payment.html'));
     const waiting = normalizedText(pageDocument('waiting-periods.html'));
     const oms = normalizedText(pageDocument('oms.html'));
-    const benefits = normalizedText(pageDocument('benefits.html'));
+    const benefitsDocument = pageDocument('benefits.html');
+    const benefits = normalizedText(benefitsDocument);
     const consent = normalizedText(pageDocument('informed-consent.html'));
 
     expect(payment).toContain('Оплата платных медицинских услуг осуществляется наличным и безналичным расчётом по выбору потребителя.');
@@ -76,8 +104,11 @@ describe('patient and legal page manifest', () => {
     expect(benefits).toContain('13 января 2025 года');
     expect(benefits).toMatch(/не.*универсальн.*закон/i);
     expect(benefits).toMatch(/подтверд.*клиник.*до.*лечен/i);
-    expect(benefits.match(/10\s?%/g)).toHaveLength(8);
-    expect(benefits.match(/5\s?%/g)).toHaveLength(1);
+    expect(BENEFITS).toEqual(expectedBenefits);
+    expect([...benefitsDocument.querySelectorAll('.benefit-list li')].map((item) => ({
+      category: item.querySelector('span')?.textContent,
+      discount: item.querySelector('strong')?.textContent,
+    }))).toEqual(expectedBenefits);
   });
 
   it('renders the complete guarantee table with visible qualifications', () => {
@@ -88,13 +119,12 @@ describe('patient and legal page manifest', () => {
     expect(table?.querySelector('thead')).not.toBeNull();
     expect(table?.querySelector('tbody')).not.toBeNull();
     expect(table?.querySelectorAll('thead th[scope="col"]')).toHaveLength(3);
-    expect(table?.querySelectorAll('tbody tr')).toHaveLength(11);
-    expect([...table.querySelectorAll('tbody tr')].map((row) => [...row.cells].map((cell) => cell.textContent))).toContainEqual(
-      ['Стеклоиономерная пломба, I класс по Блэку', '6 месяцев', '1 год'],
-    );
-    expect([...table.querySelectorAll('tbody tr')].map((row) => [...row.cells].map((cell) => cell.textContent))).toContainEqual(
-      ['Металлокерамические коронки и мостовидные протезы', '2 года', '5 лет'],
-    );
+    expect(GUARANTEES).toEqual(expectedGuarantees);
+    expect([...table.querySelectorAll('tbody tr')].map((row) => ({
+      work: row.cells[0]?.textContent,
+      warranty: row.cells[1]?.textContent,
+      serviceLife: row.cells[2]?.textContent,
+    }))).toEqual(expectedGuarantees);
     expect(text).toMatch(/срок.*сокращ|прекращ/i);
     expect(text).toMatch(/клиническ.*услов|соблюден.*пациент/i);
     expect(text).toMatch(/письменн.*заявлен/i);
@@ -116,6 +146,9 @@ describe('patient and legal page manifest', () => {
       expect(document.querySelector(`a[href="${href}"]`), href).not.toBeNull();
     }
     expect(document.querySelector('img[src="assets/qr/legal-resources.png"][alt]:not([alt=""])')).not.toBeNull();
+    expect(text).toContain('Информация для независимой оценки качества');
+    expect(text).toContain('требования к содержанию и форме информации о медицинских организациях, размещаемой на официальных сайтах');
+    expect(text).not.toContain('Порядок оказания помощи');
   });
 
   it('publishes the clinic and regulator complaint paths', () => {
@@ -129,7 +162,8 @@ describe('patient and legal page manifest', () => {
     expect(text).toContain('308023, г. Белгород, ул. Железнякова, д. 2');
     expect(text).toContain('+7 (4722) 34-03-16');
     expect(text).toContain('Территориальный орган Росздравнадзора по Белгородской области');
-    expect(text).toContain('308000, г. Белгород, ул. Мичурина, д. 56, 5 этаж');
+    expect(text).toContain('308007, г. Белгород, ул. Мичурина, д. 56');
+    expect(text).not.toContain('308000, г. Белгород, ул. Мичурина, д. 56, 5 этаж');
     expect(text).toContain('+7 (4722) 31-05-11');
     expect(document.querySelector('a[href="https://31.rospotrebnadzor.ru/kontakty/"]')).not.toBeNull();
     expect(document.querySelector('a[href="https://31reg.roszdravnadzor.gov.ru/"]')).not.toBeNull();
