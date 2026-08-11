@@ -248,6 +248,20 @@ body.is-locked {
   font-size: var(--hero-lead-font-size);
 }
 
+.hero-illustration-note {
+  max-inline-size: 100%;
+  display: inline-block;
+  margin-block-start: var(--space-5);
+  padding: var(--space-2) var(--space-3);
+  border: var(--border-width) solid var(--color-border-strong);
+  border-radius: var(--radius-pill);
+  overflow-wrap: anywhere;
+  color: var(--color-text);
+  background: var(--color-surface-raised);
+  font-size: var(--text-small-size);
+  font-weight: var(--text-label-weight);
+}
+
 .site-footer {
   padding-block: var(--space-16);
   border-block-start: var(--border-width) solid var(--color-border);

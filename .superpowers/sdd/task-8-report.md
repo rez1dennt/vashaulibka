@@ -227,3 +227,50 @@ Routes checked at both 320×900 and 1280×900: `index.html`, `about.html`, `serv
 ## Concerns
 
 No implementation blocker. These are original AI-generated visual compositions, not documentary photographs of the clinic's actual premises; publication context should not imply otherwise.
+
+## Review fix — visible publication distinction
+
+### Status and scope
+
+Resolved the Important publication-context finding by adding the exact visible wording `Иллюстративное изображение — не фотография помещений клиники.` to the shared hero renderer. The note is emitted on all 21 generated pages and styled as a restrained, readable pill in normal and vision modes. The accepted raster imagery and SVG identity files were not changed or regenerated. This follow-up intentionally supersedes the original self-review statement that no renderer/layout files changed.
+
+Range for this follow-up: `fe0f756..HEAD`.
+
+### TDD evidence
+
+- Initial RED: `pnpm test tests/templates/render-page.test.js tests/content/public-pages.test.js tests/styles/design-system.test.js` — exit 1; 3 test files failed, 3 tests failed and 31 passed. Failures independently covered missing renderer wording, missing wording in generated `index.html`, and missing note/vision-mode CSS.
+- Intermediate RED after minimal renderer/CSS implementation: the same focused command — exit 1; renderer and style contracts passed, while the generated-page contract alone remained red (`index.html` still missing the note). This confirmed that checked-in static output required regeneration.
+- GREEN after `pnpm generate`: the focused command — exit 0; 3 test files passed, 34 tests passed.
+- Static coverage: all 21 checked-in HTML pages contain the exact wording within `.page-hero .hero-illustration-note`.
+
+### Implementation
+
+- `src/templates/render-page.js`: adds one shared constant and a semantic paragraph after each hero lead, so the note never overlays the H1 or lead.
+- `src/styles/layout.css`: constrains the note to `max-inline-size: 100%`, allows safe wrapping, uses normal-flow spacing, readable text/surface tokens, a restrained border, and small label typography.
+- `src/styles/components.css`: strengthens the note border in `.vision-mode`; the existing vision-mode root scale continues to enlarge its rem-based text.
+- All 21 root HTML files were regenerated with the project generator.
+
+### Verification
+
+- Focused: 3 files passed, 34 tests passed.
+- Full: `pnpm test` — exit 0; 8 files passed, 74 tests passed.
+- Build: `pnpm build` — exit 0; 35 modules transformed and all 21 pages emitted without asset warnings.
+- Static publication check: `21/21` generated HTML files contain the exact note.
+- `git diff --check`: exit 0.
+- Diff review confirms no changes under `public/assets/images/` or `public/assets/icons/`.
+
+### In-app Browser QA status
+
+The requested follow-up Browser sweep for `index.html`, `about.html`, and `contacts.html` at 320×900 and 1280×900 could not be executed because the required in-app Browser surface became unavailable after the earlier Task 8 session cleanup:
+
+1. The retained in-app binding returned `Browser is not available` with its prior browser ID.
+2. Reselecting the explicit `iab` surface returned `Browser is not available: iab`.
+3. The mandated bootstrap-troubleshooting documentation was read; the existing browser runtime was reused without reset.
+4. The required single browser discovery call returned an empty list (`[]`).
+5. A final explicit `iab` reconnect attempt again returned `Browser is not available: iab`.
+
+No alternative browser or standalone automation surface was substituted, in accordance with the explicit in-app Browser requirement. Proportional non-browser evidence covers the exact DOM text on all 21 pages, normal-flow placement after H1/lead, `max-inline-size: 100%`, safe wrapping, vision-mode border treatment, full responsive/style regressions, and a clean build. A live visual recheck of the new note remains pending when the in-app Browser surface is available again.
+
+### Follow-up concerns
+
+The publication ambiguity is addressed in code and generated output. Remaining concern: responsive visual and console QA of the newly added note could not be refreshed because the required in-app Browser surface was unavailable; the pre-fix Task 8 browser QA remains recorded above but does not validate this new element.

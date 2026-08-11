@@ -194,6 +194,18 @@ describe('design system contract', () => {
     }
   });
 
+  it('keeps the hero illustration note contained and readable in vision mode', () => {
+    const layout = readStyle('layout');
+    const components = readStyle('components');
+
+    expect(layout).toMatch(/\.hero-illustration-note\s*{[^}]*display:\s*inline-block/s);
+    expect(layout).toMatch(/\.hero-illustration-note\s*{[^}]*max-inline-size:\s*100%/s);
+    expect(layout).toMatch(/\.hero-illustration-note\s*{[^}]*overflow-wrap:\s*anywhere/s);
+    expect(layout).toMatch(/\.hero-illustration-note\s*{[^}]*background:\s*var\(--color-surface-raised\)/s);
+    expect(layout).toMatch(/\.hero-illustration-note\s*{[^}]*font-size:\s*var\(--text-small-size\)/s);
+    expect(components).toMatch(/\.vision-mode\s+\.hero-illustration-note\s*{[^}]*border-width:\s*var\(--border-width-strong\)/s);
+  });
+
   it('provides a reduced-motion mode without removing focus treatment', () => {
     const css = `${readStyle('base')}\n${readStyle('layout')}\n${readStyle('components')}`;
     const reducedMotion = css.match(/@media\s*\(prefers-reduced-motion:\s*reduce\)\s*{([\s\S]+)}\s*$/)?.[1] ?? '';

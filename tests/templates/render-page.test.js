@@ -12,6 +12,8 @@ const page = {
   noindex: false,
 };
 
+const HERO_ILLUSTRATION_NOTE = 'Иллюстративное изображение — не фотография помещений клиники.';
+
 describe('renderPage', () => {
   it('renders semantic content and accessibility anchors', () => {
     const html = renderPage(page);
@@ -34,5 +36,13 @@ describe('renderPage', () => {
 
     expect(html).toContain('Общество с ограниченной ответственностью «Стоматология Ваша улыбка» зарегистрировано 17 февраля 2012 года.');
     expect(html).not.toContain('работает в Белгороде с 2012 года');
+  });
+
+  it('distinguishes every hero illustration from clinic premises photography', () => {
+    for (const publicPage of PAGES) {
+      const html = renderPage(publicPage);
+
+      expect(html).toContain(`<p class="hero-illustration-note">${HERO_ILLUSTRATION_NOTE}</p>`);
+    }
   });
 });
