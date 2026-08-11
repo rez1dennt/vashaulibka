@@ -18,7 +18,7 @@
 Финальный запуск выполнен после всех handoff-правок, без `SITE_ORIGIN`:
 
 - `pnpm verify` — exit 0;
-- Vitest: 10 files passed, 141 tests passed;
+- Vitest: 10 files passed, 142 tests passed;
 - Vite 8.2.1: 35 modules transformed, build exit 0, warnings/errors нет;
 - production verifier: `Verified 21 HTML pages`;
 - фактическое число `dist/*.html`: 21;
@@ -65,7 +65,7 @@
 
 Встроенный Browser в этой сессии предоставил только browser capabilities `visibility` и `viewport`; API для смены `prefers-reduced-motion` отсутствует. В текущей среде `matchMedia("(prefers-reduced-motion: reduce)")` равен false, поэтому переключённое состояние не было интерактивно эмулировано.
 
-Как доступная проверка загруженного production CSS в Browser CSSOM подтвердила реально присутствующее media-правило, которое ставит `scroll-behavior: auto`, мгновенную длительность animation/transition, одну итерацию анимации и нулевую задержку. Тот же контракт проверен автотестом `design-system.test.js` в составе 141 зелёного теста. Невозможность Browser-эмуляции остаётся QA-ограничением; это не является выявленным дефектом сайта.
+Как доступная проверка загруженного production CSS в Browser CSSOM подтвердила реально присутствующее media-правило, которое ставит `scroll-behavior: auto`, мгновенную длительность animation/transition, одну итерацию анимации и нулевую задержку. Тот же контракт проверен автотестом `design-system.test.js` в составе 142 зелёных тестов. Невозможность Browser-эмуляции остаётся QA-ограничением; это не является выявленным дефектом сайта.
 
 ## Release-review remediation
 
@@ -91,6 +91,16 @@ Production preview: `http://127.0.0.1:43129`.
 - Console: 0 errors/warnings. Network последней страницы: только same-origin HTML, JS, CSS, SVG и AVIF; удалённых active resources нет.
 
 После превращения appointment actions в raw `tel:` fallback встроенный Browser отклонил прямой клик как потенциальный внешний звонок. Ограничение не обходилось. Свежий автотест `intercepts the mobile telephone fallback only after dialog enhancement` подтверждает `preventDefault`, открытие dialog и закрытие; отдельные автотесты подтверждают backdrop close, focus return/trap, Escape и отсутствие формы. Browser дополнительно подтвердил новый текст dialog и порядок слоёв, но прямой post-conversion click в Browser остаётся непроверенным из-за safety-ограничения инструмента.
+
+### Final integration re-review
+
+Финальная перепроверка выявила конфликт порядка обработчиков: `initMobileMenu` регистрировался раньше `initDialog` и закрывал меню при клике на production-shaped `<a href="tel:…" data-appointment-open>`. Из-за этого dialog запоминал уже скрытую ссылку как точку возврата фокуса.
+
+- Новый интеграционный тест с реальной формой menu CTA сначала упал на `aria-expanded="false"`, чем воспроизвёл регрессию.
+- Минимальное исправление исключило `a[data-appointment-open]` из обычного mobile-menu auto-close; все прочие навигационные ссылки продолжают закрывать меню.
+- GREEN-сценарий подтверждает: click event отменён; dialog открывается при остающемся открытым меню; ref-counted body lock сохраняется; первый Escape закрывает только dialog и возвращает фокус видимой CTA; повторное открытие и dialog-backdrop дают тот же результат; следующий Escape закрывает menu, снимает lock и возвращает фокус toggle.
+- Focused: 10 files / 142 tests. Полный `pnpm verify`: 10 files / 142 tests, Vite 35 modules, production verifier 21 HTML pages, exit 0. `git diff --check`: exit 0.
+- Affected Browser на `127.0.0.1:43130`, 390×844: открытое меню `aria-expanded="true"`, body locked, CTA — видимая `A` с точным `tel:+74722215356`, фокус на внутренней кнопке закрытия, horizontal overflow 0; обычное закрытие меню снимает lock и возвращает toggle; console errors 0. Прямой клик по `tel:` повторно не выполнялся из-за уже зафиксированного safety-ограничения Browser.
 
 ## Self-review
 

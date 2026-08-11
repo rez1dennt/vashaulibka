@@ -212,6 +212,45 @@ describe('progressive interactions', () => {
     expect(document.activeElement).toBe(toggle);
   });
 
+  it('keeps the production menu open behind its telephone appointment dialog', () => {
+    document.body.innerHTML = '<button class="menu-toggle" aria-expanded="false" aria-controls="main-menu"><span data-menu-toggle-label>Открыть меню</span></button><div data-menu-backdrop></div><nav id="main-menu"><button data-menu-close>Закрыть меню</button><a href="index.html">Главная</a><a href="tel:+74722215356" data-appointment-open>Запись на приём</a></nav><div id="appointment-dialog" role="dialog" hidden><div data-dialog-backdrop></div><button data-dialog-close>Закрыть диалог</button><a href="tel:+74722215356">Позвонить</a></div>';
+    initMobileMenu();
+    initDialog({ provider: createAppointmentProvider() });
+    const toggle = document.querySelector('.menu-toggle');
+    const opener = document.querySelector('[data-appointment-open]');
+    const dialog = document.querySelector('#appointment-dialog');
+
+    toggle.click();
+    const firstClick = new MouseEvent('click', { bubbles: true, cancelable: true });
+    opener.dispatchEvent(firstClick);
+
+    expect(firstClick.defaultPrevented).toBe(true);
+    expect(dialog.hidden).toBe(false);
+    expect(toggle.getAttribute('aria-expanded')).toBe('true');
+    expect(document.body.classList.contains('is-locked')).toBe(true);
+
+    document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
+
+    expect(dialog.hidden).toBe(true);
+    expect(toggle.getAttribute('aria-expanded')).toBe('true');
+    expect(document.body.classList.contains('is-locked')).toBe(true);
+    expect(document.activeElement).toBe(opener);
+
+    opener.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true }));
+    document.querySelector('[data-dialog-backdrop]').click();
+
+    expect(dialog.hidden).toBe(true);
+    expect(toggle.getAttribute('aria-expanded')).toBe('true');
+    expect(document.body.classList.contains('is-locked')).toBe(true);
+    expect(document.activeElement).toBe(opener);
+
+    document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
+
+    expect(toggle.getAttribute('aria-expanded')).toBe('false');
+    expect(document.body.classList.contains('is-locked')).toBe(false);
+    expect(document.activeElement).toBe(toggle);
+  });
+
   it('wraps keyboard focus inside an open appointment dialog', () => {
     document.body.innerHTML = '<button data-appointment-open>Запись</button><div id="appointment-dialog" role="dialog" hidden><button data-dialog-close>Закрыть</button><a href="tel:+74722215356">Позвонить</a></div>';
     initDialog({ provider: createAppointmentProvider() });

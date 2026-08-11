@@ -41,5 +41,5 @@ export function initMobileMenu() {
     if (event.key === 'Escape') close();
   });
   menu.addEventListener('keydown', trap);
-  menu.querySelectorAll('a[href]').forEach((link) => link.addEventListener('click', close));
+  menu.querySelectorAll('a[href]:not([data-appointment-open])').forEach((link) => link.addEventListener('click', close));
 }
