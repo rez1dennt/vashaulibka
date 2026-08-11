@@ -77,7 +77,7 @@
   --primitive-size-hero-desktop: 26.875rem;
   --primitive-size-tab-column: 17.5rem;
   --primitive-size-screen-reader: 0.0625rem;
-  --primitive-container-max: 73.75rem;
+  --primitive-container-max: 77.5rem;
   --primitive-container-gutter-mobile: 0.75rem;
   --primitive-container-gutter-desktop: 1.5rem;
   --primitive-breakpoint-tablet: 48rem;
@@ -136,16 +136,19 @@
   --color-overlay: var(--primitive-color-overlay);
   --font-body: var(--primitive-font-sans);
   --font-heading: var(--primitive-font-serif);
-  --text-body-size: var(--primitive-font-size-base);
+  --text-body-size: 0.9375rem;
   --text-body-line-height: var(--primitive-line-height-body);
   --text-small-size: var(--primitive-font-size-sm);
+  --text-caption-size: var(--primitive-font-size-xs);
+  --text-lead-size: var(--primitive-font-size-lg);
   --text-label-weight: var(--primitive-font-weight-semibold);
+  --text-label-letter-spacing: var(--primitive-letter-spacing-label);
   --text-heading-weight: var(--primitive-font-weight-medium);
   --text-heading-line-height: var(--primitive-line-height-tight);
   --text-heading-letter-spacing: var(--primitive-letter-spacing-tight);
-  --text-h1-size: clamp(var(--primitive-font-size-4xl), 9vw, var(--primitive-font-size-6xl));
-  --text-h2-size: clamp(var(--primitive-font-size-3xl), 6vw, var(--primitive-font-size-5xl));
-  --text-h3-size: clamp(var(--primitive-font-size-xl), 4vw, var(--primitive-font-size-2xl));
+  --text-h1-size: clamp(2.35rem, 4.2vw, 3.4rem);
+  --text-h2-size: clamp(1.75rem, 2.6vw, 2.35rem);
+  --text-h3-size: clamp(1.125rem, 1.7vw, 1.35rem);
   --text-body-measure: var(--primitive-measure-body);
   --text-heading-measure: var(--primitive-measure-heading);
 
@@ -167,7 +170,7 @@
   --space-20: var(--primitive-space-20);
   --space-24: var(--primitive-space-24);
   --space-30: var(--primitive-space-30);
-  --section-space: clamp(var(--space-16), 10vw, var(--space-30));
+  --section-space: clamp(var(--space-14), 7vw, var(--space-24));
   --container-max: var(--primitive-container-max);
   --header-container-max: var(--primitive-size-header-container);
   --container-gutter: var(--primitive-container-gutter-mobile);
@@ -175,6 +178,9 @@
   --control-block-size: var(--primitive-size-control);
   --control-scale-active: var(--primitive-scale-pressed);
   --icon-size: var(--primitive-size-icon);
+  --icon-size-small: var(--primitive-font-size-lg);
+  --media-aspect-wide: 16 / 10;
+  --media-aspect-document: 3 / 4;
   --brand-mark-size: var(--primitive-size-brand-mark);
   --border-width: var(--primitive-border-width);
   --border-width-strong: var(--primitive-border-width-strong);
@@ -303,6 +309,12 @@
   }
 }
 
+@media (min-width: 30rem) {
+  :root {
+    --text-body-size: var(--primitive-font-size-base);
+  }
+}
+
 @media (min-width: 48.0625rem) {
   :root {
     --mobile-appointment-reserve: var(--space-0);
@@ -332,7 +344,7 @@
     --layout-navigation-visibility: visible;
     --layout-navigation-pointer-events: auto;
     --layout-navigation-z-index: auto;
-    --layout-footer-columns: 1.25fr repeat(2, minmax(var(--space-0), 1fr));
+    --layout-footer-columns: 1.15fr repeat(3, minmax(var(--space-0), 1fr));
     --layout-hero-min-block-size: var(--primitive-size-hero-desktop);
     --layout-hero-scrim: linear-gradient(90deg, var(--color-surface-page) 0 42%, rgb(255 253 251 / 28%) 72%);
     --layout-card-columns: repeat(3, minmax(var(--space-0), 1fr));

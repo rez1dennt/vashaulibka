@@ -149,7 +149,7 @@ describe('design system contract', () => {
     expect(tokens).toMatch(/:root\s*{[\s\S]*?--layout-topbar-display:\s*flex/);
     expect(tokens).toMatch(/:root\s*{[\s\S]*?--layout-topbar-info-display:\s*none/);
     expect(tokens).toMatch(/@media\s*\(min-width:\s*75rem\)[\s\S]*?--layout-topbar-info-display:\s*inline/);
-    expect(layout).toMatch(/\.topbar\s+span\s*{[^}]*display:\s*var\(--layout-topbar-info-display\)/s);
+    expect(layout).toMatch(/\.utility-bar__address,[\s\S]*?display:\s*var\(--layout-topbar-info-display\)/s);
   });
 
   it('gives the mobile vision toggle a 48px target without enlarging desktop', () => {
@@ -160,7 +160,7 @@ describe('design system contract', () => {
     expect(resolveColor(tokens, '--control-block-size')).toBe('3rem');
     expect(css).toMatch(/:root\s*{[\s\S]*?--layout-topbar-button-min-block-size:\s*var\(--control-block-size\)/);
     expect(css).toMatch(/@media\s*\(min-width:\s*75rem\)[\s\S]*?--layout-topbar-button-min-block-size:\s*var\(--control-target-min\)/);
-    expect(layout).toMatch(/\.topbar\s+button\s*{[^}]*min-block-size:\s*var\(--layout-topbar-button-min-block-size\)/s);
+    expect(layout).toMatch(/\.utility-bar\s+button\s*{[^}]*min-block-size:\s*var\(--layout-topbar-button-min-block-size\)/s);
   });
 
   it('keeps primitive tokens private to the token layer', () => {
@@ -186,8 +186,8 @@ describe('design system contract', () => {
   it('defines hover and active feedback for utility buttons', () => {
     const layout = readStyle('layout');
 
-    expect(layout).toMatch(/\.topbar\s+button:hover\s*{[^}]*(color|background|transform):/s);
-    expect(layout).toMatch(/\.topbar\s+button:active\s*{[^}]*(color|background|transform):/s);
+    expect(layout).toMatch(/\.utility-bar\s+button:hover\s*{[^}]*(color|background|transform):/s);
+    expect(layout).toMatch(/\.utility-bar\s+button:active\s*{[^}]*(color|background|transform):/s);
     expect(layout).toMatch(/\.site-footer\s+button:hover\s*{[^}]*(color|background|transform):/s);
     expect(layout).toMatch(/\.site-footer\s+button:active\s*{[^}]*(color|background|transform):/s);
   });
@@ -210,14 +210,14 @@ describe('design system contract', () => {
     expect(css).toMatch(/\.service-tabs\s+\[role=['"]tablist['"]\][^{]*{[^}]*overflow-x:\s*var\(--layout-tablist-overflow\)/s);
   });
 
-  it('uses a two-row intermediate header and a wider single-row desktop header', () => {
+  it('uses a spacious brand row and an independent desktop navigation band', () => {
     const tokens = readStyle('tokens');
     const layout = readStyle('layout');
 
     expect(tokens).toMatch(/--header-container-max:\s*var\(--primitive-size-header-container\)/);
-    expect(tokens).toMatch(/@media\s*\(min-width:\s*75rem\)[\s\S]*?--layout-header-main-display:\s*grid/);
-    expect(tokens).toMatch(/@media\s*\(min-width:\s*85rem\)[\s\S]*?--layout-header-main-display:\s*flex/);
-    expect(layout).toMatch(/\.header-main\s*{[^}]*width:\s*min\([^;]*var\(--header-container-max\)[^;]*\)[^}]*display:\s*var\(--layout-header-main-display\)/s);
+    expect(layout).toMatch(/\.header-shell\s*{[^}]*width:\s*min\([^;]*var\(--header-container-max\)[^;]*\)/s);
+    expect(layout).toMatch(/\.brand-row__inner\s*{[^}]*grid-template-columns:/s);
+    expect(layout).toMatch(/@media\s*\(min-width:\s*75rem\)[\s\S]*?\.nav-row\s*{[^}]*display:\s*block/s);
     expect(layout).toMatch(/\.site-header\s+nav\s*{[^}]*flex-wrap:\s*var\(--layout-navigation-flex-wrap\)/s);
   });
 
@@ -231,16 +231,16 @@ describe('design system contract', () => {
     }
   });
 
-  it('keeps the hero illustration note contained and readable in vision mode', () => {
+  it('keeps the hero visualization label contained and readable in vision mode', () => {
     const layout = readStyle('layout');
     const components = readStyle('components');
 
-    expect(layout).toMatch(/\.hero-illustration-note\s*{[^}]*display:\s*inline-block/s);
-    expect(layout).toMatch(/\.hero-illustration-note\s*{[^}]*max-inline-size:\s*100%/s);
-    expect(layout).toMatch(/\.hero-illustration-note\s*{[^}]*overflow-wrap:\s*anywhere/s);
-    expect(layout).toMatch(/\.hero-illustration-note\s*{[^}]*background:\s*var\(--color-surface-raised\)/s);
-    expect(layout).toMatch(/\.hero-illustration-note\s*{[^}]*font-size:\s*var\(--text-small-size\)/s);
-    expect(components).toMatch(/\.vision-mode\s+\.hero-illustration-note\s*{[^}]*border-width:\s*var\(--border-width-strong\)/s);
+    expect(layout).toMatch(/\.hero-visualization-label\s*{[^}]*display:\s*inline-flex/s);
+    expect(layout).toMatch(/\.hero-visualization-label\s*{[^}]*max-inline-size:\s*100%/s);
+    expect(layout).toMatch(/\.hero-visualization-label\s*{[^}]*overflow-wrap:\s*anywhere/s);
+    expect(layout).toMatch(/\.hero-visualization-label\s*{[^}]*background:\s*var\(--color-surface-raised\)/s);
+    expect(layout).toMatch(/\.hero-visualization-label\s*{[^}]*font-size:\s*var\(--text-caption-size\)/s);
+    expect(components).toMatch(/\.vision-mode\s+\.hero-visualization-label\s*{[^}]*border-width:\s*var\(--border-width-strong\)/s);
   });
 
   it('provides a reduced-motion mode without removing focus treatment', () => {

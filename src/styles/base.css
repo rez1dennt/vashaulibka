@@ -36,6 +36,10 @@ img {
   block-size: auto;
 }
 
+figure {
+  margin: var(--space-0);
+}
+
 button,
 input,
 select,

@@ -2,6 +2,22 @@
   transition: var(--transition-interactive);
 }
 
+.ui-icon {
+  inline-size: var(--icon-size);
+  block-size: var(--icon-size);
+  flex: none;
+  stroke: currentColor;
+}
+
+.button-icon,
+.header-icon,
+.footer-icon {
+  inline-size: var(--icon-size-small);
+  block-size: var(--icon-size-small);
+  flex: none;
+  stroke: currentColor;
+}
+
 .button {
   min-block-size: var(--control-block-size);
   display: inline-flex;
@@ -11,6 +27,7 @@
   padding: var(--button-padding-block) var(--button-padding-inline);
   border: var(--border-width) solid var(--button-border);
   border-radius: var(--button-radius);
+  font-size: var(--text-small-size);
   font-weight: var(--text-label-weight);
   line-height: var(--button-line-height);
   text-align: center;
@@ -305,7 +322,7 @@ button.card:active {
   box-shadow: none;
 }
 
-.vision-mode .hero-illustration-note {
+.vision-mode .hero-visualization-label {
   border-width: var(--border-width-strong);
 }
 
