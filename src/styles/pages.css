@@ -204,6 +204,220 @@
   gap: var(--space-3);
 }
 
+.contact-page {
+  background: var(--color-surface-subtle);
+}
+
+.contact-page__grid {
+  min-inline-size: var(--space-0);
+  display: grid;
+  gap: var(--space-6);
+  margin-block-end: var(--space-6);
+}
+
+.contact-location,
+.contact-channels,
+.contact-schedule {
+  min-inline-size: var(--space-0);
+  padding: var(--card-padding);
+  border: var(--border-width) solid var(--color-border);
+  border-radius: var(--radius-lg);
+}
+
+.contact-location {
+  display: grid;
+  grid-template-columns: var(--control-block-size) minmax(var(--space-0), 1fr);
+  align-items: start;
+  gap: var(--space-4);
+  background: var(--color-surface-brand-soft);
+  box-shadow: var(--shadow-card);
+}
+
+.contact-location__icon,
+.contact-schedule__icon,
+.contact-channel__icon {
+  inline-size: var(--control-block-size);
+  block-size: var(--control-block-size);
+  display: grid;
+  place-items: center;
+  border: var(--border-width) solid var(--color-border);
+  border-radius: var(--radius-sm);
+  color: var(--color-primary-strong);
+  background: var(--color-surface-raised);
+}
+
+.contact-location__icon .ui-icon,
+.contact-schedule__icon .ui-icon,
+.contact-channel__icon .ui-icon {
+  inline-size: var(--icon-size);
+  block-size: var(--icon-size);
+}
+
+.contact-location__copy,
+.contact-channels,
+.contact-schedule__heading > div {
+  min-inline-size: var(--space-0);
+}
+
+.contact-location .eyebrow,
+.contact-location h2,
+.contact-channels .eyebrow,
+.contact-channels h2,
+.contact-schedule .eyebrow,
+.contact-schedule h2 {
+  max-inline-size: none;
+  margin-block-end: var(--space-0);
+}
+
+.contact-location__copy {
+  display: grid;
+  gap: var(--space-2);
+}
+
+.contact-location address {
+  max-inline-size: var(--text-body-measure);
+  overflow-wrap: anywhere;
+  color: var(--color-text);
+  font-size: var(--text-lead-size);
+  font-style: normal;
+}
+
+.contact-location__route {
+  grid-column: 1 / -1;
+  justify-self: start;
+}
+
+.contact-channels {
+  background: var(--color-surface-raised);
+}
+
+.contact-channels__list {
+  display: grid;
+  gap: var(--space-2);
+  margin-block-start: var(--space-6);
+}
+
+.contact-channel {
+  min-inline-size: var(--space-0);
+  min-block-size: var(--control-block-size);
+  display: grid;
+  grid-template-columns: var(--control-block-size) minmax(var(--space-0), 1fr) var(--icon-size);
+  align-items: center;
+  gap: var(--space-3);
+  padding-block: var(--space-3);
+  border-block-end: var(--border-width) solid var(--color-border);
+  color: var(--color-text);
+  text-decoration: none;
+  transition: var(--transition-interactive);
+}
+
+.contact-channel:first-child {
+  border-block-start: var(--border-width) solid var(--color-border);
+}
+
+.contact-channel:hover {
+  border-color: var(--color-primary-strong);
+  color: var(--color-primary-strong);
+  background: var(--color-surface-brand-soft);
+}
+
+.contact-channel:active {
+  color: var(--color-primary-active);
+  transform: translateY(var(--space-0-5));
+}
+
+.contact-channel__copy {
+  min-inline-size: var(--space-0);
+  display: grid;
+  gap: var(--space-1);
+  overflow-wrap: anywhere;
+}
+
+.contact-channel__copy small {
+  color: var(--color-text-muted);
+  font-size: var(--text-caption-size);
+}
+
+.contact-channel__copy strong {
+  font-size: var(--text-small-size);
+}
+
+.contact-channel__arrow {
+  display: grid;
+  place-items: center;
+  color: var(--color-primary-strong);
+}
+
+.contact-channel__arrow .ui-icon {
+  inline-size: var(--icon-size);
+  block-size: var(--icon-size);
+}
+
+.contact-schedule {
+  display: grid;
+  align-items: center;
+  gap: var(--space-6);
+  background: var(--color-surface-warm);
+}
+
+.contact-schedule__heading {
+  min-inline-size: var(--space-0);
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+}
+
+.contact-schedule__heading > div {
+  display: grid;
+  gap: var(--space-2);
+}
+
+.contact-hours {
+  min-inline-size: var(--space-0);
+  display: grid;
+  grid-template-columns: repeat(2, minmax(var(--space-0), 1fr));
+  gap: var(--border-width);
+  margin: var(--space-0);
+  padding: var(--border-width);
+  overflow: hidden;
+  border-radius: var(--radius-sm);
+  background: var(--color-border);
+}
+
+.contact-hours > div {
+  min-inline-size: var(--space-0);
+  padding: var(--space-3);
+  overflow-wrap: anywhere;
+  background: var(--color-surface-raised);
+}
+
+.contact-hours dt {
+  color: var(--color-text-muted);
+  font-size: var(--text-caption-size);
+  font-weight: var(--text-label-weight);
+}
+
+.contact-hours dd {
+  margin: var(--space-1) var(--space-0) var(--space-0);
+  color: var(--color-text);
+  font-weight: var(--text-label-weight);
+  font-variant-numeric: tabular-nums;
+}
+
+.contact-schedule__action {
+  min-inline-size: var(--space-0);
+  display: grid;
+  justify-items: start;
+  gap: var(--space-3);
+}
+
+.contact-schedule__action p {
+  max-inline-size: var(--contact-action-copy-measure);
+  margin-block-end: var(--space-0);
+  color: var(--color-text-muted);
+  font-size: var(--text-small-size);
+}
+
 .empty-state {
   max-inline-size: var(--text-body-measure);
   margin-inline: auto;
@@ -1433,6 +1647,19 @@
 }
 
 @media (min-width: 48rem) {
+  .contact-page__grid {
+    grid-template-columns: minmax(var(--space-0), 7fr) minmax(var(--space-0), 5fr);
+    align-items: stretch;
+  }
+
+  .contact-schedule {
+    grid-template-columns: minmax(var(--space-0), 1fr) minmax(var(--contact-action-column-min), auto);
+  }
+
+  .contact-schedule__heading {
+    grid-column: 1 / -1;
+  }
+
   .patient-notice {
     grid-template-columns: var(--control-block-size) minmax(var(--space-0), 1fr);
   }
@@ -1501,6 +1728,18 @@
 }
 
 @media (min-width: 75rem) {
+  .contact-schedule {
+    grid-template-columns: minmax(var(--space-0), auto) minmax(var(--space-0), 1fr) minmax(var(--space-0), auto);
+  }
+
+  .contact-schedule__heading {
+    grid-column: auto;
+  }
+
+  .contact-hours {
+    grid-template-columns: repeat(3, minmax(var(--space-0), 1fr)) minmax(var(--space-0), 1.35fr);
+  }
+
   .main--patient .section {
     padding-block: var(--space-14);
   }

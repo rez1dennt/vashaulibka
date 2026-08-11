@@ -42,6 +42,7 @@
   --primitive-letter-spacing-label: 0.025em;
   --primitive-measure-body: 65ch;
   --primitive-measure-heading: 20ch;
+  --primitive-measure-contact-copy: 28ch;
 
   /* Primitive spacing and sizing */
   --primitive-space-0: 0;
@@ -67,6 +68,7 @@
   --primitive-size-brand-mark: 3.5rem;
   --primitive-size-avatar-sm: 4rem;
   --primitive-size-avatar-lg: 6rem;
+  --primitive-size-contact-action: 11rem;
   --primitive-size-dialog: 32.5rem;
   --primitive-size-cookie: 35rem;
   --primitive-size-header-mobile: 4.5rem;
@@ -248,6 +250,8 @@
   --brand-font-weight: var(--primitive-font-weight-bold);
   --brand-line-height: var(--primitive-line-height-heading);
   --brand-text-measure: var(--primitive-measure-heading);
+  --contact-action-column-min: var(--primitive-size-contact-action);
+  --contact-action-copy-measure: var(--primitive-measure-contact-copy);
   --navigation-link-weight: var(--primitive-font-weight-medium);
   --hero-lead-font-size: var(--primitive-font-size-lg);
   --footer-heading-font-size: var(--primitive-font-size-lg);

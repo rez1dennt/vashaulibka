@@ -48,7 +48,7 @@ export function renderHeader(activeFile) {
     `<a class="utility-bar__phone" href="${primaryPhone.href}">${renderIcon('phone', 'header-icon')}${escapeHtml(primaryPhone.label)}</a>`,
     '</div></div>',
     '<div class="brand-row"><div class="header-shell brand-row__inner">',
-    `<a class="brand" href="index.html" aria-label="${escapeHtml(CLINIC.name)}, главная"><img src="assets/icons/logo.svg" alt="" width="56" height="56"><span class="brand__copy"><strong><span class="brand__full-name">${escapeHtml(CLINIC.name)}</span><span class="brand__short-name">Ваша улыбка</span></strong><small>стоматологическая клиника</small></span></a>`,
+    `<a class="brand" href="index.html" aria-label="${escapeHtml(CLINIC.name)}, главная"><img src="assets/icons/logo.svg" alt="" width="56" height="56"><span class="brand__wordmark"><span class="brand__prefix">Ваша</span><span class="brand__accent">улыбка</span><svg class="brand__smile" viewBox="0 0 64 8" aria-hidden="true" focusable="false"><path d="M2 2c16 6 44 6 60 0"/></svg></span></a>`,
     `<div class="brand-row__actions"><div class="brand-phone-group">${phoneLinks}</div><a class="button button-primary header-appointment" href="${primaryPhone.href}" data-appointment-open>${renderIcon('calendar', 'button-icon')}Запись на приём</a></div>`,
     '<button class="menu-toggle" type="button" aria-expanded="false" aria-controls="main-menu"><span class="menu-toggle__icon" aria-hidden="true"></span><span class="sr-only" data-menu-toggle-label>Открыть меню</span></button>',
     '</div></div>',

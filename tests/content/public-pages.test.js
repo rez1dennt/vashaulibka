@@ -170,6 +170,7 @@ describe('public page accessibility and safety', () => {
   it('derives contacts, hours, phones, and email from verified data', () => {
     const page = PAGES.find((item) => item.file === 'contacts.html');
     const html = renderPage(page);
+    const document = new JSDOM(html).window.document;
 
     expect(html).toContain(CLINIC.activityAddress);
     expect(html).toContain(CONTACTS.email);
@@ -183,6 +184,13 @@ describe('public page accessibility and safety', () => {
       expect(html).toContain(entry.value);
     }
     expect(html).toContain(HOURS.breakNote);
+    expect(document.querySelector('.contact-page')).not.toBeNull();
+    expect(document.querySelector('.contact-location address')?.textContent).toBe(CLINIC.activityAddress);
+    expect(document.querySelector('.contact-location a[href*="yandex.ru/maps"]')?.getAttribute('target')).toBe('_blank');
+    expect(document.querySelector('.contact-location a[href*="yandex.ru/maps"]')?.getAttribute('rel')).toBe('noopener');
+    expect(document.querySelectorAll('.contact-channel')).toHaveLength(3);
+    expect(document.querySelectorAll('.contact-hours > div')).toHaveLength(4);
+    expect(document.querySelector('.contact-grid')).toBeNull();
   });
 
   it('renders no forms, tracking, remote fonts, map embeds, or unapproved contact schemes', () => {

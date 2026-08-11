@@ -124,37 +124,51 @@ body {
 }
 
 .brand img {
-  display: none;
+  display: block;
   inline-size: var(--brand-mark-size);
   block-size: var(--brand-mark-size);
   flex: none;
 }
 
-.brand > span {
+.brand__wordmark {
+  position: relative;
   min-inline-size: var(--space-0);
-  display: grid;
-  gap: var(--space-0-5);
+  display: inline-flex;
+  align-items: baseline;
+  gap: var(--space-1);
+  padding-block-end: var(--space-1);
+  font-family: var(--font-heading);
+  font-size: var(--text-lead-size);
+  font-weight: var(--text-heading-weight);
+  white-space: nowrap;
 }
 
-.brand__short-name {
-  display: inline;
+.brand__prefix {
+  color: var(--color-text);
 }
 
-.brand__full-name,
-.brand small {
-  display: none;
-}
-
-.brand strong {
-  max-inline-size: var(--brand-text-measure);
-  overflow-wrap: anywhere;
+.brand__accent {
+  color: var(--color-primary-strong);
+  font-style: italic;
   font-weight: var(--brand-font-weight);
 }
 
-.brand small {
-  color: var(--color-text-muted);
-  font-size: var(--text-caption-size);
-  font-weight: var(--text-label-weight);
+.brand__smile {
+  position: absolute;
+  inset-inline-end: var(--space-0);
+  inset-block-end: var(--space-0);
+  inline-size: calc(var(--icon-size) + var(--space-10));
+  block-size: var(--space-2);
+  overflow: visible;
+  color: var(--color-primary-strong);
+  pointer-events: none;
+}
+
+.brand__smile path {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: var(--border-width);
+  stroke-linecap: round;
 }
 
 .brand-row__actions {
@@ -540,19 +554,6 @@ body {
   .brand-row__inner {
     min-block-size: calc(var(--control-block-size) + var(--space-8));
     padding-block: var(--space-3);
-  }
-
-  .brand img {
-    display: block;
-  }
-
-  .brand__short-name {
-    display: none;
-  }
-
-  .brand__full-name,
-  .brand small {
-    display: inline;
   }
 
   .brand-row__actions {

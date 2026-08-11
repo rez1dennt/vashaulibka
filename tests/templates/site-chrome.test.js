@@ -12,8 +12,14 @@ describe('premium light site chrome', () => {
     expect(document.querySelector('.nav-row')).not.toBeNull();
     expect(document.querySelector('[data-vision-toggle]')).not.toBeNull();
     expect(document.querySelector('[data-vision-toggle] .vision-icon')).not.toBeNull();
-    expect(document.querySelector('.brand__short-name')?.textContent).toBe('Ваша улыбка');
-    expect(document.querySelector('.brand__full-name')?.textContent).toBe(CLINIC.name);
+    expect(document.querySelector('.brand__wordmark')?.textContent).toContain('Ваша');
+    expect(document.querySelector('.brand__wordmark')?.textContent).toContain('улыбка');
+    expect(document.querySelector('.brand__prefix')?.textContent).toBe('Ваша');
+    expect(document.querySelector('.brand__accent')?.textContent).toBe('улыбка');
+    expect(document.querySelector('.brand__smile[aria-hidden="true"]')).not.toBeNull();
+    expect(document.querySelector('.brand img[src="assets/icons/logo.svg"]')).not.toBeNull();
+    expect(document.querySelector('.brand__full-name')).toBeNull();
+    expect(document.querySelector('.brand small')).toBeNull();
     expect(document.querySelector('[data-menu-backdrop]')).not.toBeNull();
     const toggle = document.querySelector('.menu-toggle[aria-controls="main-menu"]');
     expect(toggle).not.toBeNull();

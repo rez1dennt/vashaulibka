@@ -43,11 +43,14 @@ describe('premium light visual contract', () => {
     expect(layout).toMatch(/\.menu-toggle__icon::after\s*{[^}]*translateY\(var\(--menu-toggle-line-offset\)\)/s);
   });
 
-  it('keeps only the short clinic name beside the burger before desktop', () => {
-    expect(layout).toMatch(/\.brand__short-name\s*{[^}]*display:\s*inline/s);
-    expect(layout).toMatch(/\.brand img\s*{[^}]*display:\s*none/s);
-    expect(layout).toMatch(/\.brand__full-name,\s*\.brand small\s*{[^}]*display:\s*none/s);
-    expect(layout).toMatch(/@media\s*\(min-width:\s*75rem\)[\s\S]*?\.brand__short-name\s*{[^}]*display:\s*none/s);
+  it('keeps the logo and short clinic name on every viewport', () => {
+    expect(layout).toMatch(/\.brand img\s*{[^}]*display:\s*block/s);
+    expect(layout).toMatch(/\.brand__wordmark\s*{[^}]*font-family:\s*var\(--font-heading\)/s);
+    expect(layout).toMatch(/\.brand__prefix\s*{[^}]*color:\s*var\(--color-text\)/s);
+    expect(layout).toMatch(/\.brand__accent\s*{[^}]*color:\s*var\(--color-primary-strong\)[^}]*font-style:\s*italic/s);
+    expect(layout).toMatch(/\.brand__smile\s*{[^}]*color:\s*var\(--color-primary-strong\)/s);
+    expect(layout).not.toContain('.brand__full-name');
+    expect(layout).not.toMatch(/@media\s*\(min-width:\s*75rem\)[\s\S]*?\.brand__wordmark\s*{[^}]*display:\s*none/s);
   });
 
   it('uses one icon-and-text grid for homepage contacts', () => {
