@@ -1,6 +1,6 @@
 import { JSDOM } from 'jsdom';
 import { describe, expect, it } from 'vitest';
-import { CLINIC, CONTACTS, LICENSE } from '../../src/data/clinic.js';
+import { CLINIC, CONTACTS, HOURS, LICENSE } from '../../src/data/clinic.js';
 import { SERVICES } from '../../src/data/services.js';
 import { STAFF } from '../../src/data/staff.js';
 import { HOME_PAGE } from '../../src/content/home-page.js';
@@ -65,7 +65,21 @@ describe('premium light homepage', () => {
     expect(rows).toHaveLength(5);
     expect(document.querySelectorAll('.home-contact__phones .home-contact__row')).toHaveLength(CONTACTS.phones.length);
     expect(document.querySelector('.home-contact__schedule > .ui-icon')).not.toBeNull();
-    expect(document.querySelector('.home-contact__schedule .definition-list')).not.toBeNull();
+    expect(document.querySelector('.home-contact__hours')).not.toBeNull();
+  });
+
+  it('renders the schedule as four verified definition cells', () => {
+    const document = render();
+    const cells = [...document.querySelectorAll('.home-contact__hours > div')];
+
+    expect(cells).toHaveLength(4);
+    expect(cells.map((cell) => [cell.querySelector('dt')?.textContent, cell.querySelector('dd')?.textContent])).toEqual([
+      [HOURS.weekdays.label, HOURS.weekdays.value],
+      [HOURS.saturday.label, HOURS.saturday.value],
+      [HOURS.sunday.label, HOURS.sunday.value],
+      ['Перерыв', HOURS.breakNote],
+    ]);
+    expect(document.querySelector('.home-contact__break')).toBeNull();
   });
 
   it('uses only verified clinic facts and explicitly labels generated interiors', () => {

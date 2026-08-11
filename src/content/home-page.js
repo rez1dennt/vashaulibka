@@ -96,7 +96,12 @@ const documentCards = [
 
 const documentsSection = `<section class="home-section home-documents"><div class="container home-documents__grid"><div class="home-documents__intro"><p class="eyebrow">Документы</p><h2>Оригиналы клиники</h2><p>На сайте размещены предоставленные клиникой регистрационные и лицензионные документы.</p><a class="button button-secondary" href="license.html">Все сведения${renderIcon('arrow', 'button-icon')}</a></div><div class="home-documents__cards">${documentCards.map((document) => `<a class="document-card" href="${document.href}" target="_blank" rel="noopener"><span class="document-card__preview"><img src="${document.image}" alt="${document.alt}" width="720" height="960" loading="lazy"></span><span class="document-card__body">${renderIcon('document')}<span><strong>${document.title}</strong><small>Открыть PDF</small></span>${renderIcon('arrow', 'button-icon')}</span></a>`).join('')}</div></div></section>`;
 
-const hours = [HOURS.weekdays, HOURS.saturday, HOURS.sunday]
+const hours = [
+  HOURS.weekdays,
+  HOURS.saturday,
+  HOURS.sunday,
+  { label: 'Перерыв', value: HOURS.breakNote },
+]
   .map((entry) => `<div><dt>${escapeHtml(entry.label)}</dt><dd>${escapeHtml(entry.value)}</dd></div>`)
   .join('');
 
@@ -107,7 +112,7 @@ const contactsSection = [
   `<p class="home-contact__row home-contact__address">${renderIcon('pin')}<span>${escapeHtml(CLINIC.activityAddress)}</span></p>`,
   `<div class="home-contact__phones">${CONTACTS.phones.map((phone) => `<a class="home-contact__row" href="${phone.href}">${renderIcon('phone')}<span>${escapeHtml(phone.label)}</span></a>`).join('')}</div>`,
   `<a class="home-contact__row home-contact__email" href="${CONTACTS.emailHref}">${renderIcon('mail')}<span>${escapeHtml(CONTACTS.email)}</span></a>`,
-  `<div class="home-contact__row home-contact__schedule">${renderIcon('clock')}<div><dl class="definition-list definition-list--compact">${hours}</dl><p class="home-contact__break"><strong>${escapeHtml(HOURS.breakNote)}</strong></p></div></div>`,
+  `<div class="home-contact__row home-contact__schedule">${renderIcon('clock')}<dl class="home-contact__hours">${hours}</dl></div>`,
   `<a class="button button-primary" href="${CONTACTS.phones[0].href}" data-appointment-open>${renderIcon('calendar', 'button-icon')}Записаться на приём</a>`,
   '</div>',
   renderInteriorFigure('contacts', 'home-contact__media'),

@@ -41,7 +41,8 @@ describe('premium light visual contract', () => {
 
   it('uses one icon-and-text grid for homepage contacts', () => {
     expect(pages).toMatch(/\.home-contact__row\s*{[^}]*display:\s*grid[^}]*grid-template-columns:\s*var\(--icon-size\)\s+minmax\(var\(--space-0\),\s*1fr\)/s);
-    expect(pages).toMatch(/\.home-contact__schedule\s+\.definition-list\s*{[^}]*margin-block-end:\s*var\(--space-0\)/s);
+    expect(pages).toMatch(/\.home-contact__hours\s*{[^}]*grid-template-columns:\s*repeat\(2,\s*minmax\(var\(--space-0\),\s*1fr\)\)[^}]*gap:\s*var\(--border-width\)/s);
+    expect(pages).toMatch(/@media\s*\(min-width:\s*75rem\)[\s\S]*?\.home-contact__hours\s*{[^}]*grid-template-columns:\s*repeat\(4,\s*minmax\(var\(--space-0\),\s*1fr\)\)/s);
   });
 
   it('styles all rich homepage sections and local icons', () => {

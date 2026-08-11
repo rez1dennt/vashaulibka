@@ -796,13 +796,36 @@
   margin-block-end: var(--space-4);
 }
 
-.home-contact__schedule .definition-list {
-  max-inline-size: var(--text-heading-measure);
-  margin-block-end: var(--space-0);
+.home-contact__hours {
+  min-inline-size: var(--space-0);
+  display: grid;
+  grid-template-columns: repeat(2, minmax(var(--space-0), 1fr));
+  gap: var(--border-width);
+  margin: var(--space-0);
+  padding: var(--border-width);
+  overflow: hidden;
+  border-radius: var(--radius-sm);
+  background: var(--color-border);
 }
 
-.home-contact__break {
-  margin-block-end: var(--space-0);
+.home-contact__hours > div {
+  min-inline-size: var(--space-0);
+  padding: var(--space-3);
+  overflow-wrap: anywhere;
+  background: var(--color-surface-raised);
+}
+
+.home-contact__hours dt {
+  color: var(--color-text-muted);
+  font-size: var(--text-caption-size);
+  font-weight: var(--text-label-weight);
+}
+
+.home-contact__hours dd {
+  margin: var(--space-1) var(--space-0) var(--space-0);
+  color: var(--color-text);
+  font-weight: var(--text-label-weight);
+  font-variant-numeric: tabular-nums;
 }
 
 @media (min-width: 48rem) {
@@ -840,6 +863,10 @@
 }
 
 @media (min-width: 75rem) {
+  .home-contact__hours {
+    grid-template-columns: repeat(4, minmax(var(--space-0), 1fr));
+  }
+
   .quick-links {
     margin-block-start: var(--space-0);
     padding-block-start: var(--space-6);
