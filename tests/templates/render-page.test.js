@@ -13,7 +13,7 @@ const page = {
   noindex: false,
 };
 
-const HERO_ILLUSTRATION_NOTE = 'Иллюстративное изображение — не фотография помещений клиники.';
+const HERO_VISUALIZATION_LABEL = 'Визуализация интерьера';
 
 describe('renderPage', () => {
   it('renders semantic content and accessibility anchors', () => {
@@ -98,11 +98,14 @@ describe('renderPage', () => {
     expect(html).not.toContain('работает в Белгороде с 2012 года');
   });
 
-  it('distinguishes every hero illustration from clinic premises photography', () => {
+  it('labels every generated interior without the rejected large disclaimer', () => {
     for (const publicPage of PAGES) {
       const html = renderPage(publicPage);
+      const document = new JSDOM(html).window.document;
 
-      expect(html).toContain(`<p class="hero-illustration-note">${HERO_ILLUSTRATION_NOTE}</p>`);
+      expect(document.querySelectorAll('.hero-visualization-label')).toHaveLength(1);
+      expect(document.querySelector('.hero-visualization-label')?.textContent).toBe(HERO_VISUALIZATION_LABEL);
+      expect(html).not.toContain('Иллюстративное изображение — не фотография помещений клиники.');
     }
   });
 });

@@ -32,7 +32,7 @@ const approvedFiles = [
   'cookies.html',
 ];
 
-const HERO_ILLUSTRATION_NOTE = 'Иллюстративное изображение — не фотография помещений клиники.';
+const HERO_VISUALIZATION_LABEL = 'Визуализация интерьера';
 
 const renderedPages = () => PAGES.map((page) => ({
   page,
@@ -52,12 +52,12 @@ describe('public page manifest', () => {
     expect(Object.isFrozen(LEGAL_PAGES)).toBe(true);
   });
 
-  it('publishes the hero illustration distinction in every generated page', () => {
+  it('publishes a compact visualization label in every generated page', () => {
     for (const file of approvedFiles) {
       const document = new JSDOM(readFileSync(file, 'utf8')).window.document;
-      const note = document.querySelector('.page-hero .hero-illustration-note');
+      const note = document.querySelector('.page-hero .hero-visualization-label');
 
-      expect(note?.textContent, file).toBe(HERO_ILLUSTRATION_NOTE);
+      expect(note?.textContent, file).toBe(HERO_VISUALIZATION_LABEL);
     }
   });
 
