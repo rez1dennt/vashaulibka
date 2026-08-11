@@ -1,0 +1,137 @@
+.page-hero--home {
+  --hero-image: image-set(url("/assets/images/hero-home.avif") type("image/avif"), url("/assets/images/hero-home.webp") type("image/webp"));
+}
+
+.page-hero--about {
+  --hero-image: image-set(url("/assets/images/hero-about.avif") type("image/avif"), url("/assets/images/hero-about.webp") type("image/webp"));
+}
+
+.page-hero--services {
+  --hero-image: image-set(url("/assets/images/hero-services.avif") type("image/avif"), url("/assets/images/hero-services.webp") type("image/webp"));
+}
+
+.page-hero--specialists {
+  --hero-image: image-set(url("/assets/images/hero-specialists.avif") type("image/avif"), url("/assets/images/hero-specialists.webp") type("image/webp"));
+}
+
+.page-hero--reviews {
+  --hero-image: image-set(url("/assets/images/hero-reviews.avif") type("image/avif"), url("/assets/images/hero-reviews.webp") type("image/webp"));
+}
+
+.page-hero--vacancies {
+  --hero-image: image-set(url("/assets/images/hero-vacancies.avif") type("image/avif"), url("/assets/images/hero-vacancies.webp") type("image/webp"));
+}
+
+.page-hero--contacts {
+  --hero-image: image-set(url("/assets/images/hero-contacts.avif") type("image/avif"), url("/assets/images/hero-contacts.webp") type("image/webp"));
+}
+
+.service-tabs {
+  min-inline-size: var(--space-0);
+  display: grid;
+  grid-template-columns: var(--layout-service-columns);
+  align-items: start;
+  gap: var(--space-8);
+}
+
+.service-tabs [role="tablist"] {
+  min-inline-size: var(--space-0);
+  display: var(--layout-tablist-display);
+  align-content: start;
+  overflow-x: var(--layout-tablist-overflow);
+  overscroll-behavior-inline: contain;
+  scrollbar-gutter: stable;
+}
+
+.service-list,
+.service-grid,
+.info-grid,
+.price-list,
+.vacancy-list,
+.contact-grid,
+.staff-list,
+.review-grid {
+  min-inline-size: var(--space-0);
+  display: grid;
+  gap: var(--space-5);
+}
+
+.service-grid,
+.info-grid,
+.contact-grid {
+  grid-template-columns: var(--layout-card-columns);
+}
+
+.review-grid {
+  grid-template-columns: var(--layout-review-columns);
+}
+
+.staff-card {
+  min-inline-size: var(--space-0);
+  display: grid;
+  grid-template-columns: var(--layout-staff-columns);
+  align-items: start;
+  gap: var(--space-5);
+  padding: var(--card-padding);
+  border: var(--border-width) solid var(--card-border);
+  border-radius: var(--card-radius);
+  background: var(--card-background);
+}
+
+.staff-avatar,
+.staff-placeholder,
+.specialist-placeholder {
+  inline-size: var(--avatar-size);
+  block-size: var(--avatar-size);
+  display: grid;
+  flex: none;
+  place-items: center;
+  overflow: hidden;
+  border: var(--border-width) solid var(--color-border);
+  border-radius: var(--radius-pill);
+  color: var(--color-primary-strong);
+  background: var(--color-surface-brand-soft);
+  font-family: var(--font-heading);
+  font-size: var(--primitive-font-size-xl);
+  text-align: center;
+}
+
+.staff-card h2,
+.staff-card h3,
+.service-tabs h2,
+.service-tabs h3 {
+  max-inline-size: none;
+}
+
+.staff-card > :last-child,
+.service-tabs [role="tabpanel"] > :last-child {
+  margin-block-end: var(--space-0);
+}
+
+.price-list {
+  margin: var(--space-0);
+  padding: var(--space-0);
+  list-style: none;
+}
+
+.price-list > li {
+  max-inline-size: none;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding-block: var(--space-4);
+  border-block-end: var(--border-width) solid var(--color-border);
+}
+
+.review-grid blockquote {
+  margin: var(--space-0);
+}
+
+.review-grid cite {
+  display: block;
+  margin-block-start: var(--space-4);
+  color: var(--color-text-muted);
+  font-style: normal;
+  font-size: var(--text-small-size);
+}

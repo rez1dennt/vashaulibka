@@ -1,0 +1,318 @@
+:where(.button, button, [role="tab"], [data-disclosure-button]) {
+  transition: var(--transition-interactive);
+}
+
+.button {
+  min-block-size: var(--control-block-size);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  padding: var(--button-padding-block) var(--button-padding-inline);
+  border: var(--border-width) solid var(--button-border);
+  border-radius: var(--button-radius);
+  font-weight: var(--text-label-weight);
+  line-height: var(--primitive-line-height-heading);
+  text-align: center;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.button-primary {
+  color: var(--button-primary-text);
+  background: var(--button-primary-background);
+  box-shadow: var(--shadow-card);
+}
+
+.button-primary:hover {
+  color: var(--button-primary-text);
+  background: var(--button-primary-background-hover);
+  box-shadow: var(--shadow-card-hover);
+  transform: translateY(calc(var(--space-0-5) * -1));
+}
+
+.button-primary:active {
+  color: var(--button-primary-text);
+  background: var(--button-primary-background-active);
+  box-shadow: none;
+  transform: translateY(var(--space-0-5));
+}
+
+.button-secondary {
+  color: var(--button-secondary-text);
+  background: var(--button-secondary-background);
+}
+
+.button-secondary:hover {
+  color: var(--color-primary-active);
+  background: var(--button-secondary-background-hover);
+}
+
+.button-secondary:active {
+  color: var(--color-text);
+  border-color: var(--color-primary-active);
+  background: var(--color-surface-warm);
+}
+
+.button:disabled,
+.button[aria-disabled="true"] {
+  box-shadow: none;
+  cursor: not-allowed;
+  pointer-events: none;
+  transform: none;
+}
+
+.card {
+  padding: var(--card-padding);
+  border: var(--border-width) solid var(--card-border);
+  border-radius: var(--card-radius);
+  background: var(--card-background);
+  box-shadow: var(--shadow-card);
+}
+
+a.card:hover,
+button.card:hover {
+  border-color: var(--color-border-strong);
+  box-shadow: var(--shadow-card-hover);
+  transform: translateY(calc(var(--space-0-5) * -1));
+}
+
+a.card:active,
+button.card:active {
+  box-shadow: var(--shadow-card);
+  transform: translateY(var(--space-0-5));
+}
+
+.notice {
+  padding: var(--card-padding);
+  border: var(--border-width) solid var(--color-border);
+  border-radius: var(--card-radius);
+  background: var(--notice-background);
+}
+
+.notice > :last-child,
+.card > :last-child {
+  margin-block-end: var(--space-0);
+}
+
+[role="tablist"] {
+  gap: var(--space-2);
+}
+
+[role="tab"] {
+  min-block-size: var(--control-block-size);
+  flex: none;
+  padding: var(--space-3) var(--space-4);
+  border: var(--border-width) solid var(--color-border);
+  border-radius: var(--radius-sm);
+  color: var(--color-text-muted);
+  background: var(--color-surface-raised);
+  font-weight: var(--primitive-font-weight-medium);
+  text-align: start;
+  cursor: pointer;
+}
+
+[role="tab"]:hover {
+  border-color: var(--color-primary-strong);
+  color: var(--color-primary-strong);
+  background: var(--color-surface-brand-soft);
+}
+
+[role="tab"]:active {
+  color: var(--color-primary-active);
+  transform: translateY(var(--space-0-5));
+}
+
+[role="tab"][aria-selected="true"] {
+  border-color: var(--tab-selected-border);
+  box-shadow: inset var(--border-width-strong) var(--space-0) var(--space-0) var(--tab-selected-border);
+  color: var(--color-primary-strong);
+  font-weight: var(--text-label-weight);
+}
+
+[role="tab"]:disabled,
+[role="tab"][aria-disabled="true"] {
+  cursor: not-allowed;
+}
+
+[role="tabpanel"] {
+  min-inline-size: var(--space-0);
+}
+
+[data-disclosure-button] {
+  min-block-size: var(--control-block-size);
+  padding: var(--space-3) var(--space-4);
+  border: var(--border-width) solid var(--color-border-strong);
+  border-radius: var(--radius-sm);
+  color: var(--color-text);
+  background: var(--color-surface-raised);
+  font-weight: var(--text-label-weight);
+  text-align: start;
+  cursor: pointer;
+}
+
+[data-disclosure-button]:hover {
+  border-color: var(--color-primary-strong);
+  background: var(--color-surface-brand-soft);
+}
+
+[data-disclosure-button]:active {
+  background: var(--color-surface-warm);
+  transform: translateY(var(--space-0-5));
+}
+
+[data-disclosure-button][aria-expanded="true"] {
+  border-color: var(--color-primary-strong);
+  box-shadow: inset var(--space-0) calc(var(--border-width-strong) * -1) var(--space-0) var(--color-primary-strong);
+}
+
+[data-disclosure-button]:disabled {
+  cursor: not-allowed;
+}
+
+.dialog {
+  position: fixed;
+  z-index: var(--z-dialog);
+  inset: var(--space-0);
+  display: grid;
+  place-items: center;
+  padding: var(--container-gutter);
+  overflow-y: auto;
+  background: var(--color-overlay);
+}
+
+.dialog__panel {
+  position: relative;
+  inline-size: 100%;
+  max-inline-size: var(--dialog-max-inline-size);
+  max-block-size: var(--dialog-max-block-size);
+  padding: var(--card-padding);
+  overflow-y: auto;
+  border: var(--border-width) solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-surface-raised);
+  box-shadow: var(--shadow-card-hover);
+}
+
+.dialog__panel [data-dialog-close] {
+  position: absolute;
+  inset-block-start: var(--space-3);
+  inset-inline-end: var(--space-3);
+  inline-size: var(--control-block-size);
+  block-size: var(--control-block-size);
+  padding: var(--space-0);
+  border: var(--border-width) solid var(--color-border);
+  border-radius: var(--radius-pill);
+  color: var(--color-text);
+  background: var(--color-surface-subtle);
+  font-size: var(--primitive-font-size-2xl);
+  line-height: var(--primitive-line-height-tight);
+  cursor: pointer;
+}
+
+.dialog__panel [data-dialog-close]:hover {
+  border-color: var(--color-primary-strong);
+  color: var(--color-primary-strong);
+  background: var(--color-surface-brand-soft);
+}
+
+.dialog__panel [data-dialog-close]:active {
+  color: var(--color-primary-active);
+  transform: scale(var(--primitive-scale-pressed));
+}
+
+.dialog__panel h2 {
+  padding-inline-end: var(--space-12);
+}
+
+.dialog__panel .button {
+  inline-size: 100%;
+  margin-block-start: var(--space-2);
+}
+
+.cookie-banner {
+  position: fixed;
+  z-index: var(--z-cookie);
+  inset-inline: var(--container-gutter);
+  inset-block-end: var(--container-gutter);
+  inline-size: auto;
+  max-inline-size: var(--cookie-max-inline-size);
+  margin-inline-start: auto;
+  padding: var(--card-padding);
+  border: var(--border-width) solid var(--color-border-strong);
+  border-radius: var(--radius-md);
+  background: var(--color-surface-raised);
+  box-shadow: var(--shadow-card-hover);
+}
+
+.cookie-banner p {
+  margin-block-end: var(--space-4);
+}
+
+.cookie-banner button {
+  min-block-size: var(--control-block-size);
+  margin-block-start: var(--space-2);
+  margin-inline-end: var(--space-2);
+  padding: var(--space-3) var(--space-4);
+  border: var(--border-width) solid var(--button-border);
+  border-radius: var(--button-radius);
+  color: var(--button-secondary-text);
+  background: var(--button-secondary-background);
+  font-weight: var(--text-label-weight);
+  cursor: pointer;
+}
+
+.cookie-banner button:hover {
+  color: var(--color-primary-active);
+  background: var(--button-secondary-background-hover);
+}
+
+.cookie-banner button:active {
+  background: var(--color-surface-warm);
+  transform: translateY(var(--space-0-5));
+}
+
+.cookie-banner button:disabled {
+  cursor: not-allowed;
+}
+
+.vision-mode {
+  font-size: var(--vision-scale);
+}
+
+.vision-mode body {
+  color: var(--color-text);
+  background: var(--color-surface-page);
+}
+
+.vision-mode a {
+  text-decoration: underline;
+  text-decoration-thickness: var(--border-width-strong);
+}
+
+.vision-mode .card,
+.vision-mode .notice,
+.vision-mode .dialog__panel,
+.vision-mode .cookie-banner {
+  border-width: var(--border-width-strong);
+  box-shadow: none;
+}
+
+.vision-mode :focus-visible {
+  outline-width: calc(var(--focus-ring-width) + var(--border-width));
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: var(--motion-duration-instant) !important;
+    animation-iteration-count: var(--motion-iteration-once) !important;
+    transition-delay: var(--motion-delay-none) !important;
+    transition-duration: var(--motion-duration-instant) !important;
+  }
+}
