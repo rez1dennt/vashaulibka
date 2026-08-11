@@ -188,7 +188,7 @@ describe('design system contract', () => {
     const css = `${readStyle('layout')}\n${readStyle('pages')}`;
 
     expect(css).toMatch(/\.page-hero[^{]*{[^}]*(min-block-size|aspect-ratio):/s);
-    for (const name of ['home', 'about', 'services', 'specialists', 'reviews', 'vacancies', 'contacts']) {
+    for (const name of ['home', 'about', 'services', 'specialists', 'prices', 'reviews', 'vacancies', 'contacts']) {
       expect(css).toContain(`hero-${name}.avif`);
       expect(css).toContain(`hero-${name}.webp`);
     }
