@@ -12,6 +12,8 @@ describe('premium light visual contract', () => {
     expect(tokens).toMatch(/--text-h2-size:\s*clamp\(1\.75rem,\s*2\.6vw,\s*2\.35rem\)/);
     expect(tokens).toMatch(/--text-h3-size:\s*clamp\(1\.125rem,\s*1\.7vw,\s*1\.35rem\)/);
     expect(tokens).toMatch(/--primitive-container-max:\s*77\.5rem/);
+    expect(tokens).toMatch(/--text-body-weight:\s*var\(--primitive-font-weight-regular\)/);
+    expect(tokens).toMatch(/--hero-image:\s*none/);
   });
 
   it('implements three desktop header bands without the old cramped row', () => {
@@ -19,6 +21,11 @@ describe('premium light visual contract', () => {
     expect(layout).toMatch(/\.brand-row\s*{/);
     expect(layout).toMatch(/\.nav-row\s*{/);
     expect(layout).toMatch(/@media\s*\(min-width:\s*75rem\)[\s\S]*?\.nav-row/);
+    expect(layout).toMatch(/@media\s*\(min-width:\s*75rem\)[\s\S]*?a\.nav-appointment,\s*\.menu-backdrop,\s*\.menu-close\s*{[^}]*display:\s*none/s);
+  });
+
+  it('shows only the in-panel close control while the mobile menu is open', () => {
+    expect(layout).toMatch(/\.menu-open\s+\.menu-toggle\s*{[^}]*visibility:\s*hidden[^}]*pointer-events:\s*none/s);
   });
 
   it('styles all rich homepage sections and local icons', () => {

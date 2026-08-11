@@ -223,6 +223,12 @@ body {
   transform: rotate(calc(var(--menu-toggle-angle) * -1));
 }
 
+.menu-open .menu-toggle {
+  visibility: hidden;
+  opacity: 0;
+  pointer-events: none;
+}
+
 .menu-backdrop {
   position: fixed;
   z-index: var(--z-menu-backdrop);
@@ -549,7 +555,7 @@ body {
     min-inline-size: 11rem;
   }
 
-  .nav-appointment,
+  a.nav-appointment,
   .menu-backdrop,
   .menu-close {
     display: none;

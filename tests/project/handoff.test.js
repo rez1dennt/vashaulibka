@@ -23,4 +23,15 @@ describe('release handoff contract', () => {
     expect(checklist).toMatch(/\[ \].*серверн.*журнал.*IP-адрес.*срок.*хранен/i);
     expect(checklist).not.toContain('медициского');
   });
+
+  it('documents the rich homepage and its local visual sources', () => {
+    const readme = read('README.md');
+
+    expect(readme).toContain('## Главная страница и визуальные материалы');
+    expect(readme).toContain('`src/content/home-page.js`');
+    expect(readme).toContain('`src/templates/site-chrome.js`');
+    expect(readme).toContain('`src/templates/icons.js`');
+    expect(readme).toContain('`public/assets/documents/`');
+    expect(readme).toContain('«Визуализация интерьера»');
+  });
 });

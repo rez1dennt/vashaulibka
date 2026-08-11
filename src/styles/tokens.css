@@ -137,6 +137,7 @@
   --font-body: var(--primitive-font-sans);
   --font-heading: var(--primitive-font-serif);
   --text-body-size: 0.9375rem;
+  --text-body-weight: var(--primitive-font-weight-regular);
   --text-body-line-height: var(--primitive-line-height-body);
   --text-small-size: var(--primitive-font-size-sm);
   --text-caption-size: var(--primitive-font-size-xs);
@@ -217,6 +218,7 @@
   --z-skip-link: var(--primitive-z-skip-link);
 
   /* Component aliases */
+  --hero-image: none;
   --button-primary-background: var(--color-primary-strong);
   --button-primary-background-hover: var(--color-primary-active);
   --button-primary-background-active: var(--color-primary-active);
