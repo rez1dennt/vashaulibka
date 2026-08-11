@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+import { PAGES } from '../../src/content/page-manifest.js';
 import { renderPage } from '../../src/templates/render-page.js';
 
 const page = {
@@ -25,5 +26,13 @@ describe('renderPage', () => {
   it('adds robots noindex only for controlled incomplete pages', () => {
     expect(renderPage({ ...page, noindex: true })).toContain('content="noindex, follow"');
     expect(renderPage(page)).not.toContain('content="noindex, follow"');
+  });
+
+  it('states the verified legal-entity registration date on the home page', () => {
+    const home = PAGES.find((item) => item.file === 'index.html');
+    const html = renderPage(home);
+
+    expect(html).toContain('Общество с ограниченной ответственностью «Стоматология Ваша улыбка» зарегистрировано 17 февраля 2012 года.');
+    expect(html).not.toContain('работает в Белгороде с 2012 года');
   });
 });

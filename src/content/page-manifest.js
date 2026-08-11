@@ -1,3 +1,5 @@
+import { CLINIC } from '../data/clinic.js';
+
 export const PAGES = [
   {
     file: 'index.html',
@@ -6,7 +8,7 @@ export const PAGES = [
     heading: 'Стоматология Ваша улыбка',
     lead: 'Забота о здоровье зубов в пределах действующей медицинской лицензии.',
     heroImage: 'home',
-    body: '<section class="section"><div class="container"><h2>О клинике</h2><p>Клиника работает в Белгороде с 2012 года.</p></div></section>',
+    body: `<section class="section"><div class="container"><h2>О клинике</h2><p>${CLINIC.legalName} зарегистрировано ${CLINIC.registeredSince}.</p></div></section>`,
     noindex: false,
   },
   {
