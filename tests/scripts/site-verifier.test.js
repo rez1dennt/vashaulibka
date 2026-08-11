@@ -1,0 +1,393 @@
+import {
+  mkdirSync,
+  mkdtempSync,
+  readFileSync,
+  writeFileSync,
+} from 'node:fs';
+import { tmpdir } from 'node:os';
+import { dirname, join } from 'node:path';
+import { spawnSync } from 'node:child_process';
+import { describe, expect, it } from 'vitest';
+import { generateSeo } from '../../scripts/generate-seo.mjs';
+import { verifyDirectory } from '../../scripts/verify-site.mjs';
+
+const INDEXABLE_PAGE = Object.freeze({ file: 'index.html', noindex: false });
+const EXPLICIT_ORIGIN = 'https://provided-domain.ru';
+
+const makeDirectory = () => mkdtempSync(join(tmpdir(), 'clinic-site-'));
+
+const write = (directory, file, contents = '') => {
+  const target = join(directory, file);
+  mkdirSync(dirname(target), { recursive: true });
+  writeFileSync(target, contents, 'utf8');
+};
+
+const pageHtml = ({
+  title = 'Главная',
+  description = 'Описание главной страницы',
+  h1 = '<h1>Главная</h1>',
+  head = '',
+  body = '',
+  robots = 'index, follow',
+} = {}) => `<!doctype html>
+<html lang="ru">
+  <head>
+    <title>${title}</title>
+    <meta name="description" content="${description}">
+    <meta name="robots" content="${robots}">
+    ${head}
+  </head>
+  <body>
+    <a class="skip-link" href="#main-content">К содержимому</a>
+    <main id="main-content">${h1}${body}</main>
+  </body>
+</html>`;
+
+const writeSeo = (directory, pages, origin) => {
+  const seo = generateSeo(pages, { origin });
+  write(directory, 'robots.txt', seo.robots);
+  write(directory, 'sitemap.xml', seo.sitemap);
+};
+
+const writeValidFixture = ({
+  pages = [INDEXABLE_PAGE],
+  origin,
+  htmlByFile = {},
+} = {}) => {
+  const directory = makeDirectory();
+  for (const [index, page] of pages.entries()) {
+    write(directory, page.file, htmlByFile[page.file] ?? pageHtml({
+      title: `Страница ${index + 1}`,
+      description: `Описание страницы ${index + 1}`,
+      h1: `<h1>Страница ${index + 1}</h1>`,
+      robots: page.noindex ? 'noindex, follow' : 'index, follow',
+    }));
+  }
+  writeSeo(directory, pages, origin);
+  return directory;
+};
+
+describe('SEO output generation', () => {
+  it('keeps the sitemap valid but empty when no origin is supplied', () => {
+    const seo = generateSeo([
+      INDEXABLE_PAGE,
+      { file: 'prices.html', noindex: true },
+    ]);
+
+    expect(seo.sitemap).toContain('<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">');
+    expect(seo.sitemap).not.toContain('<url>');
+    expect(seo.robots).not.toMatch(/^Sitemap:/m);
+  });
+
+  it('disallows every noindex page even when the origin is absent', () => {
+    const seo = generateSeo([
+      INDEXABLE_PAGE,
+      { file: 'prices.html', noindex: true },
+      { file: 'specialists.html', noindex: true },
+    ]);
+
+    expect(seo.robots).toContain('Disallow: /prices.html');
+    expect(seo.robots).toContain('Disallow: /specialists.html');
+  });
+
+  it('emits absolute indexable-only URLs for an explicit HTTP(S) origin', () => {
+    const seo = generateSeo([
+      INDEXABLE_PAGE,
+      { file: 'services.html', noindex: false },
+      { file: 'prices.html', noindex: true },
+    ], { origin: EXPLICIT_ORIGIN });
+
+    expect(seo.sitemap).toContain(`<loc>${EXPLICIT_ORIGIN}/</loc>`);
+    expect(seo.sitemap).toContain(`<loc>${EXPLICIT_ORIGIN}/services.html</loc>`);
+    expect(seo.sitemap).not.toContain('prices.html');
+    expect(seo.robots).toContain(`Sitemap: ${EXPLICIT_ORIGIN}/sitemap.xml`);
+  });
+
+  it('XML-escapes sitemap locations', () => {
+    const seo = generateSeo([
+      { file: 'care&help.html', noindex: false },
+    ], { origin: EXPLICIT_ORIGIN });
+
+    expect(seo.sitemap).toContain(`<loc>${EXPLICIT_ORIGIN}/care&amp;help.html</loc>`);
+  });
+
+  it.each([
+    'ftp://clinic.test',
+    'https://clinic.test/path',
+    'not-a-url',
+    'http://localhost:4173',
+    'https://clinic.invalid',
+    'https://example.com',
+  ])('rejects an invalid explicit origin: %s', (origin) => {
+    expect(() => generateSeo([INDEXABLE_PAGE], { origin })).toThrow(/origin/i);
+  });
+});
+
+describe('production site verifier', () => {
+  it('rejects a directory without generated HTML pages', () => {
+    const directory = makeDirectory();
+    writeSeo(directory, []);
+
+    const result = verifyDirectory(directory, { pages: [] });
+
+    expect(result.errors).toEqual(expect.arrayContaining([
+      expect.objectContaining({ code: 'html.missing' }),
+    ]));
+  });
+
+  it('requires exactly one non-empty h1', () => {
+    const directory = writeValidFixture({
+      htmlByFile: { 'index.html': pageHtml({ h1: '<h1> </h1><h1>Второй</h1>' }) },
+    });
+
+    const result = verifyDirectory(directory, { pages: [INDEXABLE_PAGE] });
+
+    expect(result.errors).toEqual(expect.arrayContaining([
+      expect.objectContaining({ code: 'html.h1', file: 'index.html' }),
+    ]));
+  });
+
+  it('requires Russian language, one main, and a working same-page skip link', () => {
+    const directory = writeValidFixture({
+      htmlByFile: {
+        'index.html': pageHtml()
+          .replace('lang="ru"', 'lang="en"')
+          .replace('href="#main-content"', 'href="#missing"')
+          .replace('</main>', '</main><main></main>'),
+      },
+    });
+
+    const result = verifyDirectory(directory, { pages: [INDEXABLE_PAGE] });
+    const codes = result.errors.map((error) => error.code);
+
+    expect(codes).toContain('html.lang');
+    expect(codes).toContain('html.main');
+    expect(codes).toContain('html.skip-link');
+  });
+
+  it('requires non-empty unique titles and descriptions on indexable pages', () => {
+    const pages = [INDEXABLE_PAGE, { file: 'about.html', noindex: false }];
+    const duplicated = pageHtml({ title: 'Одинаково', description: 'Одинаковое описание' });
+    const directory = writeValidFixture({
+      pages,
+      htmlByFile: {
+        'index.html': duplicated,
+        'about.html': duplicated.replace('<h1>Главная</h1>', '<h1>О клинике</h1>'),
+      },
+    });
+
+    const result = verifyDirectory(directory, { pages });
+    const codes = result.errors.map((error) => error.code);
+
+    expect(codes).toContain('seo.title.duplicate');
+    expect(codes).toContain('seo.description.duplicate');
+  });
+
+  it('resolves root-relative pages, query strings, and cross-page fragments', () => {
+    const pages = [INDEXABLE_PAGE, { file: 'about.html', noindex: false }];
+    const directory = writeValidFixture({
+      pages,
+      htmlByFile: {
+        'index.html': pageHtml({ body: '<a href="/about.html?from=home#team">Команда</a>' }),
+        'about.html': pageHtml({
+          title: 'О клинике',
+          description: 'Описание страницы о клинике',
+          h1: '<h1>О клинике</h1>',
+          body: '<section id="team">Команда</section>',
+        }),
+      },
+    });
+
+    expect(verifyDirectory(directory, { pages }).errors).toEqual([]);
+  });
+
+  it('reports broken local page links and missing fragment targets', () => {
+    const directory = writeValidFixture({
+      htmlByFile: {
+        'index.html': pageHtml({ body: '<a href="missing.html">Нет страницы</a><a href="#absent">Нет якоря</a>' }),
+      },
+    });
+
+    const result = verifyDirectory(directory, { pages: [INDEXABLE_PAGE] });
+
+    expect(result.errors).toEqual(expect.arrayContaining([
+      expect.objectContaining({ code: 'link.missing' }),
+      expect.objectContaining({ code: 'link.fragment' }),
+    ]));
+  });
+
+  it('rejects local references that escape the verified directory', () => {
+    const directory = writeValidFixture({
+      htmlByFile: {
+        'index.html': pageHtml({ body: '<a href="/%2e%2e%2foutside.pdf">Вне сборки</a>' }),
+      },
+    });
+    writeFileSync(join(directory, '..', 'outside.pdf'), 'outside', 'utf8');
+
+    const result = verifyDirectory(directory, { pages: [INDEXABLE_PAGE] });
+
+    expect(result.errors).toEqual(expect.arrayContaining([
+      expect.objectContaining({ code: 'link.outside' }),
+    ]));
+  });
+
+  it('ignores outbound anchors, telephone, email, data, and valid same-page fragments', () => {
+    const directory = writeValidFixture({
+      htmlByFile: {
+        'index.html': pageHtml({ body: '<span id="details"></span><a href="#details">Детали</a><a href="https://minzdrav.gov.ru/">Минздрав</a><a href="tel:+74722215356">Телефон</a><a href="mailto:test@example.test">Почта</a><a href="data:text/plain,ok">Данные</a>' }),
+      },
+    });
+
+    expect(verifyDirectory(directory, { pages: [INDEXABLE_PAGE] }).errors).toEqual([]);
+  });
+
+  it('resolves local images, srcset, stylesheets, scripts, favicon, PDFs, and downloads', () => {
+    const directory = writeValidFixture({
+      htmlByFile: {
+        'index.html': pageHtml({
+          head: '<link rel="stylesheet" href="/assets/site.css"><link rel="icon" href="assets/favicon.svg"><script src="assets/app.js"></script>',
+          body: '<picture><source srcset="assets/photo.avif 1x, assets/photo@2x.avif 2x"><img src="assets/photo.webp" alt=""></picture><a href="/documents/license.pdf" download>Лицензия</a>',
+        }),
+      },
+    });
+    for (const file of [
+      'assets/site.css',
+      'assets/favicon.svg',
+      'assets/app.js',
+      'assets/photo.avif',
+      'assets/photo@2x.avif',
+      'assets/photo.webp',
+      'documents/license.pdf',
+    ]) write(directory, file);
+
+    expect(verifyDirectory(directory, { pages: [INDEXABLE_PAGE] }).errors).toEqual([]);
+  });
+
+  it('reports missing local active resources', () => {
+    const directory = writeValidFixture({
+      htmlByFile: {
+        'index.html': pageHtml({
+          head: '<link rel="stylesheet" href="missing.css"><script src="missing.js"></script>',
+          body: '<img src="missing.webp" alt="">',
+        }),
+      },
+    });
+
+    const errors = verifyDirectory(directory, { pages: [INDEXABLE_PAGE] }).errors;
+
+    expect(errors.filter((error) => error.code === 'resource.missing')).toHaveLength(3);
+  });
+
+  it('rejects external active resources but allows ordinary outbound anchors', () => {
+    const directory = writeValidFixture({
+      htmlByFile: {
+        'index.html': pageHtml({
+          head: '<link rel="stylesheet" href="https://cdn.example.test/site.css"><link rel="preload" as="font" href="//fonts.example.test/font.woff2"><script src="https://cdn.example.test/app.js"></script>',
+          body: '<img src="https://cdn.example.test/photo.webp" alt=""><iframe src="https://maps.example.test/"></iframe><a href="https://minzdrav.gov.ru/">Разрешённая ссылка</a>',
+        }),
+      },
+    });
+
+    const errors = verifyDirectory(directory, { pages: [INDEXABLE_PAGE] }).errors;
+
+    expect(errors.filter((error) => error.code === 'resource.external')).toHaveLength(5);
+  });
+
+  it('rejects remote imports and URLs inside local stylesheets', () => {
+    const directory = writeValidFixture({
+      htmlByFile: {
+        'index.html': pageHtml({ head: '<link rel="stylesheet" href="assets/site.css">' }),
+      },
+    });
+    write(directory, 'assets/site.css', '@import "https://fonts.example.test/font.css"; .hero { background: url(//cdn.example.test/photo.webp); }');
+
+    const errors = verifyDirectory(directory, { pages: [INDEXABLE_PAGE] }).errors;
+
+    expect(errors.filter((error) => error.code === 'resource.external')).toHaveLength(2);
+  });
+
+  it('rejects remote resources in style blocks and style attributes', () => {
+    const directory = writeValidFixture({
+      htmlByFile: {
+        'index.html': pageHtml({
+          head: '<style>.hero { background: url(https://cdn.example.test/hero.webp); }</style>',
+          body: '<div style="background-image: url(//cdn.example.test/card.webp)"></div>',
+        }),
+      },
+    });
+
+    const errors = verifyDirectory(directory, { pages: [INDEXABLE_PAGE] }).errors;
+
+    expect(errors.filter((error) => error.code === 'resource.external')).toHaveLength(2);
+  });
+
+  it('parses every JSON-LD block', () => {
+    const directory = writeValidFixture({
+      htmlByFile: {
+        'index.html': pageHtml({ head: '<script type="application/ld+json">{"broken":}</script>' }),
+      },
+    });
+
+    const result = verifyDirectory(directory, { pages: [INDEXABLE_PAGE] });
+
+    expect(result.errors).toEqual(expect.arrayContaining([
+      expect.objectContaining({ code: 'jsonld.invalid', file: 'index.html' }),
+    ]));
+  });
+
+  it('enforces manifest noindex state in both directions', () => {
+    const pages = [
+      INDEXABLE_PAGE,
+      { file: 'prices.html', noindex: true },
+    ];
+    const directory = writeValidFixture({
+      pages,
+      htmlByFile: {
+        'index.html': pageHtml({ robots: 'noindex, follow' }),
+        'prices.html': pageHtml({
+          title: 'Цены',
+          description: 'Описание страницы цен',
+          h1: '<h1>Цены</h1>',
+          robots: 'index, follow',
+        }),
+      },
+    });
+
+    const errors = verifyDirectory(directory, { pages }).errors;
+
+    expect(errors).toEqual(expect.arrayContaining([
+      expect.objectContaining({ code: 'seo.noindex.unexpected', file: 'index.html' }),
+      expect.objectContaining({ code: 'seo.noindex.missing', file: 'prices.html' }),
+    ]));
+  });
+
+  it('requires robots and sitemap to match domain-unset mode', () => {
+    const directory = writeValidFixture();
+    write(directory, 'robots.txt', `${readFileSync(join(directory, 'robots.txt'), 'utf8')}Sitemap: https://clinic.test/sitemap.xml\n`);
+    write(directory, 'sitemap.xml', '<?xml version="1.0"?><urlset><url><loc>/</loc></url></urlset>');
+
+    const errors = verifyDirectory(directory, { pages: [INDEXABLE_PAGE] }).errors;
+
+    expect(errors).toEqual(expect.arrayContaining([
+      expect.objectContaining({ code: 'seo.robots.inconsistent' }),
+      expect.objectContaining({ code: 'seo.sitemap.inconsistent' }),
+    ]));
+  });
+
+  it('accepts origin-aware robots and an absolute populated sitemap', () => {
+    const origin = EXPLICIT_ORIGIN;
+    const directory = writeValidFixture({ origin });
+
+    expect(verifyDirectory(directory, { pages: [INDEXABLE_PAGE], origin }).errors).toEqual([]);
+  });
+
+  it('sets CLI exit code 1 when verification fails', () => {
+    const directory = makeDirectory();
+    const script = join(import.meta.dirname, '..', '..', 'scripts', 'verify-site.mjs');
+
+    const result = spawnSync(process.execPath, [script, directory], { encoding: 'utf8' });
+
+    expect(result.status).toBe(1);
+    expect(result.stderr).toContain('html.missing');
+  });
+});

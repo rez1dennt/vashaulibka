@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+Disallow: /specialists.html
+Disallow: /prices.html
