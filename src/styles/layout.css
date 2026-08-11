@@ -220,7 +220,12 @@ body.is-locked {
 }
 
 .page-hero .container {
+  min-inline-size: 0;
   padding-block: var(--space-16);
+}
+
+.page-hero h1 {
+  overflow-wrap: anywhere;
 }
 
 .page-hero nav[aria-label="Хлебные крошки"] {

@@ -241,3 +241,62 @@
   font-style: normal;
   font-size: var(--text-small-size);
 }
+
+.patient-links a {
+  min-block-size: var(--control-block-size);
+  color: var(--color-text);
+  font-weight: var(--text-label-weight);
+  text-decoration: none;
+}
+
+.benefit-list {
+  display: grid;
+  gap: var(--space-2);
+  padding-inline-start: var(--space-6);
+}
+
+.benefit-list li {
+  max-inline-size: none;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding-block: var(--space-3);
+  border-block-end: var(--border-width) solid var(--color-border);
+}
+
+.table-scroll {
+  max-inline-size: 100%;
+  overflow-x: auto;
+  overscroll-behavior-inline: contain;
+  border: var(--border-width) solid var(--color-border);
+  border-radius: var(--radius-sm);
+}
+
+.table-scroll table {
+  inline-size: 100%;
+  min-inline-size: 44rem;
+  border-collapse: collapse;
+  background: var(--color-surface-raised);
+}
+
+.table-scroll :where(th, td) {
+  padding: var(--space-3) var(--space-4);
+  border-block-end: var(--border-width) solid var(--color-border);
+  text-align: start;
+  vertical-align: top;
+}
+
+.table-scroll thead th {
+  color: var(--color-text);
+  background: var(--color-surface-brand-soft);
+}
+
+.table-scroll tbody th {
+  font-weight: var(--text-body-weight);
+}
+
+.legal-qr img {
+  inline-size: min(100%, 20rem);
+  block-size: auto;
+}

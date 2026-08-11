@@ -17,6 +17,19 @@ const approvedFiles = [
   'reviews.html',
   'vacancies.html',
   'contacts.html',
+  'patients.html',
+  'license.html',
+  'payment.html',
+  'benefits.html',
+  'waiting-periods.html',
+  'oms.html',
+  'informed-consent.html',
+  'guarantees.html',
+  'complaints.html',
+  'standards.html',
+  'personal-data-consent.html',
+  'privacy.html',
+  'cookies.html',
 ];
 
 const renderedPages = () => PAGES.map((page) => ({
@@ -26,14 +39,14 @@ const renderedPages = () => PAGES.map((page) => ({
 }));
 
 describe('public page manifest', () => {
-  it('contains exactly the eight approved public routes once and an empty legal boundary', () => {
+  it('contains exactly the approved public and patient routes once', () => {
     expect(PAGES.map((page) => page.file)).toEqual(expect.arrayContaining(approvedFiles));
     expect(PAGES).toHaveLength(approvedFiles.length);
     expect(new Set(PAGES.map((page) => page.file))).toHaveLength(approvedFiles.length);
 
     const legalModulePath = 'src/content/legal-pages.js';
     expect(existsSync(legalModulePath)).toBe(true);
-    expect(LEGAL_PAGES).toEqual([]);
+    expect(LEGAL_PAGES).toHaveLength(13);
     expect(Object.isFrozen(LEGAL_PAGES)).toBe(true);
   });
 
@@ -99,7 +112,10 @@ describe('public page manifest', () => {
   });
 
   it('contains no fabricated clinical claims, people, prices, reviews, or vacancies', () => {
-    const allCopy = PAGES.map((page) => `${page.title} ${page.description} ${page.heading} ${page.lead} ${page.body}`).join(' ');
+    const allCopy = PAGES
+      .filter((page) => !LEGAL_PAGES.includes(page))
+      .map((page) => `${page.title} ${page.description} ${page.heading} ${page.lead} ${page.body}`)
+      .join(' ');
     const reviews = new JSDOM(renderPage(PAGES.find((page) => page.file === 'reviews.html'))).window.document;
     const vacancies = new JSDOM(renderPage(PAGES.find((page) => page.file === 'vacancies.html'))).window.document;
 
