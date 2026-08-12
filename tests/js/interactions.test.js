@@ -170,11 +170,16 @@ describe('progressive interactions', () => {
     const original = globalThis.localStorage;
     Object.defineProperty(globalThis, 'localStorage', {
       configurable: true,
-      value: { getItem: () => { throw new Error('blocked'); }, setItem: () => { throw new Error('blocked'); } },
+      value: {
+        getItem: () => { throw new Error('blocked'); },
+        setItem: () => { throw new Error('blocked'); },
+        removeItem: () => { throw new Error('blocked'); },
+      },
     });
 
     expect(safeStorage.get('setting')).toBeNull();
     expect(safeStorage.set('setting', 'value')).toBe(false);
+    expect(safeStorage.remove('setting')).toBe(false);
 
     Object.defineProperty(globalThis, 'localStorage', { configurable: true, value: original });
   });

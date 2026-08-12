@@ -14,4 +14,12 @@ export const safeStorage = {
       return false;
     }
   },
+  remove(key) {
+    try {
+      localStorage.removeItem(key);
+      return true;
+    } catch {
+      return false;
+    }
+  },
 };
