@@ -78,6 +78,26 @@ describe('design system contract', () => {
     expect(contrastRatio(color('--color-border-strong'), color('--color-surface-page'))).toBeGreaterThanOrEqual(3);
   });
 
+  it('keeps compact accessibility primitives in tokens and exposes semantic component aliases', () => {
+    const css = readStyle('tokens');
+    const tokens = tokenValues(css);
+
+    for (const primitive of [
+      '--primitive-size-accessibility-control',
+      '--primitive-size-accessibility-toolbar-group',
+      '--primitive-size-accessibility-dialog',
+      '--primitive-size-accessibility-dialog-inset',
+      '--primitive-z-accessibility-dialog',
+    ]) {
+      expect(tokens.has(primitive)).toBe(true);
+    }
+    expect(resolveColor(tokens, '--accessibility-control-min-block-size')).toBe('44px');
+    expect(Number(resolveColor(tokens, '--accessibility-dialog-z-index'))).toBeGreaterThan(Number(resolveColor(tokens, '--z-cookie')));
+    expect(css).toMatch(/--accessibility-toolbar-background:\s*var\(--color-surface-brand-soft\)/);
+    expect(css).toMatch(/--accessibility-segment-selected-background:\s*var\(--button-primary-background\)/);
+    expect(css).toMatch(/--accessibility-segment-unselected-background:\s*var\(--button-secondary-background\)/);
+  });
+
   it('keeps focus and hidden states accessible', () => {
     const css = `${readStyle('base')}\n${readStyle('components')}`;
 
