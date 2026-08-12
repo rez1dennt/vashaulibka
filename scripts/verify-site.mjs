@@ -254,6 +254,17 @@ export function verifyDirectory(directory, { pages = PAGES, origin } = {}) {
       add('accessibility.panel.count', 'expected exactly one compact accessibility panel and toolbar', { file });
     }
 
+    const speakers = document.querySelectorAll('[data-speech-announcements]');
+    const speakerDescriptionId = speakers[0]?.getAttribute('aria-describedby');
+    const speakerAvailability = speakerDescriptionId ? document.getElementById(speakerDescriptionId) : null;
+    const validSpeechRelationship = speakers.length === 1
+      && speakerAvailability?.matches('[data-speech-availability]')
+      && !speakerAvailability.hidden
+      && speakerAvailability.textContent.trim() === 'Локальный русский голос недоступен в этом браузере';
+    if (!validSpeechRelationship) {
+      add('accessibility.speech.relationship', 'speech control must reference its visible local-voice availability message', { file });
+    }
+
     const dialogs = document.querySelectorAll('#accessibility-settings-dialog');
     if (dialogs.length !== 1) {
       add('accessibility.dialog.count', 'expected exactly one advanced accessibility dialog', { file });

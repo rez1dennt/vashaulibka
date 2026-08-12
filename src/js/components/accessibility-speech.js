@@ -21,6 +21,7 @@ export function createAccessibilitySpeechController({
   let previousVoicesChanged = null;
 
   const speaker = root?.querySelector?.('[data-speech-announcements]');
+  const availability = root?.querySelector?.('[data-speech-availability]');
   const status = root?.querySelector?.('[data-accessibility-status]');
   const view = eventWindow(root);
 
@@ -40,8 +41,11 @@ export function createAccessibilitySpeechController({
 
     speaker.disabled = !voice;
     speaker.setAttribute('aria-pressed', String(Boolean(voice && enabled)));
-    if (voice) speaker.removeAttribute('aria-label');
-    else speaker.setAttribute('aria-label', `Голосовые подтверждения: ${UNAVAILABLE_MESSAGE}`);
+    speaker.removeAttribute('aria-label');
+    if (availability) {
+      availability.hidden = Boolean(voice);
+      availability.textContent = voice ? '' : UNAVAILABLE_MESSAGE;
+    }
   }
 
   function stop() {

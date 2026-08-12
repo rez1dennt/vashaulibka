@@ -59,6 +59,7 @@ describe('accessibility panel template', () => {
     const themes = [...(panel?.querySelectorAll('button[data-accessibility-setting="theme"]') ?? [])];
     const images = [...(panel?.querySelectorAll('button[data-accessibility-setting="images"]') ?? [])];
     const speech = panel?.querySelector('button[data-speech-announcements]');
+    const speechAvailability = panel?.querySelector('#accessibility-speech-availability[data-speech-availability]');
     const advanced = panel?.querySelector('button[data-accessibility-advanced-open]');
     const standard = panel?.querySelector('button[data-accessibility-standard]');
     const collapse = panel?.querySelector('button[data-accessibility-close]');
@@ -88,6 +89,10 @@ describe('accessibility panel template', () => {
     expect(speech?.getAttribute('aria-pressed')).toBe('false');
     expect(speech?.hasAttribute('data-accessibility-setting')).toBe(false);
     expect(speech?.textContent.trim()).toBe('Голосовые подтверждения');
+    expect(speech?.getAttribute('aria-describedby')).toBe('accessibility-speech-availability');
+    expect(speechAvailability?.hidden).toBe(false);
+    expect(speechAvailability?.textContent).toBe('Локальный русский голос недоступен в этом браузере');
+    expect(speechAvailability?.closest('.accessibility-toolbar__speech')).not.toBeNull();
     expect(advanced?.getAttribute('aria-controls')).toBe('accessibility-settings-dialog');
     expect(advanced?.getAttribute('aria-expanded')).toBe('false');
     expect(advanced?.textContent.trim()).toBe('Расширенные настройки');

@@ -4,7 +4,7 @@ Date: 12 August 2026
 
 Scope: Compact Accessibility Tasks 1–7, including the Task 7 live Browser follow-up.
 
-Build under test: production output from Task 7 commit `424a7bd926c05d3c9feb180eb931844275612cc7` plus the Browser-demonstrated fixes and regressions recorded below.
+Build under test: production output through Task 7 Browser-fix commit `d6d513178c5634e4133b0a2c623384cbe49d6aeb` plus the final speech-unavailable review correction recorded below.
 
 ## Result and evidence boundary
 
@@ -69,6 +69,8 @@ The in-app Browser exposed a qualifying local Russian voice, so the speech butto
 
 Unit tests pass for qualifying and unavailable local-voice paths, exact short phrases, hydration and panel-opening silence, latest-only cancellation, pagehide/beforeunload/ordinary/reset cancellation, reset's final confirmation, and absence of remote fallback. No third-party TTS resource or page-reading control was added.
 
+The final review found that the unavailable path communicated only through a disabled state and dynamic `aria-label`; it did not render the visible nearby message required by the approved specification. A strict RED run produced 6 failures across the template, speech lifecycle, compact CSS, all-page conformance, and verifier suites. The speaker now permanently references `#accessibility-speech-availability` with `aria-describedby`. Generated markup initially shows the exact message `Локальный русский голос недоступен в этом браузере`; a qualifying local Russian voice clears and hides it, and a subsequent `voiceschanged` loss restores and shows it. The compact notice uses intrinsic sizing and anywhere wrapping, including at 200% and maximum spacing. The focused GREEN run passes 120/120 across 5 files, and the verifier enforces the visible initial relationship on every generated page. A live available-voice rerun confirmed `disabled=false`, the unchanged `aria-describedby` target, no overriding `aria-label`, and an existing hidden availability element with empty text.
+
 ## Automated production gate
 
 Final verification after the Browser fixes:
@@ -82,9 +84,9 @@ pnpm verify:site
 git diff --check
 ```
 
-The fresh full test run passes 36 files and 407/407 tests. Both generation runs are stable. The production build transforms 43 modules and emits all 21 HTML entries. The site verifier reports `Verified 21 HTML pages`. The diff whitespace check passes.
+The fresh full test run passes 36 files and 410/410 tests. Both generation runs are stable. The production build transforms 43 modules and emits all 21 HTML entries. The site verifier reports `Verified 21 HTML pages`. The diff whitespace check passes.
 
-One earlier full-suite run under transient load timed out in the unrelated public-page visualization-label test at its 5-second limit. Its immediate isolated rerun passed 13/13 in 2.18 seconds, and the fresh final full run passed 407/407; no production change was made for the timing event.
+One earlier full-suite run under transient load timed out in the unrelated public-page visualization-label test at its 5-second limit. Its immediate isolated rerun passed 13/13 in 2.18 seconds, and subsequent fresh full runs, including the final 410/410 run, were fully green; no production change was made for the timing event.
 
 The generated `dist` scan finds no Lidrekon, ResponsiveVoice, Yandex VoiceTech, jQuery, `data-speech-read`, `data-speech-pause`, `data-speech-stop`, `Читать страницу`, or `Озвучивание страницы` match.
 
@@ -101,4 +103,4 @@ The automated suite calculates actual consumer chains with 4.5:1 text and 3:1 es
 
 ## Remaining limitations
 
-The Browser could not capture audible speech, so only voice availability, enabled state, exact phrase/state, error absence, and no-network behavior were observed live. The live nested appointment/accessibility modal stack was not recreated during the resumed Browser session; its production-shaped automated regression passed. These limitations do not justify a public WCAG or ГОСТ certification claim.
+The Browser could not capture audible speech, so only voice availability, enabled state, exact phrase/state, error absence, and no-network behavior were observed live. The unavailable-to-available-to-unavailable message lifecycle is production-shaped automated evidence; the installed Browser voice prevented inducing the unavailable branch live. The live nested appointment/accessibility modal stack was not recreated during the resumed Browser session; its production-shaped automated regression passed. These limitations do not justify a public WCAG or ГОСТ certification claim.

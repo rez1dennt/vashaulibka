@@ -38,13 +38,15 @@ function createSynth(voices = []) {
 function renderFixture() {
   document.body.innerHTML = `
     <section data-accessibility-panel>
-      <button type="button" data-speech-announcements aria-pressed="false" disabled>Голосовые подтверждения</button>
+      <button type="button" data-speech-announcements aria-describedby="accessibility-speech-availability" aria-pressed="false" disabled>Голосовые подтверждения</button>
+      <p id="accessibility-speech-availability" data-speech-availability>Локальный русский голос недоступен в этом браузере</p>
       <p data-accessibility-status role="status" aria-live="polite"></p>
     </section>
   `;
 
   return {
     speaker: document.querySelector('[data-speech-announcements]'),
+    availability: document.querySelector('[data-speech-availability]'),
     status: document.querySelector('[data-accessibility-status]'),
   };
 }
@@ -91,7 +93,10 @@ describe('browser-local Russian action announcements', () => {
 
     expect(controls.speaker.disabled).toBe(true);
     expect(controls.speaker.getAttribute('aria-pressed')).toBe('false');
-    expect(controls.speaker.getAttribute('aria-label')).toContain('Локальный русский голос недоступен');
+    expect(controls.speaker.hasAttribute('aria-label')).toBe(false);
+    expect(controls.speaker.getAttribute('aria-describedby')).toBe(controls.availability.id);
+    expect(controls.availability.hidden).toBe(false);
+    expect(controls.availability.textContent).toBe('Локальный русский голос недоступен в этом браузере');
     expect(controls.status.textContent).toBe('Изображения скрыты');
   });
 
@@ -121,7 +126,26 @@ describe('browser-local Russian action announcements', () => {
     expect(controls.speaker.disabled).toBe(false);
     expect(controls.speaker.getAttribute('aria-pressed')).toBe('true');
     expect(controls.speaker.hasAttribute('aria-label')).toBe(false);
+    expect(controls.availability.hidden).toBe(true);
+    expect(controls.availability.textContent).toBe('');
     expect(controls.status.textContent).toBe('');
+  });
+
+  it('restores the nearby unavailable message if the qualifying voice disappears', () => {
+    const synth = createSynth([LOCAL_RUSSIAN_VOICE]);
+    const { controls } = setup({ synth });
+
+    expect(controls.availability.hidden).toBe(true);
+    expect(controls.availability.textContent).toBe('');
+
+    synth.setVoices([]);
+    synth.emit('voiceschanged');
+
+    expect(controls.speaker.disabled).toBe(true);
+    expect(controls.speaker.getAttribute('aria-pressed')).toBe('false');
+    expect(controls.speaker.getAttribute('aria-describedby')).toBe(controls.availability.id);
+    expect(controls.availability.hidden).toBe(false);
+    expect(controls.availability.textContent).toBe('Локальный русский голос недоступен в этом браузере');
   });
 
   it('speaks one normalized short phrase with the qualifying local voice', () => {

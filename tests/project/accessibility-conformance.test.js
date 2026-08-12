@@ -22,6 +22,11 @@ describe('generated-page accessibility conformance', () => {
       expect(document.querySelectorAll('[data-accessibility-advanced-open][aria-controls="accessibility-settings-dialog"]'), file).toHaveLength(1);
       expect(document.querySelectorAll('#accessibility-settings-dialog [data-accessibility-dialog-backdrop]'), file).toHaveLength(1);
       expect(document.querySelectorAll('#accessibility-settings-dialog [data-accessibility-dialog-close]'), file).toHaveLength(1);
+      const speaker = document.querySelector('[data-speech-announcements]');
+      const availability = document.querySelector('#accessibility-speech-availability[data-speech-availability]');
+      expect(speaker?.getAttribute('aria-describedby'), file).toBe('accessibility-speech-availability');
+      expect(availability?.hidden, file).toBe(false);
+      expect(availability?.textContent, file).toBe('Локальный русский голос недоступен в этом браузере');
     }
   });
 

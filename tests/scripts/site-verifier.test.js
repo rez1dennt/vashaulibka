@@ -45,6 +45,8 @@ const pageHtml = ({
       <h2 id="accessibility-panel-title">Настройки доступности</h2>
       <div class="accessibility-toolbar">
         <button type="button" data-accessibility-advanced-open aria-controls="accessibility-settings-dialog" aria-expanded="false">Расширенные настройки</button>
+        <button type="button" data-speech-announcements aria-describedby="accessibility-speech-availability" disabled>Голосовые подтверждения</button>
+        <p id="accessibility-speech-availability" data-speech-availability>Локальный русский голос недоступен в этом браузере</p>
       </div>
     </section>
     <div id="accessibility-settings-dialog" role="dialog" aria-modal="true" aria-labelledby="accessibility-settings-title" hidden>
@@ -462,6 +464,20 @@ describe('production site verifier', () => {
 
     expect(verifyDirectory(directory, { pages: [INDEXABLE_PAGE] }).errors).toEqual(expect.arrayContaining([
       expect.objectContaining({ code: 'accessibility.dialog.relationship', file: 'index.html' }),
+    ]));
+  });
+
+  it('rejects a missing or broken visible speech-availability relationship', () => {
+    const directory = writeValidFixture({
+      htmlByFile: {
+        'index.html': pageHtml()
+          .replace('aria-describedby="accessibility-speech-availability"', 'aria-describedby="missing-speech-availability"')
+          .replace('Локальный русский голос недоступен в этом браузере', ''),
+      },
+    });
+
+    expect(verifyDirectory(directory, { pages: [INDEXABLE_PAGE] }).errors).toEqual(expect.arrayContaining([
+      expect.objectContaining({ code: 'accessibility.speech.relationship', file: 'index.html' }),
     ]));
   });
 

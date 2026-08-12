@@ -336,6 +336,19 @@ describe('responsive accessibility visual system', () => {
     expect(accessibilityCss).toMatch(/\.accessibility-panel button:focus-visible,\s*\.accessibility-settings-dialog button:focus-visible\s*\{[^}]*outline:\s*var\(--focus-ring-width\)\s+solid\s+var\(--color-focus\)[^}]*outline-offset:\s*var\(--focus-ring-offset\)/s);
   });
 
+  it('styles the visible local-voice availability message as a compact wrapping notice', () => {
+    const notice = accessibilityCss.match(/\.accessibility-panel__availability\s*\{([^}]*)\}/)?.[1] ?? '';
+
+    expect(notice).toMatch(/min-inline-size:\s*var\(--space-0\)/);
+    expect(notice).toMatch(/max-inline-size:\s*100%/);
+    expect(notice).toMatch(/padding:\s*var\(--space-2\)/);
+    expect(notice).toMatch(/border-inline-start:\s*var\(--border-width-strong\)\s+solid\s+var\(--color-primary-strong\)/);
+    expect(notice).toMatch(/color:\s*var\(--color-text\)/);
+    expect(notice).toMatch(/background:\s*var\(--notice-background\)/);
+    expect(notice).toMatch(/overflow-wrap:\s*anywhere/);
+    expect(notice).not.toMatch(/(?:^|;)\s*(?:position:\s*(?:absolute|fixed)|inline-size:\s*\d|white-space:\s*nowrap)/);
+  });
+
   it('uses compact intrinsic toolbar groups without a mobile scroller or fixed panel height', () => {
     const panelBlock = accessibilityCss.match(/\.accessibility-panel\s*\{([^}]*)\}/)?.[1] ?? '';
     const panelButtonsBlock = accessibilityCss.match(/\.accessibility-panel button,\s*\.accessibility-settings-dialog button\s*\{([^}]*)\}/)?.[1] ?? '';

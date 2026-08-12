@@ -262,6 +262,23 @@ html[data-accessibility-enabled="true"][data-accessibility-paragraph-spacing="la
   gap: var(--space-2);
 }
 
+.accessibility-panel__availability {
+  min-inline-size: var(--space-0);
+  max-inline-size: 100%;
+  margin: var(--space-2) var(--space-0) var(--space-0);
+  padding: var(--space-2);
+  border-inline-start: var(--border-width-strong) solid var(--color-primary-strong);
+  border-radius: var(--radius-sm);
+  color: var(--color-text);
+  background: var(--notice-background);
+  font-size: var(--text-caption-size);
+  overflow-wrap: anywhere;
+}
+
+[data-accessibility-enabled="true"][data-accessibility-paragraph-spacing] .accessibility-panel__availability {
+  margin-block-end: var(--space-0);
+}
+
 .accessibility-panel button,
 .accessibility-settings-dialog button {
   min-inline-size: var(--accessibility-control-min-block-size);
