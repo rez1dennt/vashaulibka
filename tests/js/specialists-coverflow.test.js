@@ -63,4 +63,20 @@ describe('specialists coverflow', () => {
 
     expect(activeIndex()).toBe(1);
   });
+
+  it('does not let the synthetic click after a swipe restore the original card', () => {
+    initSpecialistsCoverflow();
+    const viewport = root().querySelector('[data-specialist-viewport]');
+    const originalCard = root().querySelectorAll('[data-specialist-select]')[0];
+    const start = new Event('pointerdown', { bubbles: true });
+    const end = new Event('pointerup', { bubbles: true });
+    Object.defineProperty(start, 'clientX', { value: 220 });
+    Object.defineProperty(end, 'clientX', { value: 120 });
+
+    originalCard.dispatchEvent(start);
+    originalCard.dispatchEvent(end);
+    originalCard.click();
+
+    expect(activeIndex()).toBe(1);
+  });
 });

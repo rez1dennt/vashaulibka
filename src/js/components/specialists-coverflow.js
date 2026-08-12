@@ -17,6 +17,7 @@ export function initSpecialistsCoverflow() {
 
     let activeIndex = 0;
     let pointerStart = null;
+    let suppressPointerClick = false;
 
     const activate = (index) => {
       activeIndex = (index + slides.length) % slides.length;
@@ -40,7 +41,13 @@ export function initSpecialistsCoverflow() {
     root.querySelector('[data-specialist-prev]')?.addEventListener('click', () => activate(activeIndex - 1));
     root.querySelector('[data-specialist-next]')?.addEventListener('click', () => activate(activeIndex + 1));
     slides.forEach((slide, index) => slide.querySelector('[data-specialist-select]')
-      ?.addEventListener('click', () => activate(index)));
+      ?.addEventListener('click', (event) => {
+        if (suppressPointerClick) {
+          event.preventDefault();
+          return;
+        }
+        activate(index);
+      }));
 
     viewport.addEventListener('keydown', (event) => {
       if (!['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(event.key)) return;
@@ -60,7 +67,13 @@ export function initSpecialistsCoverflow() {
 
       const distance = event.clientX - pointerStart;
       pointerStart = null;
-      if (Math.abs(distance) >= 48) activate(activeIndex + (distance < 0 ? 1 : -1));
+      if (Math.abs(distance) >= 48) {
+        suppressPointerClick = true;
+        globalThis.setTimeout(() => {
+          suppressPointerClick = false;
+        }, 0);
+        activate(activeIndex + (distance < 0 ? 1 : -1));
+      }
     });
     viewport.addEventListener('pointercancel', () => {
       pointerStart = null;
