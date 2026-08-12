@@ -22,7 +22,7 @@ const ABSOLUTE_SCHEME = /^[a-z][a-z\d+.-]*:/i;
 const ACTIVE_LINK_RELS = new Set(['stylesheet', 'icon', 'preload', 'modulepreload', 'manifest']);
 const SEARCH_ITEM_FIELDS = Object.freeze(['id', 'href', 'category', 'title', 'summary', 'content', 'keywords']);
 const SEARCH_INDEX_MAX_BYTES = 250 * 1024;
-const BANNED_RUNTIME_HOST = /(?:^|\.)lidrekon\.ru$|(?:^|\.)responsivevoice\.(?:org|com)$|(?:^|\.)(?:tts|speechkit)(?:\.|$).*\.yandex\.(?:net|ru|com)$/i;
+const BANNED_RUNTIME_HOST = /(?:^|\.)lidrekon\.ru$|(?:^|\.)responsivevoice\.(?:org|com)$|(?:^|\.)(?:tts|speechkit)(?:\.[a-z\d-]+)*\.yandex\.(?:net|ru|com)$/i;
 const READER_CONTROL_COPY = /(?:читать|озвучить) страницу|приостановить чтение|остановить чтение/i;
 
 const normalizeNewlines = (value) => value.replaceAll('\r\n', '\n');

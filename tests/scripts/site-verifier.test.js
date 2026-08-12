@@ -419,7 +419,10 @@ describe('production site verifier', () => {
   it.each([
     'https://lidrekon.ru/assets/widget.js',
     'https://code.responsivevoice.org/responsivevoice.js',
+    'https://tts.yandex.net/generate?text=test',
+    'https://speechkit.yandex.ru/synthesize',
     'https://tts.voicetech.yandex.net/generate?text=test',
+    'https://speechkit.api.cloud.yandex.net/synthesize',
   ])('rejects a banned accessibility runtime host even in an outbound anchor: %s', (reference) => {
     const directory = writeValidFixture({
       htmlByFile: {
@@ -430,6 +433,22 @@ describe('production site verifier', () => {
     expect(verifyDirectory(directory, { pages: [INDEXABLE_PAGE] }).errors).toEqual(expect.arrayContaining([
       expect.objectContaining({ code: 'resource.banned-host', file: 'index.html', reference }),
     ]));
+  });
+
+  it.each([
+    'https://yandex.ru/',
+    'https://maps.yandex.ru/',
+    'https://mytts.yandex.net/',
+    'https://tts.yandex.net.example.test/',
+  ])('does not broadly reject a non-TTS Yandex-like outbound anchor: %s', (reference) => {
+    const directory = writeValidFixture({
+      htmlByFile: {
+        'index.html': pageHtml({ body: `<a href="${reference}">Обычная ссылка</a>` }),
+      },
+    });
+
+    expect(verifyDirectory(directory, { pages: [INDEXABLE_PAGE] }).errors)
+      .not.toEqual(expect.arrayContaining([expect.objectContaining({ code: 'resource.banned-host' })]));
   });
 
   it('rejects missing and broken advanced-dialog relationships', () => {

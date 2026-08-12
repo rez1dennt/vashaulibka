@@ -3,7 +3,7 @@ import { describe, expect, it } from 'vitest';
 import { PAGES } from '../../src/content/page-manifest.js';
 import { renderPage } from '../../src/templates/render-page.js';
 
-const BANNED_RUNTIME_HOST = /(?:^|\.)lidrekon\.ru$|(?:^|\.)responsivevoice\.(?:org|com)$|(?:^|\.)tts(?:\.voicetech)?\.yandex\.net$/i;
+const BANNED_RUNTIME_HOST = /(?:^|\.)lidrekon\.ru$|(?:^|\.)responsivevoice\.(?:org|com)$|(?:^|\.)(?:tts|speechkit)(?:\.[a-z\d-]+)*\.yandex\.(?:net|ru|com)$/i;
 const READER_CONTROL_COPY = /(?:читать|озвучить) страницу|приостановить чтение|остановить чтение/i;
 
 const documents = () => PAGES.map((page) => ({
