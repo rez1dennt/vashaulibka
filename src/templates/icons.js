@@ -15,6 +15,11 @@ const ICONS = Object.freeze({
   search: '<circle cx="11" cy="11" r="6.5"/><path d="m16 16 4.5 4.5"/>',
   close: '<path d="M5 5l14 14M19 5 5 19"/>',
   clear: '<circle cx="12" cy="12" r="9"/><path d="m9 9 6 6M15 9l-6 6"/>',
+  gear: '<circle cx="12" cy="12" r="3"/><path d="M12 2.75v2M12 19.25v2M2.75 12h2M19.25 12h2M5.45 5.45l1.4 1.4M17.15 17.15l1.4 1.4M18.55 5.45l-1.4 1.4M6.85 17.15l-1.4 1.4"/><circle cx="12" cy="12" r="7.25"/>',
+  speaker: '<path d="M4 10v4h4l5 4V6l-5 4zM16 9.25a4 4 0 0 1 0 5.5M18.5 6.75a7.5 7.5 0 0 1 0 10.5"/>',
+  image: '<rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="8.5" cy="9" r="1.5"/><path d="m4 17 5-5 3.5 3 2.5-2 5 4"/>',
+  contrast: '<circle cx="12" cy="12" r="9"/><path d="M12 3a9 9 0 0 0 0 18zM12 7h5M12 12h7M12 17h5"/>',
+  collapse: '<path d="m5 9 7 7 7-7"/>',
 });
 
 const SAFE_CLASS_NAMES = /^[a-z][a-z0-9_-]*(?:\s+[a-z][a-z0-9_-]*)*$/i;

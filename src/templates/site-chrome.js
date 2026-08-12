@@ -1,5 +1,5 @@
 import { CLINIC, CONTACTS, HOURS, LICENSE } from '../data/clinic.js';
-import { renderAccessibilityPanel } from './accessibility-panel.js';
+import { renderAccessibilityPanel, renderAccessibilitySettingsDialog } from './accessibility-panel.js';
 import { renderIcon } from './icons.js';
 import { renderSiteSearch } from './site-search.js';
 
@@ -50,6 +50,7 @@ export function renderHeader(activeFile) {
     `<a class="utility-bar__phone" href="${primaryPhone.href}">${renderIcon('phone', 'header-icon')}${escapeHtml(primaryPhone.label)}</a>`,
     '</div></div>',
     renderAccessibilityPanel(),
+    renderAccessibilitySettingsDialog(),
     '<div class="brand-row"><div class="header-shell brand-row__inner">',
     `<a class="brand" href="index.html" aria-label="${escapeHtml(CLINIC.name)}, главная"><img src="assets/icons/logo.svg" alt="" width="56" height="56"><span class="brand__wordmark"><span class="brand__prefix">Ваша</span><span class="brand__accent">улыбка</span><svg class="brand__smile" viewBox="0 0 64 8" aria-hidden="true" focusable="false"><path d="M2 2c16 6 44 6 60 0"/></svg></span></a>`,
     renderSiteSearch(),

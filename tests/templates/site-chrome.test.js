@@ -19,7 +19,10 @@ describe('premium light site chrome', () => {
     expect(visionToggle?.textContent).toContain('Версия для слабовидящих');
     expect(document.querySelectorAll('[data-vision-toggle]')).toHaveLength(1);
     expect(document.querySelectorAll('#accessibility-panel[data-accessibility-panel]')).toHaveLength(1);
+    expect(document.querySelectorAll('#accessibility-settings-dialog[role="dialog"]')).toHaveLength(1);
     expect(document.querySelector('.utility-bar')?.nextElementSibling?.id).toBe('accessibility-panel');
+    expect(document.querySelector('#accessibility-panel')?.nextElementSibling?.id).toBe('accessibility-settings-dialog');
+    expect(document.querySelector('#accessibility-settings-dialog')?.nextElementSibling?.classList.contains('brand-row')).toBe(true);
     expect(document.querySelector('.brand__wordmark')?.textContent).toContain('Ваша');
     expect(document.querySelector('.brand__wordmark')?.textContent).toContain('улыбка');
     expect(document.querySelector('.brand__prefix')?.textContent).toBe('Ваша');

@@ -18,6 +18,11 @@ const names = [
   'search',
   'close',
   'clear',
+  'gear',
+  'speaker',
+  'image',
+  'contrast',
+  'collapse',
 ];
 
 describe('local UI icons', () => {
