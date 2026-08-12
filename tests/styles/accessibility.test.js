@@ -336,6 +336,21 @@ describe('responsive accessibility visual system', () => {
     expect(accessibilityCss).toMatch(/\.accessibility-panel button:focus-visible,\s*\.accessibility-settings-dialog button:focus-visible\s*\{[^}]*outline:\s*var\(--focus-ring-width\)\s+solid\s+var\(--color-focus\)[^}]*outline-offset:\s*var\(--focus-ring-offset\)/s);
   });
 
+  it('keeps action icons beside their labels and places the collapse chevron last', () => {
+    const actionRule = accessibilityCss.match(/\.accessibility-action-button\s*\{([^}]*)\}/)?.[1] ?? '';
+    const labelRule = accessibilityCss.match(/\.accessibility-action-button__label\s*\{([^}]*)\}/)?.[1] ?? '';
+    const collapseRule = accessibilityCss.match(/\.accessibility-action-button--collapse\s*\{([^}]*)\}/)?.[1] ?? '';
+
+    expect(actionRule).toMatch(/display:\s*grid/);
+    expect(actionRule).toMatch(/grid-template-columns:\s*auto\s+minmax\(var\(--space-0\),\s*1fr\)/);
+    expect(actionRule).toMatch(/align-items:\s*center/);
+    expect(actionRule).toMatch(/gap:\s*var\(--space-2\)/);
+    expect(actionRule).toMatch(/text-align:\s*center/);
+    expect(labelRule).toMatch(/min-inline-size:\s*var\(--space-0\)/);
+    expect(labelRule).toMatch(/overflow-wrap:\s*anywhere/);
+    expect(collapseRule).toMatch(/grid-template-columns:\s*minmax\(var\(--space-0\),\s*1fr\)\s+auto/);
+  });
+
   it('styles the visible local-voice availability message as a compact wrapping notice', () => {
     const notice = accessibilityCss.match(/\.accessibility-panel__availability\s*\{([^}]*)\}/)?.[1] ?? '';
 

@@ -298,6 +298,29 @@ html[data-accessibility-enabled="true"][data-accessibility-paragraph-spacing="la
   transition: var(--transition-interactive);
 }
 
+.accessibility-action-button {
+  display: grid;
+  grid-template-columns: auto minmax(var(--space-0), 1fr);
+  align-items: center;
+  gap: var(--space-2);
+  text-align: center;
+}
+
+.accessibility-action-button__label {
+  min-inline-size: var(--space-0);
+  overflow-wrap: anywhere;
+}
+
+.accessibility-action-button > .ui-icon {
+  align-self: center;
+  justify-self: center;
+  margin: var(--space-0);
+}
+
+.accessibility-action-button--collapse {
+  grid-template-columns: minmax(var(--space-0), 1fr) auto;
+}
+
 :where([data-accessibility-advanced-open], [data-accessibility-standard], [data-accessibility-close], [data-accessibility-reset], [data-accessibility-dialog-close]) {
   min-block-size: var(--accessibility-action-min-block-size);
 }

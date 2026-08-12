@@ -98,6 +98,16 @@ describe('accessibility panel template', () => {
     expect(advanced?.textContent.trim()).toBe('Расширенные настройки');
     expect(standard?.textContent.trim()).toBe('Обычная версия сайта');
     expect(collapse?.textContent.trim()).toBe('Свернуть');
+    expect(speech?.classList.contains('accessibility-action-button')).toBe(true);
+    expect(advanced?.classList.contains('accessibility-action-button')).toBe(true);
+    expect(collapse?.classList.contains('accessibility-action-button')).toBe(true);
+    expect(collapse?.classList.contains('accessibility-action-button--collapse')).toBe(true);
+    expect([...speech.children].map((child) => child.tagName)).toEqual(['svg', 'SPAN']);
+    expect([...advanced.children].map((child) => child.tagName)).toEqual(['svg', 'SPAN']);
+    expect([...collapse.children].map((child) => child.tagName)).toEqual(['SPAN', 'svg']);
+    expect(speech?.querySelector('.accessibility-action-button__label')?.textContent).toBe('Голосовые подтверждения');
+    expect(advanced?.querySelector('.accessibility-action-button__label')?.textContent).toBe('Расширенные настройки');
+    expect(collapse?.querySelector('.accessibility-action-button__label')?.textContent).toBe('Свернуть');
     expect(panel?.querySelector('[data-accessibility-status][role="status"][aria-live="polite"]')).not.toBeNull();
   });
 
