@@ -33,7 +33,12 @@ describe('specialists coverflow content', () => {
     expect(slides.slice(1).every((slide) => !slide.hasAttribute('aria-current'))).toBe(true);
     expect(root.querySelector('[data-specialist-prev]').getAttribute('aria-label')).toBe('Предыдущий специалист');
     expect(root.querySelector('[data-specialist-next]').getAttribute('aria-label')).toBe('Следующий специалист');
-    expect(root.querySelector('[data-specialist-counter]').getAttribute('aria-live')).toBe('polite');
+    expect(root.querySelector('[data-specialist-counter]')).toBeNull();
+    expect(root.querySelector('.specialists-coverflow__gesture')).toBeNull();
+    expect(root.querySelector('.specialists-coverflow__toolbar')?.querySelectorAll('button')).toHaveLength(2);
+    expect(document.body.textContent).not.toContain('Выберите карточку');
+    expect(document.body.textContent).not.toContain('Листайте карточки');
+    expect(document.querySelector('#specialists-coverflow-instructions')?.classList.contains('sr-only')).toBe(true);
     expect(root.querySelector('[data-specialist-detail-name]').textContent.trim()).toBe(STAFF[0].name);
     expect(root.querySelector('[data-specialist-detail-role]').textContent.trim()).toBe(STAFF[0].role);
     expect(document.body.textContent).toContain(INCOMPLETE_CONTENT.specialists.reason);

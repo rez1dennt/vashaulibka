@@ -10,7 +10,6 @@ export function initSpecialistsCoverflow() {
   document.querySelectorAll('[data-specialists-coverflow]').forEach((root) => {
     const slides = [...root.querySelectorAll('[data-specialist-slide]')];
     const viewport = root.querySelector('[data-specialist-viewport]');
-    const counter = root.querySelector('[data-specialist-counter]');
     const detailName = root.querySelector('[data-specialist-detail-name]');
     const detailRole = root.querySelector('[data-specialist-detail-role]');
     if (!slides.length || !viewport || root.classList.contains('is-enhanced')) return;
@@ -33,7 +32,6 @@ export function initSpecialistsCoverflow() {
       });
 
       const active = slides[activeIndex];
-      if (counter) counter.textContent = `${activeIndex + 1} / ${slides.length}`;
       if (detailName) detailName.textContent = active.querySelector('.specialist-card__name')?.textContent.trim() || '';
       if (detailRole) detailRole.textContent = active.querySelector('.specialist-card__role')?.textContent.trim() || '';
     };

@@ -22,8 +22,12 @@ describe('specialists coverflow styles', () => {
     expect(pages).toMatch(/\.no-js\s+\.specialist-card__select,[\s\S]*?display:\s*none/s);
   });
 
-  it('centers the gesture hint below the centered controls', () => {
-    expect(pages).toMatch(/\.specialists-coverflow__gesture\s*{[^}]*margin-inline:\s*auto[^}]*text-align:\s*center/s);
+  it('places a compact two-button toolbar at the top end of the wide stage', () => {
+    expect(pages).toMatch(/\.specialists-coverflow__toolbar\s*{[^}]*position:\s*absolute[^}]*inset-block-start:\s*var\(--space-0\)[^}]*inset-inline-end:\s*var\(--space-0\)[^}]*z-index:\s*var\(--coverflow-z-toolbar\)/s);
+    expect(pages).toMatch(/\.specialists-coverflow__controls\s*{[^}]*display:\s*none[^}]*gap:\s*var\(--space-3\)/s);
+    expect(tokens).toMatch(/--coverflow-z-toolbar:/);
+    expect(tokens).toMatch(/--primitive-size-coverflow-card-desktop:\s*min\(34vw,\s*26rem\)/);
+    expect(tokens).toMatch(/--primitive-offset-coverflow-side-desktop:\s*92%/);
   });
 
   it('contains transformed slides during resize transitions', () => {

@@ -1,10 +1,11 @@
+import { readFileSync } from 'node:fs';
 import { beforeEach, describe, expect, it } from 'vitest';
 import { initSpecialistsCoverflow } from '../../src/js/components/specialists-coverflow.js';
 
 const names = ['Первый', 'Второй', 'Третий', 'Четвёртый', 'Пятый'];
 const fixture = () => `<section data-specialists-coverflow><div data-specialist-viewport tabindex="0"><ol>${names.map((name, index) => `
   <li data-specialist-slide data-specialist-index="${index}"><article><h3 class="specialist-card__name">${name}</h3><p class="specialist-card__role">Должность ${index + 1}</p><button type="button" data-specialist-select>Выбрать</button></article></li>`).join('')}</ol></div>
-  <button type="button" data-specialist-prev>Назад</button><output data-specialist-counter></output><button type="button" data-specialist-next>Вперёд</button>
+  <button type="button" data-specialist-prev>Назад</button><button type="button" data-specialist-next>Вперёд</button>
   <h3 data-specialist-detail-name></h3><p data-specialist-detail-role></p></section>`;
 
 beforeEach(() => {
@@ -21,8 +22,12 @@ describe('specialists coverflow', () => {
     expect(root().classList.contains('is-enhanced')).toBe(true);
     expect([...root().querySelectorAll('[data-specialist-slide]')].map((slide) => slide.dataset.position))
       .toEqual(['active', 'next', 'far-next', 'far-previous', 'previous']);
-    expect(root().querySelector('[data-specialist-counter]').textContent).toBe('1 / 5');
     expect(root().querySelector('[data-specialist-detail-name]').textContent).toBe('Первый');
+  });
+
+  it('does not carry a visual counter contract in the interaction module', () => {
+    expect(readFileSync('src/js/components/specialists-coverflow.js', 'utf8'))
+      .not.toContain('[data-specialist-counter]');
   });
 
   it('wraps in both directions without moving control focus', () => {

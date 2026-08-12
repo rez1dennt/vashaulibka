@@ -233,8 +233,7 @@ describe('patient and legal page manifest', () => {
     expect(privacy).toMatch(/телефон.*диалог/i);
     expect(privacy).toMatch(/серверн.*журнал|техническ.*лог/i);
     expect(privacy).not.toContain('CONTENT_CHECKLIST.md');
-    expect(privacy).toMatch(/поставщик хостинга.*реальн.*домен.*серверн.*журнал/i);
-    expect(privacy).toMatch(/будут.*уточнены.*до публикации/i);
+    expect(privacy).not.toMatch(/что требуется завершить|будут.*уточнены.*до публикации/i);
 
     expect(cookies).toContain('localStorage');
     expect(cookies).toContain('cookie-consent');
@@ -249,6 +248,56 @@ describe('patient and legal page manifest', () => {
       const document = pageDocument(file);
       expect(document.querySelector('form, input, textarea, select')).toBeNull();
     }
+  });
+
+  it('publishes a structured operator policy with confirmed details and no invented MIS processing', () => {
+    const document = pageDocument('privacy.html');
+    const text = normalizedText(document);
+    const expectedSections = [
+      'privacy-general',
+      'privacy-operator',
+      'privacy-principles',
+      'privacy-current-site',
+      'privacy-technical-data',
+      'privacy-purposes',
+      'privacy-processing',
+      'privacy-third-parties',
+      'privacy-security',
+      'privacy-rights',
+      'privacy-storage',
+      'privacy-updates',
+    ];
+
+    expect(document.querySelector('.privacy-policy')).not.toBeNull();
+    expect([...document.querySelectorAll('.privacy-policy__section[id]')].map((section) => section.id))
+      .toEqual(expectedSections);
+    expect([...document.querySelectorAll('.privacy-policy__contents a')].map((link) => link.getAttribute('href')))
+      .toEqual(expectedSections.map((id) => `#${id}`));
+
+    for (const value of [
+      CLINIC.legalName,
+      CLINIC.ogrn,
+      CLINIC.inn,
+      CLINIC.activityAddress,
+      CLINIC.complaintsPostalAddress,
+      CONTACTS.email,
+      ...CONTACTS.phones.map((phone) => phone.label),
+    ]) expect(text).toContain(value);
+
+    expect(document.querySelector(`a[href="${CONTACTS.emailHref}"]`)).not.toBeNull();
+    for (const phone of CONTACTS.phones) {
+      expect(document.querySelector(`a[href="${phone.href}"]`)).not.toBeNull();
+    }
+
+    expect(text).toContain('Редакция от 12 августа 2026 года');
+    expect(text).toMatch(/МИС не подключена.*форм.*отсутств/i);
+    expect(text).toMatch(/IP-адрес.*дат.*врем.*запрос.*адрес.*страниц.*браузер.*устройств/i);
+    expect(text).toMatch(/специальн.*категор.*биометрическ.*не.*собира/i);
+    expect(text).toMatch(/уточнен.*блокирован.*удален.*отзыв.*соглас/i);
+    expect(text).toMatch(/Роскомнадзор|уполномоченн.*орган/i);
+    expect(text).toMatch(/до подключения МИС.*политик.*согласи/i);
+    expect(text).not.toMatch(/что требуется завершить|будут.*уточнены.*до публикации|CONTENT_CHECKLIST/i);
+    expect(document.querySelector('form, input, textarea, select')).toBeNull();
   });
 
   it('introduces no unsupported service claims or broken internal page/document links', () => {

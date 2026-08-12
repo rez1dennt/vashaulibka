@@ -83,9 +83,9 @@
   --primitive-size-decor-medium: 20rem;
   --primitive-size-decor-large: 34rem;
   --primitive-size-coverflow-card-mobile: min(78vw, 20rem);
-  --primitive-size-coverflow-card-tablet: min(42vw, 22rem);
-  --primitive-size-coverflow-card-desktop: min(30vw, 23rem);
-  --primitive-size-coverflow-viewport: 29rem;
+  --primitive-size-coverflow-card-tablet: min(46vw, 24rem);
+  --primitive-size-coverflow-card-desktop: min(34vw, 26rem);
+  --primitive-size-coverflow-viewport: 33rem;
   --primitive-size-coverflow-copy-min: 9rem;
   --primitive-size-coverflow-decoration: 70%;
   --primitive-menu-toggle-line-offset: 0.375rem;
@@ -102,8 +102,8 @@
   --primitive-skip-offset: -180%;
   --primitive-perspective-coverflow: 70rem;
   --primitive-offset-coverflow-side-mobile: 61%;
-  --primitive-offset-coverflow-side-tablet: 69%;
-  --primitive-offset-coverflow-side-desktop: 78%;
+  --primitive-offset-coverflow-side-tablet: 78%;
+  --primitive-offset-coverflow-side-desktop: 92%;
   --primitive-offset-coverflow-far: 92%;
   --primitive-scale-coverflow-side: 0.84;
   --primitive-scale-coverflow-far: 0.68;
@@ -136,6 +136,7 @@
   --primitive-z-coverflow-far: 1;
   --primitive-z-coverflow-side: 2;
   --primitive-z-coverflow-active: 3;
+  --primitive-z-coverflow-toolbar: 4;
   --primitive-opacity-disabled: 0.56;
   --primitive-opacity-muted: 0.72;
   --primitive-opacity-decor: 0.1;
@@ -275,6 +276,7 @@
   --coverflow-z-far: var(--primitive-z-coverflow-far);
   --coverflow-z-side: var(--primitive-z-coverflow-side);
   --coverflow-z-active: var(--primitive-z-coverflow-active);
+  --coverflow-z-toolbar: var(--primitive-z-coverflow-toolbar);
 
   /* Component aliases */
   --hero-image: none;
