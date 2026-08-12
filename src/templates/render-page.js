@@ -1,4 +1,5 @@
 import { CLINIC, CONTACTS, HOURS, LICENSE } from '../data/clinic.js';
+import { ONLINE_BOOKING } from '../data/online-booking.js';
 import { renderAccessibilityBootstrap } from './accessibility-bootstrap.js';
 import { renderHero } from './render-hero.js';
 import { renderFooter, renderHeader } from './site-chrome.js';
@@ -64,8 +65,10 @@ export function renderPage(page) {
     `<main id="main-content"${mainClass}>${renderHero(page)}${page.body}</main>`,
     renderFooter(),
     `<a class="mobile-appointment button button-primary" href="${CONTACTS.phones[0].href}" data-appointment-open>Запись на приём</a>`,
-    '<div id="appointment-dialog" class="dialog" role="dialog" aria-modal="true" aria-labelledby="appointment-title" hidden><div class="dialog__backdrop" data-dialog-backdrop aria-hidden="true"></div><div class="dialog__panel"><button type="button" data-dialog-close aria-label="Закрыть">×</button><h2 id="appointment-title">Запись на приём</h2><p>Онлайн-запись подключается. Пока запишитесь по телефону:</p>',
-    '<div class="dialog__actions"><div class="dialog__phones">',
+    '<div id="appointment-dialog" class="dialog" role="dialog" aria-modal="true" aria-labelledby="appointment-title" aria-describedby="appointment-description" hidden><div class="dialog__backdrop" data-dialog-backdrop aria-hidden="true"></div><div class="dialog__panel"><button type="button" data-dialog-close aria-label="Закрыть">×</button><h2 id="appointment-title">Запись на приём</h2>',
+    `<p id="appointment-description">Запишитесь онлайн через ${esc(ONLINE_BOOKING.providerName)} или позвоните в клинику. Данные, которые вы введёте в форме, получат сервис 32top и клиника для организации приёма.</p>`,
+    '<div class="dialog__actions"><button class="button button-primary" type="button" data-booking-online>Записаться онлайн</button><button class="button button-secondary" type="button" data-booking-consent-open data-cookie-settings>Настроить онлайн-запись</button><p class="dialog__status" data-booking-status aria-live="polite" aria-atomic="true"></p><div class="dialog__error" data-booking-error role="alert" hidden>',
+    `<p>Если сервис временно недоступен, <a href="${esc(ONLINE_BOOKING.bookingUrl)}" target="_blank" rel="noopener noreferrer">откройте форму 32top напрямую</a> или позвоните нам.</p></div><div class="dialog__phones">`,
     CONTACTS.phones.map((phone) => `<a class="button button-secondary" href="${phone.href}">${esc(phone.label)}</a>`).join(''),
     '</div></div>',
     `<h3>Режим работы</h3><dl class="definition-list definition-list--compact">${appointmentHours}</dl><p><strong>${esc(HOURS.breakNote)}</strong></p></div></div>`,

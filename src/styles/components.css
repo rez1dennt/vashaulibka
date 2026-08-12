@@ -261,6 +261,23 @@ button.card:active {
   margin: var(--space-0);
 }
 
+.dialog__status,
+.dialog__error {
+  grid-column: 1 / -1;
+  margin: var(--space-0);
+}
+
+.dialog__status:not(:empty),
+.dialog__error {
+  padding: var(--space-3);
+  border-radius: var(--radius-sm);
+  background: var(--color-surface-soft);
+}
+
+.dialog__error a {
+  font-weight: var(--text-label-weight);
+}
+
 .cookie-banner {
   position: fixed;
   z-index: var(--z-cookie);

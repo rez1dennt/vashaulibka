@@ -69,6 +69,17 @@ describe('renderPage', () => {
     expect(banner?.textContent).toMatch(/онлайн-запис.*32top/i);
   });
 
+  it('renders an accessible MIS action, status, error, and direct fallback', () => {
+    const document = new JSDOM(renderPage(PAGES[0])).window.document;
+    const dialog = document.querySelector('#appointment-dialog');
+
+    expect(dialog?.querySelector('[data-booking-online]')?.textContent).toMatch(/Записаться онлайн/i);
+    expect(dialog?.querySelector('[data-booking-status][aria-live="polite"]')).not.toBeNull();
+    expect(dialog?.querySelector('[data-booking-error][role="alert"]')).not.toBeNull();
+    expect(dialog?.querySelector('a[href^="https://book-app.32top.ru/"]')).not.toBeNull();
+    expect(dialog?.textContent).toMatch(/ООО «Айкомплекс»|МИС 32top/i);
+  });
+
   it('marks the raw document as no-js and switches the class before styles load', () => {
     const html = renderPage(page);
     const document = new JSDOM(html).window.document;
@@ -245,7 +256,8 @@ describe('renderPage', () => {
     const dialog = document.querySelector('#appointment-dialog');
     const schema = JSON.parse(document.querySelector('script[type="application/ld+json"]').textContent);
 
-    expect(dialog.textContent).toContain('Онлайн-запись подключается');
+    expect(dialog.textContent).toContain('Записаться онлайн');
+    expect(dialog.textContent).toContain('МИС 32top');
     expect(schema.openingHoursSpecification).toEqual([
       {
         '@type': 'OpeningHoursSpecification',

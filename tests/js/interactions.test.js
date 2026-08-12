@@ -39,6 +39,47 @@ describe('progressive interactions', () => {
     expect(document.querySelector('#appointment-dialog').hidden).toBe(true);
   });
 
+  it('opens MIS booking only with consent and exposes recoverable loading errors', async () => {
+    document.body.innerHTML = `
+      <button data-appointment-open>Запись</button>
+      <div id="appointment-dialog" role="dialog" hidden>
+        <div data-dialog-backdrop></div><button data-dialog-close>Закрыть</button>
+        <button data-booking-online>Записаться онлайн</button>
+        <button data-booking-consent-open>Настроить онлайн-запись</button>
+        <p data-booking-status></p><div data-booking-error hidden><a href="https://book-app.32top.ru/test">Открыть напрямую</a></div>
+      </div>
+      <div data-cookie-banner hidden><input data-cookie-online-booking><button data-cookie-reject>Нет</button><button data-cookie-save>Сохранить</button></div>
+      <button data-cookie-settings>Настройки cookies</button>`;
+    const provider = { open: vi.fn(() => Promise.reject(new Error('blocked'))) };
+    const storage = { get: vi.fn(() => null), set: vi.fn() };
+    initCookieConsent({ storage });
+    initDialog({ provider, storage });
+
+    document.querySelector('[data-appointment-open]').click();
+    document.querySelector('[data-booking-online]').click();
+    expect(provider.open).not.toHaveBeenCalled();
+    expect(document.querySelector('[data-cookie-banner]').hidden).toBe(false);
+
+    storage.get.mockReturnValue(JSON.stringify({ version: 2, onlineBooking: true }));
+    document.querySelector('[data-booking-online]').click();
+    expect(document.querySelector('[data-booking-online]').disabled).toBe(true);
+    await vi.waitFor(() => expect(document.querySelector('[data-booking-error]').hidden).toBe(false));
+    expect(document.querySelector('[data-booking-status]').textContent).toMatch(/не удалось/i);
+    expect(document.querySelector('[data-booking-online]').disabled).toBe(false);
+    document.querySelector('[data-dialog-close]').click();
+  });
+
+  it('closes the clinic dialog after the MIS modal opens successfully', async () => {
+    document.body.innerHTML = '<button data-appointment-open>Запись</button><div id="appointment-dialog" role="dialog" hidden><button data-dialog-close>Закрыть</button><button data-booking-online>Записаться онлайн</button><p data-booking-status></p><div data-booking-error hidden></div></div>';
+    const provider = { open: vi.fn(() => Promise.resolve({ mode: 'online', state: 'ready' })) };
+    initDialog({ provider, storage: { get: () => JSON.stringify({ version: 2, onlineBooking: true }) } });
+    document.querySelector('[data-appointment-open]').click();
+
+    document.querySelector('[data-booking-online]').click();
+    await vi.waitFor(() => expect(document.querySelector('#appointment-dialog').hidden).toBe(true));
+    expect(provider.open).toHaveBeenCalledTimes(1);
+  });
+
   it('closes the appointment dialog from its real backdrop and returns focus', () => {
     document.body.innerHTML = '<button data-appointment-open>Запись</button><div id="appointment-dialog" role="dialog" hidden><div data-dialog-backdrop></div><button data-dialog-close>Закрыть</button></div>';
     initDialog({ provider: createAppointmentProvider() });
@@ -86,11 +127,12 @@ describe('progressive interactions', () => {
     expect(document.activeElement).toBe(toggle);
   });
 
-  it('provides only the phone-based appointment mode', () => {
+  it('provides the MIS appointment mode without a form-submission API', () => {
     const provider = createAppointmentProvider();
 
-    expect(provider.mode).toBe('phone-only');
-    expect(provider.open()).toEqual({ mode: 'phone-only' });
+    expect(provider.mode).toBe('mis-32top');
+    expect(provider.submit).toBeUndefined();
+    expect(provider.open).toEqual(expect.any(Function));
     expect(Object.isFrozen(provider)).toBe(true);
   });
 
