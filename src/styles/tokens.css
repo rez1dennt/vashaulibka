@@ -79,6 +79,9 @@
   --primitive-size-hero-desktop: 26.875rem;
   --primitive-size-tab-column: 17.5rem;
   --primitive-size-screen-reader: 0.0625rem;
+  --primitive-size-decor-small: 10rem;
+  --primitive-size-decor-medium: 20rem;
+  --primitive-size-decor-large: 34rem;
   --primitive-menu-toggle-line-offset: 0.375rem;
   --primitive-container-max: 77.5rem;
   --primitive-container-gutter-mobile: 0.75rem;
@@ -111,14 +114,21 @@
   --primitive-z-cookie: 250;
   --primitive-z-dialog: 300;
   --primitive-z-skip-link: 400;
+  --primitive-z-decor: 0;
+  --primitive-z-decor-content: 1;
   --primitive-opacity-disabled: 0.56;
   --primitive-opacity-muted: 0.72;
+  --primitive-opacity-decor: 0.1;
+  --primitive-opacity-decor-vision: 0.035;
   --primitive-scale-pressed: 0.96;
   --primitive-motion-instant: 0.001ms;
   --primitive-motion-fast: 160ms;
   --primitive-motion-panel: 280ms;
   --primitive-motion-delay-none: 0ms;
   --primitive-motion-iteration-once: 1;
+  --primitive-motion-decor: 12s;
+  --primitive-motion-decor-slow: 16s;
+  --primitive-distance-decor: 0.25rem;
   --primitive-easing-standard: cubic-bezier(0.2, 0, 0, 1);
 
   /* Semantic color and type aliases */
@@ -219,6 +229,16 @@
   --z-cookie: var(--primitive-z-cookie);
   --z-dialog: var(--primitive-z-dialog);
   --z-skip-link: var(--primitive-z-skip-link);
+  --home-decor-layer: var(--primitive-z-decor);
+  --home-decor-content-layer: var(--primitive-z-decor-content);
+  --home-decor-opacity: var(--primitive-opacity-decor);
+  --home-decor-opacity-vision: var(--primitive-opacity-decor-vision);
+  --home-decor-size-small: var(--primitive-size-decor-small);
+  --home-decor-size-medium: var(--primitive-size-decor-medium);
+  --home-decor-size-large: var(--primitive-size-decor-large);
+  --home-decor-motion: var(--primitive-motion-decor);
+  --home-decor-motion-slow: var(--primitive-motion-decor-slow);
+  --home-decor-distance: var(--primitive-distance-decor);
 
   /* Component aliases */
   --hero-image: none;

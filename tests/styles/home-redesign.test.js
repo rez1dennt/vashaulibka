@@ -89,4 +89,34 @@ describe('premium light visual contract', () => {
     expect(pages).toMatch(/@media\s*\(min-width:\s*75rem\)[\s\S]*?repeat\(5,/s);
     expect(components).toMatch(/@media\s*\(prefers-reduced-motion:\s*reduce\)/s);
   });
+
+  it('places editorial decoration behind homepage content with local assets', () => {
+    expect(tokens).toMatch(/--home-decor-opacity:\s*var\(--primitive-opacity-decor\)/);
+    expect(tokens).toMatch(/--home-decor-size-large:\s*var\(--primitive-size-decor-large\)/);
+    expect(tokens).toMatch(/--home-decor-content-layer:\s*var\(--primitive-z-decor-content\)/);
+    expect(pages).toMatch(/\.home-decor\s*{[^}]*position:\s*absolute[^}]*pointer-events:\s*none/s);
+    expect(pages).toMatch(/\.home-decor--hero-smile\s*{[^}]*home-hero-smile\.svg/s);
+    expect(pages).toMatch(/\.home-decor--hero-tooth\s*{[^}]*home-hero-tooth\.svg/s);
+    expect(pages).toMatch(/\.home-decor--quick-tooth\s*{[^}]*home-quick-tooth\.svg/s);
+    expect(pages).toMatch(/\.home-decor--services-dental\s*{[^}]*home-services-dental\.svg/s);
+    expect(pages).toMatch(/\.home-decor--staff-jaw\s*{[^}]*home-staff-jaw\.svg/s);
+    expect(pages).toMatch(/\.home-decor--patients-docs\s*{[^}]*home-patients-docs\.svg/s);
+  });
+
+  it('simplifies decoration on mobile and expands it without covering content', () => {
+    expect(pages).toMatch(/\.home-decor--hero-tooth\s*{[^}]*display:\s*none/s);
+    expect(pages).toMatch(/\.home-hero__inner,\s*\.quick-links__grid,[\s\S]*?position:\s*relative[^}]*z-index:\s*var\(--home-decor-content-layer\)/s);
+    expect(pages).toMatch(/@media\s*\(min-width:\s*48rem\)[\s\S]*?\.home-decor--hero-tooth\s*{[^}]*display:\s*block/s);
+    expect(pages).toMatch(/@media\s*\(min-width:\s*75rem\)[\s\S]*?\.home-decor--services-dental/s);
+    expect(components).toMatch(/\.vision-mode\s+\.home-decor\s*{[^}]*opacity:\s*var\(--home-decor-opacity-vision\)/s);
+  });
+
+  it('moves only two decorations and preserves the reduced-motion contract', () => {
+    expect(pages).toMatch(/\.home-decor--hero-tooth\s*{[^}]*animation:\s*home-decor-float/s);
+    expect(pages).toMatch(/\.home-decor--quick-tooth\s*{[^}]*animation:\s*home-decor-drift/s);
+    expect(pages.match(/animation:\s*home-decor-/g)).toHaveLength(2);
+    expect(pages).toMatch(/@keyframes\s+home-decor-float/);
+    expect(pages).toMatch(/@keyframes\s+home-decor-drift/);
+    expect(components).toMatch(/@media\s*\(prefers-reduced-motion:\s*reduce\)/s);
+  });
 });

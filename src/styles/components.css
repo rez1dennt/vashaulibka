@@ -326,6 +326,10 @@ button.card:active {
   border-width: var(--border-width-strong);
 }
 
+.vision-mode .home-decor {
+  opacity: var(--home-decor-opacity-vision);
+}
+
 .vision-mode :focus-visible {
   outline-width: calc(var(--focus-ring-width) + var(--border-width));
 }

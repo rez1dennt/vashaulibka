@@ -656,6 +656,8 @@
 }
 
 .home-hero {
+  position: relative;
+  isolation: isolate;
   overflow: hidden;
   border-block-end: var(--border-width) solid var(--color-border);
   background: var(--color-surface-brand-soft);
@@ -739,7 +741,9 @@
 
 .quick-links {
   position: relative;
-  z-index: 1;
+  z-index: var(--home-decor-content-layer);
+  isolation: isolate;
+  overflow: hidden;
   padding-block: var(--space-6) var(--space-10);
   background: var(--color-surface-page);
 }
@@ -883,6 +887,79 @@
 .home-services,
 .home-documents {
   background: var(--color-surface-subtle);
+}
+
+.home-services,
+.home-staff-prices,
+.home-patients {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+}
+
+.home-hero__inner,
+.quick-links__grid,
+.home-services > .container,
+.home-staff-prices__grid,
+.home-patients > .container {
+  position: relative;
+  z-index: var(--home-decor-content-layer);
+}
+
+.home-decor {
+  position: absolute;
+  z-index: var(--home-decor-layer);
+  display: block;
+  inline-size: var(--home-decor-size-small);
+  block-size: var(--home-decor-size-small);
+  opacity: var(--home-decor-opacity);
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+  pointer-events: none;
+}
+
+.home-decor--hero-smile {
+  inset: auto auto var(--space-4) calc(var(--space-8) * -1);
+  inline-size: var(--home-decor-size-medium);
+  background-image: url("/assets/decor/home-hero-smile.svg");
+}
+
+.home-decor--hero-tooth {
+  display: none;
+  background-image: url("/assets/decor/home-hero-tooth.svg");
+  animation: home-decor-float var(--home-decor-motion-slow) var(--motion-easing-standard) infinite alternate;
+}
+
+.home-decor--quick-tooth {
+  inset: var(--space-4) calc(var(--space-12) * -1) auto auto;
+  background-image: url("/assets/decor/home-quick-tooth.svg");
+  animation: home-decor-drift var(--home-decor-motion) var(--motion-easing-standard) infinite alternate;
+}
+
+.home-decor--services-dental {
+  inset: auto calc(var(--space-16) * -1) var(--space-4) auto;
+  background-image: url("/assets/decor/home-services-dental.svg");
+}
+
+.home-decor--staff-jaw {
+  inset: var(--space-4) auto auto calc(var(--space-14) * -1);
+  background-image: url("/assets/decor/home-staff-jaw.svg");
+}
+
+.home-decor--patients-docs {
+  inset: auto calc(var(--space-10) * -1) var(--space-4) auto;
+  background-image: url("/assets/decor/home-patients-docs.svg");
+}
+
+@keyframes home-decor-float {
+  from { transform: translateY(calc(var(--home-decor-distance) * -1)); }
+  to { transform: translateY(var(--home-decor-distance)); }
+}
+
+@keyframes home-decor-drift {
+  from { transform: translateX(calc(var(--home-decor-distance) * -1)); }
+  to { transform: translateX(var(--home-decor-distance)); }
 }
 
 .section-heading {
@@ -1647,6 +1724,20 @@
 }
 
 @media (min-width: 48rem) {
+  .home-decor {
+    inline-size: var(--home-decor-size-medium);
+    block-size: var(--home-decor-size-medium);
+  }
+
+  .home-decor--hero-tooth {
+    inset: var(--space-8) calc(var(--space-16) * -1) auto auto;
+    display: block;
+  }
+
+  .home-decor--hero-smile {
+    inset-inline-start: var(--space-0);
+  }
+
   .contact-page__grid {
     grid-template-columns: minmax(var(--space-0), 7fr) minmax(var(--space-0), 5fr);
     align-items: stretch;
@@ -1728,6 +1819,19 @@
 }
 
 @media (min-width: 75rem) {
+  .home-decor--hero-tooth,
+  .home-decor--quick-tooth,
+  .home-decor--services-dental,
+  .home-decor--staff-jaw,
+  .home-decor--patients-docs {
+    inline-size: var(--home-decor-size-large);
+    block-size: var(--home-decor-size-large);
+  }
+
+  .home-decor--services-dental { inset-inline-end: calc(var(--space-20) * -1); }
+  .home-decor--staff-jaw { inset-inline-start: calc(var(--space-20) * -1); }
+  .home-decor--patients-docs { inset-inline-end: calc(var(--space-16) * -1); }
+
   .contact-schedule {
     grid-template-columns: minmax(var(--space-0), auto) minmax(var(--space-0), 1fr) minmax(var(--space-0), auto);
   }
