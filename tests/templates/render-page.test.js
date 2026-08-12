@@ -74,9 +74,9 @@ describe('renderPage', () => {
     expect(bootstrap.textContent).not.toMatch(/eval|document\.write|innerHTML|createElement|fetch|XMLHttpRequest|WebSocket|\.src\s*=|\.href\s*=/);
   });
 
-  it('applies only exact validated version-1 preferences before styles execute', () => {
+  it('applies only exact validated version-2 preferences before styles execute', () => {
     const validPreferences = {
-      version: 1,
+      version: 2,
       enabled: true,
       scale: '150',
       theme: 'blue-light',
@@ -85,6 +85,7 @@ describe('renderPage', () => {
       lineHeight: 'large',
       paragraphSpacing: 'large',
       images: 'hidden',
+      speechAnnouncements: false,
     };
     const reads = [];
     const dom = new JSDOM(renderPage(page), {
@@ -121,7 +122,7 @@ describe('renderPage', () => {
 
   it('does not apply retained choices while the accessibility mode is disabled', () => {
     const disabledPreferences = {
-      version: 1,
+      version: 2,
       enabled: false,
       scale: '200',
       theme: 'white-black',
@@ -130,6 +131,7 @@ describe('renderPage', () => {
       lineHeight: 'large',
       paragraphSpacing: 'large',
       images: 'hidden',
+      speechAnnouncements: true,
     };
     const dom = new JSDOM(renderPage(page), {
       runScripts: 'dangerously',
@@ -146,13 +148,49 @@ describe('renderPage', () => {
   });
 
   it.each([
-    ['unknown version', { version: 2 }],
+    ['unknown version', { version: 3 }],
     ['unknown choice', { theme: 'sepia' }],
+    ['missing speech announcements', ({ speechAnnouncements, ...preferences }) => preferences],
+    ['non-boolean speech announcements', { speechAnnouncements: 'false' }],
     ['extra key', { extra: 'value' }],
     ['malformed JSON', null],
     ['blocked storage', 'throw'],
   ])('fails safely for %s in the early accessibility record', (_, mutation) => {
     const base = {
+      version: 2,
+      enabled: true,
+      scale: '150',
+      theme: 'black-white',
+      font: 'sans',
+      letterSpacing: 'medium',
+      lineHeight: 'large',
+      paragraphSpacing: 'large',
+      images: 'hidden',
+      speechAnnouncements: false,
+    };
+    const dom = new JSDOM(renderPage(page), {
+      runScripts: 'dangerously',
+      beforeParse(window) {
+        Object.defineProperty(window, 'localStorage', {
+          value: {
+            getItem() {
+              if (mutation === 'throw') throw new Error('blocked');
+              if (mutation === null) return '{';
+              return JSON.stringify(typeof mutation === 'function' ? mutation(base) : { ...base, ...mutation });
+            },
+          },
+        });
+      },
+    });
+    const root = dom.window.document.documentElement;
+
+    expect(root.classList.contains('js')).toBe(true);
+    expect(root.classList.contains('no-js')).toBe(false);
+    expect([...root.attributes].filter((attribute) => attribute.name.startsWith('data-accessibility-'))).toEqual([]);
+  });
+
+  it('leaves exact version-1 preferences for the module migration', () => {
+    const version1Preferences = {
       version: 1,
       enabled: true,
       scale: '150',
@@ -167,21 +205,13 @@ describe('renderPage', () => {
       runScripts: 'dangerously',
       beforeParse(window) {
         Object.defineProperty(window, 'localStorage', {
-          value: {
-            getItem() {
-              if (mutation === 'throw') throw new Error('blocked');
-              if (mutation === null) return '{';
-              return JSON.stringify({ ...base, ...mutation });
-            },
-          },
+          value: { getItem: () => JSON.stringify(version1Preferences) },
         });
       },
     });
-    const root = dom.window.document.documentElement;
 
-    expect(root.classList.contains('js')).toBe(true);
-    expect(root.classList.contains('no-js')).toBe(false);
-    expect([...root.attributes].filter((attribute) => attribute.name.startsWith('data-accessibility-'))).toEqual([]);
+    expect([...dom.window.document.documentElement.attributes]
+      .filter((attribute) => attribute.name.startsWith('data-accessibility-'))).toEqual([]);
   });
 
   it('publishes the complete primary information architecture', () => {
