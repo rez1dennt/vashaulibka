@@ -5,6 +5,7 @@ import {
   saveAccessibilityPreferences,
 } from '../core/accessibility-preferences.js';
 import { createAccessibilityImageController } from './accessibility-images.js';
+import { initAccessibilitySettingsDialog } from './accessibility-settings-dialog.js';
 import { createAccessibilitySpeechController } from './accessibility-speech.js';
 import { safeStorage } from '../core/storage.js';
 
@@ -55,11 +56,12 @@ export function initAccessibilityMode({
   if (!toggle || !panel) return;
 
   const closeButton = panel.querySelector('[data-accessibility-close]');
-  const resetButton = panel.querySelector('[data-accessibility-reset]');
+  const resetButton = document.querySelector('[data-accessibility-reset]');
   const status = panel.querySelector('[data-accessibility-status]');
-  const settingButtons = [...panel.querySelectorAll('[data-accessibility-setting][data-accessibility-value]')];
+  const settingButtons = [...document.querySelectorAll('[data-accessibility-setting][data-accessibility-value]')];
   const resolvedImageController = imageController ?? createAccessibilityImageController();
   const resolvedSpeechController = speechController ?? createAccessibilitySpeechController();
+  const settingsDialog = initAccessibilitySettingsDialog();
   let preferences = loadAccessibilityPreferences(storage);
 
   resolvedSpeechController.init();
@@ -91,6 +93,7 @@ export function initAccessibilityMode({
 
   const closePanel = () => {
     if (panel.hidden) return;
+    settingsDialog.close({ restoreFocus: false });
     panel.hidden = true;
     toggle.setAttribute('aria-expanded', 'false');
     toggle.focus();

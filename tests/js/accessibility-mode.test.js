@@ -85,15 +85,15 @@ describe('accessibility mode controller', () => {
   it('keeps active preferences when the panel closes', () => {
     const { toggle, panel, storage } = setup();
     toggle.click();
-    settingButton('scale', '150').click();
+    settingButton('theme', 'white-black').click();
     toggle.click();
 
     expect(panel.hidden).toBe(true);
     expect(document.documentElement.getAttribute('data-accessibility-enabled')).toBe('true');
-    expect(document.documentElement.getAttribute('data-accessibility-scale')).toBe('150');
+    expect(document.documentElement.getAttribute('data-accessibility-theme')).toBe('white-black');
     expect(JSON.parse(storage.values.get(ACCESSIBILITY_STORAGE_KEY))).toMatchObject({
       enabled: true,
-      scale: '150',
+      theme: 'white-black',
     });
   });
 
@@ -120,7 +120,7 @@ describe('accessibility mode controller', () => {
     expect(speechController.init).toHaveBeenCalledTimes(1);
     expect(speechController.setEnabled).toHaveBeenNthCalledWith(1, false);
 
-    settingButton('scale', '125').click();
+    settingButton('theme', 'black-white').click();
     expect(speechController.setEnabled).toHaveBeenNthCalledWith(2, true);
 
     toggle.click();
@@ -134,8 +134,8 @@ describe('accessibility mode controller', () => {
 
   it('updates one setting, persists one validated record, synchronizes choices, and announces it', () => {
     const { storage, status } = setup();
-    const selected = settingButton('scale', '150');
-    const previous = settingButton('scale', '100');
+    const selected = settingButton('theme', 'black-white');
+    const previous = settingButton('theme', 'standard');
 
     selected.click();
 
@@ -143,13 +143,13 @@ describe('accessibility mode controller', () => {
     expect(storage.set).toHaveBeenCalledWith(ACCESSIBILITY_STORAGE_KEY, JSON.stringify({
       ...DEFAULT_ACCESSIBILITY_PREFERENCES,
       enabled: true,
-      scale: '150',
+      theme: 'black-white',
     }));
     expect(selected.getAttribute('aria-pressed')).toBe('true');
     expect(previous.getAttribute('aria-pressed')).toBe('false');
     expect(document.documentElement.getAttribute('data-accessibility-enabled')).toBe('true');
-    expect(document.documentElement.getAttribute('data-accessibility-scale')).toBe('150');
-    expect(status.textContent).toBe('Размер текста: 150 процентов');
+    expect(document.documentElement.getAttribute('data-accessibility-theme')).toBe('black-white');
+    expect(status.textContent).toBe('Цветовая схема: Чёрный текст на белом фоне');
   });
 
   it('hydrates disabled stored choices without presentation attributes or an announcement', () => {
@@ -162,7 +162,6 @@ describe('accessibility mode controller', () => {
       [ACCESSIBILITY_STORAGE_KEY]: JSON.stringify(stored),
     }));
 
-    expect(settingButton('scale', '150').getAttribute('aria-pressed')).toBe('true');
     expect(settingButton('theme', 'white-black').getAttribute('aria-pressed')).toBe('true');
     expect(ACTIVE_ATTRIBUTES.every((attribute) => !document.documentElement.hasAttribute(attribute))).toBe(true);
     expect(status.textContent).toBe('');
@@ -176,7 +175,7 @@ describe('accessibility mode controller', () => {
     };
     setup(createStorage({ [ACCESSIBILITY_STORAGE_KEY]: JSON.stringify(stored) }));
 
-    settingButton('scale', '150').click();
+    settingButton('theme', 'white-black').click();
 
     expect(document.documentElement.getAttribute('data-accessibility-enabled')).toBe('true');
     expect(document.documentElement.getAttribute('data-accessibility-scale')).toBe('150');
@@ -207,7 +206,7 @@ describe('accessibility mode controller', () => {
       [ACCESSIBILITY_STORAGE_KEY]: '{not-json',
     }));
 
-    expect(settingButton('scale', '100').getAttribute('aria-pressed')).toBe('true');
+    expect(settingButton('theme', 'standard').getAttribute('aria-pressed')).toBe('true');
     expect(ACTIVE_ATTRIBUTES.every((attribute) => !document.documentElement.hasAttribute(attribute))).toBe(true);
     expect(storage.set).not.toHaveBeenCalled();
     expect(status.textContent).toBe('');
@@ -223,7 +222,6 @@ describe('accessibility mode controller', () => {
 
     expect(document.documentElement.getAttribute('data-accessibility-enabled')).toBe('true');
     expect(document.documentElement.getAttribute('data-accessibility-scale')).toBe('125');
-    expect(settingButton('scale', '125').getAttribute('aria-pressed')).toBe('true');
     expect(storage.values.get(ACCESSIBILITY_STORAGE_KEY)).toBe(JSON.stringify(migrated));
     expect(storage.values.has('vision-mode')).toBe(false);
     expect(status.textContent).toBe('Локальный русский голос недоступен в этом браузере');
@@ -234,7 +232,7 @@ describe('accessibility mode controller', () => {
     const speechController = { init: vi.fn(), setEnabled: vi.fn() };
     const { toggle, panel } = setup(createStorage(), { imageController, speechController });
     toggle.click();
-    const lastButton = panel.querySelector('[data-accessibility-reset]');
+    const lastButton = panel.querySelector('[data-accessibility-close]');
     lastButton.focus();
     const tabEvent = new KeyboardEvent('keydown', {
       key: 'Tab',
@@ -249,5 +247,21 @@ describe('accessibility mode controller', () => {
     expect(document.body.style.overflow).toBe('');
     expect(tabEvent.defaultPrevented).toBe(false);
     expect(document.activeElement).toBe(lastButton);
+  });
+
+  it('closes the advanced dialog before collapsing the toolbar and returns focus to the eye button', () => {
+    const { close, panel, toggle } = setup();
+    const advanced = document.querySelector('[data-accessibility-advanced-open]');
+    const dialog = document.querySelector('#accessibility-settings-dialog');
+    toggle.click();
+    advanced.click();
+
+    close.click();
+
+    expect(dialog.hidden).toBe(true);
+    expect(advanced.getAttribute('aria-expanded')).toBe('false');
+    expect(panel.hidden).toBe(true);
+    expect(document.body.classList.contains('is-locked')).toBe(false);
+    expect(document.activeElement).toBe(toggle);
   });
 });
