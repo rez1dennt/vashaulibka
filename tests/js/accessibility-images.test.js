@@ -50,6 +50,24 @@ describe('accessibility image alternatives', () => {
     expect(alternativeFor(image).textContent).toBe('Лицензия клиники');
   });
 
+  it('treats punctuation, case, and whitespace variants as the same caption', () => {
+    mainMarkup('<figure><img id="licence" alt="Лицензия клиники"><figcaption>  ЛИЦЕНЗИЯ\n клиники.  </figcaption></figure>');
+    const image = document.querySelector('#licence');
+
+    createAccessibilityImageController().setHidden(true);
+
+    expect(alternativeFor(image).textContent).toBe('Лицензия клиники');
+  });
+
+  it('preserves a caption that adds genuine information after equivalent alt text', () => {
+    mainMarkup('<figure><img id="licence" alt="Лицензия клиники"><figcaption>Лицензия клиники. Выписка из реестра</figcaption></figure>');
+    const image = document.querySelector('#licence');
+
+    createAccessibilityImageController().setHidden(true);
+
+    expect(alternativeFor(image).textContent).toBe('Лицензия клиники. Выписка из реестра');
+  });
+
   it('hides decorative images without creating an empty alternative', () => {
     mainMarkup('<img id="decoration" src="flourish.svg" alt="">');
     const image = document.querySelector('#decoration');

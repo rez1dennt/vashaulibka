@@ -4,12 +4,20 @@ function normalizedText(value) {
   return value?.replace(/\s+/g, ' ').trim() ?? '';
 }
 
+function equivalenceText(value) {
+  return normalizedText(value)
+    .normalize('NFKC')
+    .replace(/\p{P}+/gu, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
 function imageDescription(image) {
   const alt = normalizedText(image.getAttribute('alt'));
   if (image.getAttribute('alt') === '') return null;
 
   const caption = normalizedText(image.closest('figure')?.querySelector('figcaption')?.textContent);
-  if (caption && (!alt || caption.localeCompare(alt, 'ru', { sensitivity: 'base' }) !== 0)) {
+  if (caption && (!alt || equivalenceText(caption).localeCompare(equivalenceText(alt), 'ru', { sensitivity: 'base' }) !== 0)) {
     return caption;
   }
 
