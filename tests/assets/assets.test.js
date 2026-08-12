@@ -16,6 +16,15 @@ const IMAGE_ROOT = 'public/assets/images';
 const ICON_ROOT = 'public/assets/icons';
 const DOCUMENT_ASSET_ROOT = 'public/assets/documents';
 const DOCUMENT_PREVIEWS = ['license-registry-extract', 'ogrn-certificate'];
+const HOME_DECORATIONS = [
+  'home-hero-smile',
+  'home-hero-tooth',
+  'home-quick-tooth',
+  'home-services-dental',
+  'home-staff-jaw',
+  'home-patients-docs',
+];
+const DECOR_ROOT = 'public/assets/decor';
 
 const imagePath = (name, format) => `${IMAGE_ROOT}/hero-${name}.${format}`;
 const sha256 = (file) => createHash('sha256').update(readFileSync(file)).digest('hex');
@@ -57,6 +66,19 @@ describe('original clinic visual assets', () => {
     expect(viewBox[2]).toBe(viewBox[3]);
     expect(svg).toMatch(/<path\b/);
     expect(svg).not.toMatch(/<(?:text|image|script)\b/i);
+    expect(svg).not.toMatch(/(?:href|src)\s*=\s*["'](?:https?:|data:|\/\/)/i);
+    expect(svg).not.toMatch(/url\(\s*["']?(?:https?:|data:|\/\/)/i);
+    expect(svg).not.toMatch(/\son[a-z]+\s*=/i);
+  });
+
+  it.each(HOME_DECORATIONS)('provides safe local editorial decoration in %s.svg', (name) => {
+    const file = `${DECOR_ROOT}/${name}.svg`;
+
+    expect(existsSync(file), `${file} should exist`).toBe(true);
+    const svg = readFileSync(file, 'utf8');
+    expect(svg).toMatch(/<svg\b[^>]*viewBox=["'][^"']+["']/i);
+    expect(svg).toMatch(/<(?:path|circle|rect|line|polyline|ellipse)\b/i);
+    expect(svg).not.toMatch(/<(?:text|image|script|foreignObject)\b/i);
     expect(svg).not.toMatch(/(?:href|src)\s*=\s*["'](?:https?:|data:|\/\/)/i);
     expect(svg).not.toMatch(/url\(\s*["']?(?:https?:|data:|\/\/)/i);
     expect(svg).not.toMatch(/\son[a-z]+\s*=/i);
