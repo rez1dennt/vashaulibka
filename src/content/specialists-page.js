@@ -17,7 +17,7 @@ const initialPosition = (index, length) => {
 };
 
 const staffSlides = STAFF.map((person, index) => `
-  <li class="specialists-coverflow__slide" data-specialist-slide data-specialist-index="${index}" data-position="${initialPosition(index, STAFF.length)}"${index === 0 ? ' aria-current="true"' : ''}>
+  <li class="specialists-coverflow__slide" id="specialist-${index + 1}" data-specialist-slide data-specialist-index="${index}" data-position="${initialPosition(index, STAFF.length)}"${index === 0 ? ' aria-current="true"' : ''}>
     <article class="specialist-card">
       <div class="specialist-card__portrait" aria-hidden="true">
         <span class="specialist-card__tooth">${renderIcon('tooth')}</span>

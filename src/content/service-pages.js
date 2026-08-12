@@ -9,6 +9,10 @@ const serviceTabs = `<div class="services-tabs-view"><div class="service-tabs"><
 
 const serviceDisclosures = `<div class="services-disclosures-view">${SERVICES.map((service) => `<article class="card service-disclosure"><h2><button type="button" data-disclosure-button id="services-disclosure-${service.slug}" aria-expanded="true" aria-controls="services-disclosure-panel-${service.slug}">${service.title}</button></h2><div class="disclosure-panel" id="services-disclosure-panel-${service.slug}" role="region" aria-labelledby="services-disclosure-${service.slug}">${serviceDetails(service)}</div></article>`).join('')}</div>`;
 
+const serviceAnchors = SERVICES
+  .map((service) => `<span class="search-anchor" id="service-${service.slug}" aria-hidden="true"></span>`)
+  .join('');
+
 const priceDisclosures = SERVICES.map((service) => `<article class="card price-disclosure"><h2><button type="button" data-disclosure-button id="price-disclosure-${service.slug}" aria-expanded="true" aria-controls="price-panel-${service.slug}">${service.title}</button></h2><div class="disclosure-panel" id="price-panel-${service.slug}" role="region" aria-labelledby="price-disclosure-${service.slug}">${serviceDetails(service)}</div></article>`).join('');
 
 const officialContactActions = `<div class="contact-actions">${CONTACTS.phones.map((phone) => `<a class="button button-secondary" href="${phone.href}">${phone.label}</a>`).join('')}<a class="button button-secondary" href="${CONTACTS.emailHref}">${CONTACTS.email}</a></div>`;
@@ -22,7 +26,7 @@ export const SERVICE_PAGES = Object.freeze([
     lead: 'Терапевтическая, ортопедическая стоматология и доврачебная помощь.',
     heroImage: 'services',
     noindex: false,
-    body: `<section class="section"><div class="container">${serviceTabs}${serviceDisclosures}</div></section>`,
+    body: `<section class="section"><div class="container">${serviceAnchors}${serviceTabs}${serviceDisclosures}</div></section>`,
   },
   SPECIALISTS_PAGE,
   {
