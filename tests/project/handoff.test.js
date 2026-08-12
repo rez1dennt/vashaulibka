@@ -51,4 +51,20 @@ describe('release handoff contract', () => {
     expect(source).toContain("credentials: 'same-origin'");
     expect(source).not.toMatch(/https?:\/\//);
   });
+
+  it('documents the exact local accessibility-storage and speech boundary', () => {
+    const readme = read('README.md');
+    const checklist = read('CONTENT_CHECKLIST.md');
+
+    expect(readme).toContain('`cookie-consent`');
+    expect(readme).toContain('`accessibility-preferences`');
+    expect(readme).toMatch(/accessibility-preferences.*верси[яи]\s*2/i);
+    expect(readme).toMatch(/настройк.*отображен.*speechAnnouncements/i);
+    expect(readme).toMatch(/не хран.*медицинск.*контактн.*текст.*истори/i);
+    expect(readme).toMatch(/коротк.*подтвержд.*изменен.*настро.*локальн.*русск.*голос.*браузер/i);
+    expect(readme).toMatch(/не читает.*страниц.*целиком/i);
+    expect(readme).toMatch(/не загруж.*сторонн.*(?:TTS|синтез.*реч)/i);
+    expect(readme).toMatch(/сброс.*настроек.*очистк.*данн.*браузер/i);
+    expect(checklist).toMatch(/\[ \].*заявлен.*соответств.*(?:WCAG|ГОСТ).*аудит/i);
+  });
 });

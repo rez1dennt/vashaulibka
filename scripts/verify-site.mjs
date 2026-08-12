@@ -22,6 +22,8 @@ const ABSOLUTE_SCHEME = /^[a-z][a-z\d+.-]*:/i;
 const ACTIVE_LINK_RELS = new Set(['stylesheet', 'icon', 'preload', 'modulepreload', 'manifest']);
 const SEARCH_ITEM_FIELDS = Object.freeze(['id', 'href', 'category', 'title', 'summary', 'content', 'keywords']);
 const SEARCH_INDEX_MAX_BYTES = 250 * 1024;
+const BANNED_RUNTIME_HOST = /(?:^|\.)lidrekon\.ru$|(?:^|\.)responsivevoice\.(?:org|com)$|(?:^|\.)(?:tts|speechkit)(?:\.|$).*\.yandex\.(?:net|ru|com)$/i;
+const READER_CONTROL_COPY = /(?:читать|озвучить) страницу|приостановить чтение|остановить чтение/i;
 
 const normalizeNewlines = (value) => value.replaceAll('\r\n', '\n');
 
@@ -112,6 +114,17 @@ const cssReferences = (contents) => {
   return [...new Set(references)];
 };
 
+const isBannedRuntimeReference = (reference) => {
+  const value = String(reference ?? '').trim();
+  if (!value || value.startsWith('data:')) return false;
+  try {
+    const url = new URL(value.startsWith('//') ? `https:${value}` : value, LOCAL_ORIGIN);
+    return BANNED_RUNTIME_HOST.test(url.hostname);
+  } catch {
+    return false;
+  }
+};
+
 export function verifyDirectory(directory, { pages = PAGES, origin } = {}) {
   const root = resolve(directory);
   const errors = [];
@@ -146,6 +159,9 @@ export function verifyDirectory(directory, { pages = PAGES, origin } = {}) {
   const indexableMetadata = [];
 
   const checkLocalReference = (reference, fromFile, kind, { validateFragment = false } = {}) => {
+    if (isBannedRuntimeReference(reference)) {
+      add('resource.banned-host', `banned accessibility runtime host is not allowed: ${reference}`, { file: fromFile, reference });
+    }
     const resolvedReference = resolveReference(reference, fromFile);
     if (resolvedReference.kind === 'passive') return;
     if (resolvedReference.kind === 'unsafe') {
@@ -202,6 +218,59 @@ export function verifyDirectory(directory, { pages = PAGES, origin } = {}) {
 
     if (document.querySelectorAll('main').length !== 1) {
       add('html.main', 'expected exactly one main element', { file });
+    }
+
+    const ids = [...document.querySelectorAll('[id]')].map((element) => element.id);
+    if (new Set(ids).size !== ids.length) {
+      add('html.id.duplicate', 'element ids must be unique within a page', { file });
+    }
+
+    for (const element of document.querySelectorAll('[aria-controls], [aria-labelledby], [aria-describedby]')) {
+      for (const attribute of ['aria-controls', 'aria-labelledby', 'aria-describedby']) {
+        for (const id of (element.getAttribute(attribute) ?? '').trim().split(/\s+/).filter(Boolean)) {
+          if (!document.getElementById(id)) {
+            add('html.aria.reference', `ARIA reference does not target an element: ${attribute}="${id}"`, { file, reference: id });
+          }
+        }
+      }
+    }
+
+    if ([...document.querySelectorAll('[tabindex]')].some((element) => Number(element.getAttribute('tabindex')) > 0)) {
+      add('html.tabindex.positive', 'positive tabindex values are not allowed', { file });
+    }
+
+    if ([...document.images].some((image) => !image.hasAttribute('alt'))) {
+      add('html.image.alt', 'every image must have an alt attribute', { file });
+    }
+
+    if (document.querySelector('[data-speech-read], [data-speech-pause], [data-speech-stop]')
+      || READER_CONTROL_COPY.test(document.body.textContent)) {
+      add('accessibility.reader.removed', 'full-page reading controls and copy are not allowed', { file });
+    }
+
+    const panels = document.querySelectorAll('#accessibility-panel[data-accessibility-panel]');
+    const toolbars = document.querySelectorAll('#accessibility-panel .accessibility-toolbar');
+    if (panels.length !== 1 || toolbars.length !== 1) {
+      add('accessibility.panel.count', 'expected exactly one compact accessibility panel and toolbar', { file });
+    }
+
+    const dialogs = document.querySelectorAll('#accessibility-settings-dialog');
+    if (dialogs.length !== 1) {
+      add('accessibility.dialog.count', 'expected exactly one advanced accessibility dialog', { file });
+    } else {
+      const dialog = dialogs[0];
+      const opener = document.querySelectorAll('[data-accessibility-advanced-open]');
+      const labelId = dialog.getAttribute('aria-labelledby');
+      const validRelationship = opener.length === 1
+        && opener[0].getAttribute('aria-controls') === dialog.id
+        && dialog.getAttribute('role') === 'dialog'
+        && dialog.getAttribute('aria-modal') === 'true'
+        && Boolean(labelId && document.getElementById(labelId)?.textContent.trim())
+        && Boolean(dialog.querySelector('[data-accessibility-dialog-backdrop]'))
+        && Boolean(dialog.querySelector('[data-accessibility-dialog-close]'));
+      if (!validRelationship) {
+        add('accessibility.dialog.relationship', 'advanced dialog relationships and required controls must be valid', { file });
+      }
     }
 
     const skipLink = document.querySelector('a.skip-link[href^="#"]');

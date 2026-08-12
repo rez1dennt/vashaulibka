@@ -41,6 +41,16 @@ const pageHtml = ({
   <body>
     <a class="skip-link" href="#main-content">К содержимому</a>
     <main id="main-content">${h1}${body}</main>
+    <section id="accessibility-panel" data-accessibility-panel aria-labelledby="accessibility-panel-title" hidden>
+      <h2 id="accessibility-panel-title">Настройки доступности</h2>
+      <div class="accessibility-toolbar">
+        <button type="button" data-accessibility-advanced-open aria-controls="accessibility-settings-dialog" aria-expanded="false">Расширенные настройки</button>
+      </div>
+    </section>
+    <div id="accessibility-settings-dialog" role="dialog" aria-modal="true" aria-labelledby="accessibility-settings-title" hidden>
+      <div data-accessibility-dialog-backdrop aria-hidden="true"></div>
+      <div><button type="button" data-accessibility-dialog-close>Закрыть</button><h2 id="accessibility-settings-title">Расширенные настройки</h2></div>
+    </div>
   </body>
 </html>`;
 
@@ -404,6 +414,36 @@ describe('production site verifier', () => {
     const errors = verifyDirectory(directory, { pages: [INDEXABLE_PAGE] }).errors;
 
     expect(errors.filter((error) => error.code === 'resource.external')).toHaveLength(5);
+  });
+
+  it.each([
+    'https://lidrekon.ru/assets/widget.js',
+    'https://code.responsivevoice.org/responsivevoice.js',
+    'https://tts.voicetech.yandex.net/generate?text=test',
+  ])('rejects a banned accessibility runtime host even in an outbound anchor: %s', (reference) => {
+    const directory = writeValidFixture({
+      htmlByFile: {
+        'index.html': pageHtml({ body: `<a href="${reference}">Удалённый сервис</a>` }),
+      },
+    });
+
+    expect(verifyDirectory(directory, { pages: [INDEXABLE_PAGE] }).errors).toEqual(expect.arrayContaining([
+      expect.objectContaining({ code: 'resource.banned-host', file: 'index.html', reference }),
+    ]));
+  });
+
+  it('rejects missing and broken advanced-dialog relationships', () => {
+    const directory = writeValidFixture({
+      htmlByFile: {
+        'index.html': pageHtml()
+          .replace('aria-controls="accessibility-settings-dialog"', 'aria-controls="missing-settings-dialog"')
+          .replace('aria-labelledby="accessibility-settings-title"', 'aria-labelledby="missing-settings-title"'),
+      },
+    });
+
+    expect(verifyDirectory(directory, { pages: [INDEXABLE_PAGE] }).errors).toEqual(expect.arrayContaining([
+      expect.objectContaining({ code: 'accessibility.dialog.relationship', file: 'index.html' }),
+    ]));
   });
 
   it('rejects base elements that can redirect otherwise relative resources', () => {

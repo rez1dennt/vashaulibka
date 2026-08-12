@@ -68,6 +68,19 @@ describe('generated local search index', () => {
     }
   });
 
+  it('indexes every reviewed compact-accessibility synonym on the settings page', () => {
+    const item = build().items.find((candidate) => candidate.href === 'cookies.html');
+
+    expect(item.keywords).toEqual(expect.arrayContaining([
+      'версия для слабовидящих',
+      'увеличить текст',
+      'контраст',
+      'скрыть изображения',
+      'голосовые подтверждения',
+      'расширенные настройки',
+    ]));
+  });
+
   it('ranks a concrete licensed service above the generic services overview', () => {
     const matches = searchItems(build().items, 'болит зуб');
 

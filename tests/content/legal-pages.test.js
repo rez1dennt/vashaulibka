@@ -237,12 +237,26 @@ describe('patient and legal page manifest', () => {
 
     expect(cookies).toContain('localStorage');
     expect(cookies).toContain('cookie-consent');
-    expect(cookies).toContain('vision-mode');
+    expect(cookies).toContain('accessibility-preferences');
+    expect(cookies).toMatch(/accessibility-preferences.*верси[яи]\s*2/i);
+    expect(cookies).toMatch(/настройк.*отображен.*логическ.*голосов.*подтвержд/i);
+    expect(cookies).toMatch(/не сохраняются.*медицинск.*контактн.*текст.*фраз.*истори.*действ/i);
+    expect(cookies).toMatch(/коротк.*подтвержд.*изменен.*настро/i);
+    expect(cookies).toMatch(/локальн.*русск.*голос.*браузер/i);
+    expect(cookies).toMatch(/страниц.*целиком.*не чита/i);
+    expect(cookies).toMatch(/сторонн.*виджет.*(?:TTS|синтез.*реч).*не загруж/i);
+    expect(cookies).toMatch(/сброс.*100.*стандартн.*схем.*фирменн.*шрифт.*обычн.*интервал.*показ.*изображ.*выключ.*голос.*специальн.*режим/i);
+    expect(cookies).toMatch(/очист.*данн.*браузер.*cookie-consent.*accessibility-preferences/i);
+    expect(cookies).not.toContain('vision-mode');
     expect(cookies).toMatch(/не.*HTTP-cookie|не.*файл.*cookie/i);
     expect(cookies).toMatch(/пока.*пользователь.*измен|очист.*данн/i);
     expect(cookies).toMatch(/аналитик.*реклам.*идентификатор.*пиксел/i);
     expect(cookies).toMatch(/удал[её]нн.*шрифт.*карт.*виджет/i);
     expect(cookieDocument.querySelector('[data-cookie-settings]')).not.toBeNull();
+
+    expect(privacy).toContain('accessibility-preferences');
+    expect(privacy).not.toContain('vision-mode');
+    expect(`${privacy} ${cookies}`).not.toMatch(/сайт (?:полностью )?соответствует.*(?:WCAG|ГОСТ)/i);
 
     for (const file of legalFiles) {
       const document = pageDocument(file);

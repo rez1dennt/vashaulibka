@@ -19,7 +19,21 @@ export const SEARCH_PAGE_META = Object.freeze({
   'standards.html': { category: 'Пациентам', keywords: ['стандарты', 'клинические рекомендации', 'клинреки', 'Минздрав'] },
   'personal-data-consent.html': { category: 'Персональные данные', keywords: ['согласие', 'персональные данные', 'обработка персональных данных'] },
   'privacy.html': { category: 'Персональные данные', keywords: ['политика конфиденциальности', 'персональные данные', 'оператор'] },
-  'cookies.html': { category: 'Персональные данные', keywords: ['cookies', 'cookie', 'куки', 'файлы cookie'] },
+  'cookies.html': {
+    category: 'Персональные данные',
+    keywords: [
+      'cookies',
+      'cookie',
+      'куки',
+      'файлы cookie',
+      'версия для слабовидящих',
+      'увеличить текст',
+      'контраст',
+      'скрыть изображения',
+      'голосовые подтверждения',
+      'расширенные настройки',
+    ],
+  },
 });
 
 export const SEARCH_SERVICE_KEYWORDS = Object.freeze({
