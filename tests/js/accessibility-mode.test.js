@@ -109,6 +109,29 @@ describe('accessibility mode controller', () => {
     expect(imageController.setHidden).toHaveBeenNthCalledWith(3, false);
   });
 
+  it('initializes speech once and applies enabled state without stopping when the panel closes', () => {
+    const speechController = {
+      init: vi.fn(),
+      setEnabled: vi.fn(),
+      stop: vi.fn(),
+    };
+    const { toggle, reset } = setup(createStorage(), { speechController });
+
+    expect(speechController.init).toHaveBeenCalledTimes(1);
+    expect(speechController.setEnabled).toHaveBeenNthCalledWith(1, false);
+
+    settingButton('scale', '125').click();
+    expect(speechController.setEnabled).toHaveBeenNthCalledWith(2, true);
+
+    toggle.click();
+    toggle.click();
+    expect(speechController.setEnabled).toHaveBeenCalledTimes(2);
+    expect(speechController.stop).not.toHaveBeenCalled();
+
+    reset.click();
+    expect(speechController.setEnabled).toHaveBeenNthCalledWith(3, false);
+  });
+
   it('updates one setting, persists one validated record, synchronizes choices, and announces it', () => {
     const { storage, status } = setup();
     const selected = settingButton('scale', '150');
@@ -203,12 +226,12 @@ describe('accessibility mode controller', () => {
     expect(settingButton('scale', '125').getAttribute('aria-pressed')).toBe('true');
     expect(storage.values.get(ACCESSIBILITY_STORAGE_KEY)).toBe(JSON.stringify(migrated));
     expect(storage.values.has('vision-mode')).toBe(false);
-    expect(status.textContent).toBe('');
+    expect(status.textContent).toBe('Локальный русский голос недоступен в этом браузере');
   });
 
   it('uses normal document flow without a backdrop, modal, body lock, or focus trap', () => {
     const imageController = { setHidden: vi.fn() };
-    const speechController = { setEnabled: vi.fn() };
+    const speechController = { init: vi.fn(), setEnabled: vi.fn() };
     const { toggle, panel } = setup(createStorage(), { imageController, speechController });
     toggle.click();
     const lastButton = panel.querySelector('[data-accessibility-reset]');
