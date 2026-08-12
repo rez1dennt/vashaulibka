@@ -2,6 +2,7 @@ import { CLINIC, CONTACTS, HOURS, LICENSE } from '../data/clinic.js';
 import { PUBLIC_DOCUMENTS } from '../data/legal.js';
 import { SERVICES } from '../data/services.js';
 import { STAFF } from '../data/staff.js';
+import { renderHomeDecoration } from '../templates/home-decoration.js';
 import { renderIcon } from '../templates/icons.js';
 
 const escapeHtml = (value) => String(value).replace(/[&<>\"]/g, (character) => ({
@@ -27,6 +28,7 @@ const quickLinks = [
 
 const quickLinksSection = [
   '<section class="quick-links" aria-label="Основные разделы">',
+  renderHomeDecoration('quick-tooth'),
   '<div class="container quick-links__grid">',
   ...quickLinks.map((item) => `<article class="quick-card">${renderIcon(item.icon)}<h2>${item.title}</h2><p>${item.text}</p><a href="${item.href}">Перейти${renderIcon('arrow', 'button-icon')}</a></article>`),
   `<article class="quick-card quick-card--appointment">${renderIcon('calendar')}<h2>Запись на приём</h2><p>Позвоните в клинику или откройте окно с номерами и режимом работы.</p><a href="${CONTACTS.phones[0].href}" data-appointment-open>Записаться${renderIcon('arrow', 'button-icon')}</a></article>`,
@@ -56,12 +58,13 @@ const serviceCards = SERVICES.map((service) => [
   '</article>',
 ].join('')).join('');
 
-const servicesSection = `<section class="home-section home-services"><div class="container"><div class="section-heading"><div><p class="eyebrow">Наши услуги</p><h2>Лицензированные направления помощи</h2></div><a class="text-link" href="services.html">Все услуги${renderIcon('arrow', 'button-icon')}</a></div><div class="home-services__grid">${serviceCards}</div></div></section>`;
+const servicesSection = `<section class="home-section home-services">${renderHomeDecoration('services-dental')}<div class="container"><div class="section-heading"><div><p class="eyebrow">Наши услуги</p><h2>Лицензированные направления помощи</h2></div><a class="text-link" href="services.html">Все услуги${renderIcon('arrow', 'button-icon')}</a></div><div class="home-services__grid">${serviceCards}</div></div></section>`;
 
 const staffCards = STAFF.map((person) => `<article class="home-staff-card"><span class="home-staff-card__avatar" aria-hidden="true">${escapeHtml(person.initials)}</span><div><h3>${escapeHtml(person.name)}</h3><p>${escapeHtml(person.role)}</p></div></article>`).join('');
 
 const staffAndPricesSection = [
   '<section class="home-section home-staff-prices">',
+  renderHomeDecoration('staff-jaw'),
   '<div class="container home-staff-prices__grid">',
   `<div class="home-staff"><div class="section-heading"><div><p class="eyebrow">Команда</p><h2>Сотрудники клиники</h2></div><a class="text-link" href="specialists.html">Весь список${renderIcon('arrow', 'button-icon')}</a></div><div class="home-staff__grid">${staffCards}</div></div>`,
   `<aside class="home-price-panel"><div class="home-price-panel__icon">${renderIcon('ruble')}</div><p class="eyebrow">Стоимость услуг</p><h2>Прейскурант готовится к публикации</h2><p><strong>${escapeHtml(SERVICES[0].priceStatus)}</strong></p><p>Утверждённые цены будут размещены после получения прейскуранта от клиники.</p><div class="home-price-panel__actions"><a class="button button-secondary" href="prices.html">Статус цен</a><a class="button button-primary" href="${CONTACTS.phones[0].href}" data-appointment-open>Записаться</a></div></aside>`,
@@ -77,7 +80,7 @@ const patientLinks = [
   { href: 'standards.html', label: 'Стандарты и рекомендации', icon: 'document' },
 ];
 
-const patientSection = `<section class="home-section home-patients"><div class="container"><div class="section-heading"><div><p class="eyebrow">Пациентам</p><h2>Документы и полезная информация</h2></div><a class="text-link" href="patients.html">Все разделы${renderIcon('arrow', 'button-icon')}</a></div><div class="home-patients__grid">${patientLinks.map((item) => `<a class="patient-link-card" href="${item.href}">${renderIcon(item.icon)}<span>${item.label}</span>${renderIcon('arrow', 'button-icon')}</a>`).join('')}</div></div></section>`;
+const patientSection = `<section class="home-section home-patients">${renderHomeDecoration('patients-docs')}<div class="container"><div class="section-heading"><div><p class="eyebrow">Пациентам</p><h2>Документы и полезная информация</h2></div><a class="text-link" href="patients.html">Все разделы${renderIcon('arrow', 'button-icon')}</a></div><div class="home-patients__grid">${patientLinks.map((item) => `<a class="patient-link-card" href="${item.href}">${renderIcon(item.icon)}<span>${item.label}</span>${renderIcon('arrow', 'button-icon')}</a>`).join('')}</div></div></section>`;
 
 const documentCards = [
   {

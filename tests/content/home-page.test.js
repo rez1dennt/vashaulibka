@@ -108,4 +108,31 @@ describe('premium light homepage', () => {
     ]);
     expect(document.querySelectorAll('h1')).toHaveLength(1);
   });
+
+  it('adds decorative companions only to the approved homepage sections', () => {
+    const document = render();
+
+    expect([...document.querySelectorAll('.home-decor')].map((node) => node.classList[1])).toEqual([
+      'home-decor--hero-smile',
+      'home-decor--hero-tooth',
+      'home-decor--quick-tooth',
+      'home-decor--services-dental',
+      'home-decor--staff-jaw',
+      'home-decor--patients-docs',
+    ]);
+    expect([...document.querySelectorAll('.home-decor')].every((node) => node.getAttribute('aria-hidden') === 'true')).toBe(true);
+    expect(document.querySelector('.home-about .home-decor')).toBeNull();
+    expect(document.querySelector('.home-documents .home-decor')).toBeNull();
+    expect(document.querySelector('.home-contact .home-decor')).toBeNull();
+  });
+
+  it('keeps decorative companions free of interactive or meaningful content', () => {
+    const document = render();
+
+    for (const decoration of document.querySelectorAll('.home-decor')) {
+      expect(decoration.children).toHaveLength(0);
+      expect(decoration.textContent).toBe('');
+      expect(decoration.matches('a, button, img, svg')).toBe(false);
+    }
+  });
 });

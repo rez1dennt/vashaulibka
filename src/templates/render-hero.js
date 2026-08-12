@@ -1,4 +1,5 @@
 import { CONTACTS, LICENSE } from '../data/clinic.js';
+import { renderHomeDecoration } from './home-decoration.js';
 import { renderIcon } from './icons.js';
 
 const escapeHtml = (value) => String(value).replace(/[&<>\"]/g, (character) => ({
@@ -12,6 +13,8 @@ export function renderHero(page) {
   if (page.heroVariant === 'home') {
     return [
       '<section class="home-hero">',
+      renderHomeDecoration('hero-smile'),
+      renderHomeDecoration('hero-tooth'),
       '<div class="container home-hero__inner">',
       '<div class="home-hero__copy">',
       '<p class="eyebrow">Стоматологическая клиника в Белгороде</p>',
