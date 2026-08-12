@@ -12,6 +12,18 @@ const documents = () => PAGES.map((page) => ({
 }));
 
 describe('generated-page accessibility conformance', () => {
+  it('publishes consent-gated MIS booking relationships on all 21 pages', () => {
+    expect(PAGES).toHaveLength(21);
+    for (const { file, document } of documents()) {
+      const dialog = document.querySelector('#appointment-dialog');
+      expect(dialog?.getAttribute('aria-describedby'), file).toBe('appointment-description');
+      expect(dialog?.querySelector('[data-booking-status][aria-live="polite"]'), file).not.toBeNull();
+      expect(dialog?.querySelector('[data-booking-error][role="alert"]'), file).not.toBeNull();
+      expect(document.querySelector('[data-cookie-online-booking]'), file).not.toBeNull();
+      expect(document.querySelector('script[src*="32top"], iframe[src*="32top"]'), file).toBeNull();
+    }
+  });
+
   it('renders one compact toolbar and one semantically related advanced dialog on all 21 pages', () => {
     expect(PAGES).toHaveLength(21);
 

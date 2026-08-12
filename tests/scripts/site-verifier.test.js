@@ -418,6 +418,33 @@ describe('production site verifier', () => {
     expect(errors.filter((error) => error.code === 'resource.external')).toHaveLength(5);
   });
 
+  it('allows exact approved 32top links while static widget resources stay forbidden', () => {
+    const approved = [
+      'https://book-app.32top.ru/144e96ac-dbc8-4f44-a6c2-e27f96a783a6',
+      'https://app.32top.ru/soglasie-na-obrabotku-personalnyh-dannyh',
+      'https://app.32top.ru/privacy-policy',
+    ];
+    const directory = writeValidFixture({ htmlByFile: { 'index.html': pageHtml({
+      body: `${approved.map((href) => `<a href="${href}">32top</a>`).join('')}<script src="https://book-app.32top.ru/widget.js"></script><iframe src="${approved[0]}"></iframe>`,
+    }) } });
+
+    const errors = verifyDirectory(directory, { pages: [INDEXABLE_PAGE] }).errors;
+    expect(errors.filter((error) => error.code === 'resource.external')).toHaveLength(2);
+    expect(errors.filter((error) => error.code === 'link.external-unapproved')).toHaveLength(0);
+  });
+
+  it.each([
+    'http://book-app.32top.ru/144e96ac-dbc8-4f44-a6c2-e27f96a783a6',
+    'https://evil.book-app.32top.ru/144e96ac-dbc8-4f44-a6c2-e27f96a783a6',
+    'https://book-app.32top.ru.evil.test/144e96ac-dbc8-4f44-a6c2-e27f96a783a6',
+    'https://app.32top.ru/privacy-policy?redirect=evil',
+  ])('rejects an unapproved 32top-like outbound link: %s', (reference) => {
+    const directory = writeValidFixture({ htmlByFile: { 'index.html': pageHtml({ body: `<a href="${reference}">32top</a>` }) } });
+    expect(verifyDirectory(directory, { pages: [INDEXABLE_PAGE] }).errors).toEqual(expect.arrayContaining([
+      expect.objectContaining({ code: 'link.external-unapproved', reference }),
+    ]));
+  });
+
   it.each([
     'https://lidrekon.ru/assets/widget.js',
     'https://code.responsivevoice.org/responsivevoice.js',

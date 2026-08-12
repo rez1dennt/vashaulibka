@@ -14,6 +14,7 @@ import { fileURLToPath } from 'node:url';
 import { JSDOM } from 'jsdom';
 import { PAGES } from '../src/content/page-manifest.js';
 import { generateSeo } from './generate-seo.mjs';
+import { ONLINE_BOOKING } from '../src/data/online-booking.js';
 
 const LOCAL_ORIGIN = 'https://local.test';
 const PASSIVE_SCHEMES = /^(?:mailto|tel|data):/i;
@@ -24,6 +25,11 @@ const SEARCH_ITEM_FIELDS = Object.freeze(['id', 'href', 'category', 'title', 'su
 const SEARCH_INDEX_MAX_BYTES = 250 * 1024;
 const BANNED_RUNTIME_HOST = /(?:^|\.)lidrekon\.ru$|(?:^|\.)responsivevoice\.(?:org|com)$|(?:^|\.)(?:tts|speechkit)(?:\.[a-z\d-]+)*\.yandex\.(?:net|ru|com)$/i;
 const READER_CONTROL_COPY = /(?:читать|озвучить) страницу|приостановить чтение|остановить чтение/i;
+const APPROVED_32TOP_LINKS = new Set([
+  ONLINE_BOOKING.bookingUrl,
+  ONLINE_BOOKING.consentUrl,
+  ONLINE_BOOKING.privacyUrl,
+]);
 
 const normalizeNewlines = (value) => value.replaceAll('\r\n', '\n');
 
@@ -125,6 +131,17 @@ const isBannedRuntimeReference = (reference) => {
   }
 };
 
+const isUnapproved32TopLink = (reference) => {
+  const value = String(reference ?? '').trim();
+  if (!/32top\.ru/i.test(value)) return false;
+  try {
+    const url = new URL(value);
+    return url.href !== value || !APPROVED_32TOP_LINKS.has(url.href);
+  } catch {
+    return true;
+  }
+};
+
 export function verifyDirectory(directory, { pages = PAGES, origin } = {}) {
   const root = resolve(directory);
   const errors = [];
@@ -161,6 +178,9 @@ export function verifyDirectory(directory, { pages = PAGES, origin } = {}) {
   const checkLocalReference = (reference, fromFile, kind, { validateFragment = false } = {}) => {
     if (isBannedRuntimeReference(reference)) {
       add('resource.banned-host', `banned accessibility runtime host is not allowed: ${reference}`, { file: fromFile, reference });
+    }
+    if (kind === 'link' && isUnapproved32TopLink(reference)) {
+      add('link.external-unapproved', `unapproved 32top link is not allowed: ${reference}`, { file: fromFile, reference });
     }
     const resolvedReference = resolveReference(reference, fromFile);
     if (resolvedReference.kind === 'passive') return;
