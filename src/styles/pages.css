@@ -1159,7 +1159,18 @@
   font-size: var(--text-lead-size);
 }
 
-.home-hero__actions,
+.home-hero__actions {
+  inline-size: min(100%, 22rem);
+  display: grid;
+  justify-items: center;
+  gap: var(--space-3);
+  margin-inline: auto;
+}
+
+.home-hero__actions > .button-primary {
+  inline-size: 100%;
+}
+
 .home-price-panel__actions {
   display: flex;
   flex-wrap: wrap;
@@ -2134,6 +2145,25 @@
   margin-block-end: var(--space-4);
 }
 
+.about-cta__actions {
+  min-inline-size: var(--space-0);
+  display: grid;
+  gap: var(--space-3);
+  max-inline-size: 28rem;
+  margin-block-start: var(--space-5);
+}
+
+.about-cta__phones {
+  min-inline-size: var(--space-0);
+  display: grid;
+  gap: var(--space-3);
+}
+
+.about-cta__actions > .button-primary,
+.about-cta__phones > .button {
+  inline-size: 100%;
+}
+
 .about-cta__schedule {
   min-inline-size: var(--space-0);
 }
@@ -2190,6 +2220,12 @@
 
 .about-hours__note dd {
   color: var(--color-primary-strong);
+}
+
+@media (min-width: 24rem) {
+  .about-cta__phones {
+    grid-template-columns: repeat(2, minmax(var(--space-0), 1fr));
+  }
 }
 
 @media (min-width: 48rem) {

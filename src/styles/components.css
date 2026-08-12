@@ -249,9 +249,16 @@ button.card:active {
   padding-inline-end: var(--space-12);
 }
 
+.dialog__actions,
+.dialog__phones {
+  min-inline-size: var(--space-0);
+  display: grid;
+  gap: var(--space-3);
+}
+
 .dialog__panel .button {
   inline-size: 100%;
-  margin-block-start: var(--space-2);
+  margin: var(--space-0);
 }
 
 .cookie-banner {
@@ -261,8 +268,10 @@ button.card:active {
   inset-block-end: max(var(--container-gutter), calc(var(--mobile-appointment-reserve) + env(safe-area-inset-bottom)));
   inline-size: auto;
   max-inline-size: var(--cookie-max-inline-size);
+  display: grid;
+  gap: var(--space-2);
   margin-inline-start: auto;
-  padding: var(--card-padding);
+  padding: var(--space-5);
   border: var(--border-width) solid var(--color-border-strong);
   border-radius: var(--radius-md);
   background: var(--color-surface-raised);
@@ -270,14 +279,15 @@ button.card:active {
 }
 
 .cookie-banner p {
-  margin-block-end: var(--space-4);
+  margin: var(--space-0) var(--space-0) var(--space-2);
+  font-size: var(--text-small-size);
 }
 
 .cookie-banner button {
+  inline-size: 100%;
   min-block-size: var(--control-block-size);
-  margin-block-start: var(--space-2);
-  margin-inline-end: var(--space-2);
-  padding: var(--space-3) var(--space-4);
+  margin: var(--space-0);
+  padding: var(--space-2) var(--space-3);
   border: var(--border-width) solid var(--button-border);
   border-radius: var(--button-radius);
   color: var(--button-secondary-text);
@@ -298,6 +308,20 @@ button.card:active {
 
 .cookie-banner button:disabled {
   cursor: not-allowed;
+}
+
+@media (min-width: 24rem) {
+  .dialog__phones {
+    grid-template-columns: repeat(2, minmax(var(--space-0), 1fr));
+  }
+
+  .cookie-banner {
+    grid-template-columns: repeat(2, minmax(var(--space-0), 1fr));
+  }
+
+  .cookie-banner p {
+    grid-column: 1 / -1;
+  }
 }
 
 .vision-mode {
