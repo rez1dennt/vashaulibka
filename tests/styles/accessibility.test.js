@@ -8,6 +8,8 @@ const readStyle = (name) => {
 
 const tokensCss = readStyle('tokens');
 const accessibilityCss = readStyle('accessibility');
+const componentsCss = readStyle('components');
+const layoutCss = readStyle('layout');
 
 const declarations = (css) => new Map(
   [...css.matchAll(/(--[a-z0-9-]+):\s*([^;]+);/g)].map((match) => [match[1], match[2].trim()]),
@@ -78,6 +80,33 @@ describe('responsive accessibility visual system', () => {
     expect(scaleRules).not.toMatch(/transform|zoom:/);
   });
 
+  it('reflows the accessibility header safely at 320px and 200% text', () => {
+    const values = declarations(tokensCss);
+    const pixelValue = (name) => {
+      const value = resolveToken(values, name);
+      expect(value).toMatch(/^\d+(?:\.\d+)?px$/);
+      return Number.parseFloat(value);
+    };
+    const viewport = 320;
+    const gutter = pixelValue('--accessibility-header-inline-gutter');
+    const mark = pixelValue('--accessibility-header-mark-size');
+    const brandGap = pixelValue('--accessibility-header-brand-gap');
+    const wordmark = pixelValue('--accessibility-header-wordmark-inline-size');
+    const control = pixelValue('--accessibility-header-control-size');
+    const rowGap = pixelValue('--accessibility-header-row-gap');
+    const available = viewport - (gutter * 2);
+    const occupied = mark + brandGap + wordmark + (control * 2) + (rowGap * 2);
+
+    expect(control).toBeGreaterThanOrEqual(44);
+    expect(occupied).toBeLessThanOrEqual(available);
+    expect(accessibilityCss).toMatch(/@media\s*\(max-width:\s*30rem\)[\s\S]*?html\[data-accessibility-enabled="true"\]\s+\.site-header\s+\.header-shell\s*\{[^}]*width:\s*min\(calc\(100%\s*-\s*\(var\(--accessibility-header-inline-gutter\)\s*\*\s*2\)\),\s*var\(--header-container-max\)\)/s);
+    expect(accessibilityCss).toMatch(/@media\s*\(max-width:\s*30rem\)[\s\S]*?html\[data-accessibility-enabled="true"\]\s+\.brand-row__inner\s*\{[^}]*grid-template-columns:\s*minmax\(var\(--space-0\),\s*1fr\)\s+repeat\(2,\s*var\(--accessibility-header-control-size\)\)[^}]*gap:\s*var\(--accessibility-header-row-gap\)/s);
+    expect(accessibilityCss).toMatch(/html\[data-accessibility-enabled="true"\]\s+\.brand__wordmark\s*\{[^}]*inline-size:\s*var\(--accessibility-header-wordmark-inline-size\)[^}]*font-size:\s*var\(--accessibility-header-wordmark-font-size\)/s);
+    expect(accessibilityCss).toMatch(/html\[data-accessibility-enabled="true"\]\s+:where\(\.site-search__toggle, \.menu-toggle\)\s*\{[^}]*inline-size:\s*var\(--accessibility-header-control-size\)[^}]*block-size:\s*var\(--accessibility-header-control-size\)/s);
+    expect(accessibilityCss).toMatch(/html\[data-accessibility-enabled="true"\]\s+\.site-search__field\s*\{[^}]*grid-template-columns:\s*var\(--accessibility-header-icon-size\)\s+minmax\(var\(--space-0\),\s*1fr\)\s+repeat\(2,\s*var\(--accessibility-header-control-size\)\)/s);
+    expect(accessibilityCss).not.toMatch(/@media\s*\(max-width:\s*30rem\)[\s\S]*?html\[data-accessibility-enabled="true"\][\s\S]*?overflow-x:\s*(?:hidden|clip)/s);
+  });
+
   it.each(['standard', 'black-white', 'white-black', 'blue-light'])(
     'overrides the complete semantic palette for the %s theme with AA contrast',
     (theme) => {
@@ -106,18 +135,52 @@ describe('responsive accessibility visual system', () => {
     },
   );
 
-  it('supports sans text, letter spacing, line height, and paragraph spacing in readable regions', () => {
+  it.each(['standard', 'black-white', 'white-black', 'blue-light'])(
+    'keeps regular and strong UI boundaries at three to one in the %s theme',
+    (theme) => {
+      const themeTokens = themeDeclarations(theme);
+      const values = new Map([...declarations(tokensCss), ...themeTokens]);
+      const color = (name) => resolveToken(values, name);
+
+      expect(contrastRatio(color('--color-border'), color('--color-surface-page'))).toBeGreaterThanOrEqual(3);
+      expect(contrastRatio(color('--color-border'), color('--color-surface-raised'))).toBeGreaterThanOrEqual(3);
+      expect(contrastRatio(color('--color-border-strong'), color('--notice-background'))).toBeGreaterThanOrEqual(3);
+      expect(componentsCss).toMatch(/\[role="tab"\]\s*\{[^}]*border:\s*var\(--border-width\)\s+solid\s+var\(--color-border\)[^}]*background:\s*var\(--color-surface-raised\)/s);
+      expect(accessibilityCss).toMatch(/\.accessibility-image-alternative\s*\{[^}]*border:\s*var\(--border-width-strong\)\s+solid\s+var\(--color-border-strong\)[^}]*background:\s*var\(--notice-background\)/s);
+    },
+  );
+
+  it.each(['standard', 'black-white', 'white-black', 'blue-light'])(
+    'makes the actual hero scrim chain contrast-safe in the %s theme',
+    (theme) => {
+      const themeTokens = themeDeclarations(theme);
+      const values = new Map([...declarations(tokensCss), ...themeTokens]);
+      const color = (name) => resolveToken(values, name);
+
+      expect(layoutCss).toMatch(/\.page-hero\s*\{[^}]*background-image:\s*var\(--layout-hero-scrim\),\s*var\(--hero-image, none\)/s);
+      expect(themeTokens.get('--layout-hero-scrim')).toBe('linear-gradient(var(--color-surface-page), var(--color-surface-page))');
+      expect(contrastRatio(color('--color-text'), color('--color-surface-page'))).toBeGreaterThanOrEqual(4.5);
+      expect(contrastRatio(color('--color-text-muted'), color('--color-surface-page'))).toBeGreaterThanOrEqual(4.5);
+    },
+  );
+
+  it('inherits readable typography through addresses and status copy while resetting controls', () => {
+    const readableRegion = accessibilityCss.match(/\[data-accessibility-enabled="true"\]\s+:where\(main, \.site-footer, \[role="dialog"\], \.site-search__dropdown, \.cookie-banner, \.accessibility-panel\)\s*\{([^}]*)\}/)?.[1] ?? '';
+    const controlReset = accessibilityCss.match(/\[data-accessibility-enabled="true"\]\s+:where\(\.button, button, input, select, textarea, \[role="button"\], \[role="tab"\], \[data-disclosure-button\]\)\s*\{([^}]*)\}/)?.[1] ?? '';
+
     expect(accessibilityCss).toMatch(/\[data-accessibility-font="sans"\]\s*\{[^}]*--font-body:\s*var\(--accessibility-font-sans\)[^}]*--font-heading:\s*var\(--accessibility-font-sans\)/s);
     expect(accessibilityCss).toMatch(/\[data-accessibility-letter-spacing="medium"\]\s*\{[^}]*--accessibility-letter-spacing:/s);
     expect(accessibilityCss).toMatch(/\[data-accessibility-letter-spacing="large"\]\s*\{[^}]*--accessibility-letter-spacing:/s);
-    expect(accessibilityCss).toMatch(/:where\(main, \.site-footer, \[role="dialog"\], \.site-search__dropdown, \.cookie-banner, \.accessibility-panel\)[\s\S]*letter-spacing:\s*var\(--accessibility-letter-spacing\)/);
-    expect(accessibilityCss).toMatch(/:where\([^)]*th, td, \.footer-bottom > span[^)]*\)\s*\{[^}]*letter-spacing:\s*var\(--accessibility-letter-spacing\)[^}]*line-height:\s*var\(--accessibility-line-height\)/s);
+    expect(readableRegion).toMatch(/letter-spacing:\s*var\(--accessibility-letter-spacing\)/);
+    expect(readableRegion).toMatch(/line-height:\s*var\(--accessibility-line-height\)/);
     expect(accessibilityCss).toMatch(/\[data-accessibility-line-height="medium"\]\s*\{[^}]*--accessibility-line-height:/s);
     expect(accessibilityCss).toMatch(/\[data-accessibility-line-height="large"\]\s*\{[^}]*--accessibility-line-height:/s);
-    expect(accessibilityCss).toMatch(/:where\(main, \.site-footer, \[role="dialog"\], \.site-search__dropdown, \.cookie-banner, \.accessibility-panel\)[\s\S]*line-height:\s*var\(--accessibility-line-height\)/);
     expect(accessibilityCss).toMatch(/\[data-accessibility-paragraph-spacing="large"\]\s*\{[^}]*--accessibility-paragraph-spacing:/s);
     expect(accessibilityCss).toMatch(/:where\(main, \.site-footer, \[role="dialog"\], \.site-search__dropdown, \.cookie-banner, \.accessibility-panel\)[\s\S]*margin-block-end:\s*var\(--accessibility-paragraph-spacing\)/);
-    expect(accessibilityCss).toMatch(/\.brand[^}]*letter-spacing:\s*normal/s);
+    expect(controlReset).toMatch(/letter-spacing:\s*normal/);
+    expect(controlReset).toMatch(/line-height:\s*var\(--button-line-height\)/);
+    expect(controlReset).not.toContain('var(--accessibility-line-height)');
+    expect(accessibilityCss).toMatch(/\.brand[^}]*letter-spacing:\s*normal[^}]*line-height:\s*var\(--brand-line-height\)/s);
   });
 
   it('renders compact image alternatives while leaving logos and functional SVG alone', () => {

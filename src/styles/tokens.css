@@ -11,6 +11,7 @@
   --primitive-color-warm: #f8f3ed;
   --primitive-color-border: #dfe7f0;
   --primitive-color-border-strong: #8293a8;
+  --primitive-color-border-accessibility: #78889b;
   --primitive-color-black: #000000;
   --primitive-color-white: #ffffff;
   --primitive-color-white-soft: #f2f2f2;
@@ -80,10 +81,21 @@
   --primitive-space-20: 5rem;
   --primitive-space-24: 6rem;
   --primitive-space-30: 7.5rem;
+  --primitive-space-accessibility-header-gutter: 12px;
+  --primitive-space-accessibility-header-brand-gap: 4px;
+  --primitive-space-accessibility-header-row-gap: 8px;
+  --primitive-space-accessibility-header-surface-padding: 8px;
+  --primitive-space-accessibility-header-field-gap: 4px;
   --primitive-size-target-min: 1.5rem;
   --primitive-size-control: 3rem;
   --primitive-size-icon: 1.5rem;
   --primitive-size-brand-mark: 3.5rem;
+  --primitive-size-accessibility-header-mark: 40px;
+  --primitive-size-accessibility-header-wordmark: 104px;
+  --primitive-size-accessibility-header-wordmark-font: 16px;
+  --primitive-size-accessibility-header-smile-block: 6px;
+  --primitive-size-accessibility-header-control: 44px;
+  --primitive-size-accessibility-header-icon: 20px;
   --primitive-size-avatar-sm: 4rem;
   --primitive-size-avatar-lg: 6rem;
   --primitive-size-contact-action: 11rem;
@@ -201,8 +213,8 @@
   --accessibility-theme-standard-notice: var(--primitive-color-warm);
   --accessibility-theme-standard-link: var(--primitive-color-brand-strong);
   --accessibility-theme-standard-link-active: var(--primitive-color-brand-deep);
-  --accessibility-theme-standard-border: var(--primitive-color-border);
-  --accessibility-theme-standard-border-strong: var(--primitive-color-border-strong);
+  --accessibility-theme-standard-border: var(--primitive-color-border-accessibility);
+  --accessibility-theme-standard-border-strong: var(--primitive-color-border-accessibility);
   --accessibility-theme-standard-focus: var(--primitive-color-brand-strong);
   --accessibility-theme-standard-button-background: var(--primitive-color-brand-strong);
   --accessibility-theme-standard-button-text: var(--primitive-color-white);
@@ -400,6 +412,17 @@
   --accessibility-panel-shadow: var(--shadow-header);
   --accessibility-panel-group-min-inline-size: var(--primitive-size-accessibility-group);
   --accessibility-panel-motion-distance: var(--space-2);
+  --accessibility-header-inline-gutter: var(--primitive-space-accessibility-header-gutter);
+  --accessibility-header-brand-gap: var(--primitive-space-accessibility-header-brand-gap);
+  --accessibility-header-row-gap: var(--primitive-space-accessibility-header-row-gap);
+  --accessibility-header-surface-padding: var(--primitive-space-accessibility-header-surface-padding);
+  --accessibility-header-field-gap: var(--primitive-space-accessibility-header-field-gap);
+  --accessibility-header-mark-size: var(--primitive-size-accessibility-header-mark);
+  --accessibility-header-wordmark-inline-size: var(--primitive-size-accessibility-header-wordmark);
+  --accessibility-header-wordmark-font-size: var(--primitive-size-accessibility-header-wordmark-font);
+  --accessibility-header-smile-block-size: var(--primitive-size-accessibility-header-smile-block);
+  --accessibility-header-control-size: var(--primitive-size-accessibility-header-control);
+  --accessibility-header-icon-size: var(--primitive-size-accessibility-header-icon);
 
   /* Mobile-first property tokens */
   --layout-topbar-display: flex;
