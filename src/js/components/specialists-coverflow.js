@@ -22,13 +22,19 @@ export function initSpecialistsCoverflow() {
       activeIndex = (index + slides.length) % slides.length;
       slides.forEach((slide, slideIndex) => {
         const position = positionFor(slideIndex, activeIndex, slides.length);
+        const isActive = slideIndex === activeIndex;
         slide.dataset.position = position;
 
-        if (slideIndex === activeIndex) slide.setAttribute('aria-current', 'true');
-        else slide.removeAttribute('aria-current');
+        if (isActive) {
+          slide.setAttribute('aria-current', 'true');
+          slide.removeAttribute('aria-hidden');
+        } else {
+          slide.removeAttribute('aria-current');
+          slide.setAttribute('aria-hidden', 'true');
+        }
 
         const select = slide.querySelector('[data-specialist-select]');
-        if (select) select.tabIndex = ['active', 'previous', 'next'].includes(position) ? 0 : -1;
+        if (select) select.tabIndex = isActive ? 0 : -1;
       });
 
       const active = slides[activeIndex];

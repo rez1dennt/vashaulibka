@@ -145,7 +145,83 @@ describe('responsive accessibility visual system', () => {
     expect(accessibilityCss).toMatch(/html\[data-accessibility-enabled="true"\]\s+:where\(\.site-search__toggle, \.menu-toggle\)\s*\{[^}]*inline-size:\s*var\(--accessibility-header-control-size\)[^}]*block-size:\s*var\(--accessibility-header-control-size\)/s);
     expect(accessibilityCss).toMatch(/html\[data-accessibility-enabled="true"\]\s+\.site-search__field\s*\{[^}]*grid-template-columns:\s*var\(--accessibility-header-icon-size\)\s+minmax\(var\(--space-0\),\s*1fr\)\s+repeat\(2,\s*var\(--accessibility-header-control-size\)\)/s);
     expect(accessibilityCss).not.toMatch(/@media\s*\(max-width:\s*30rem\)/);
-    expect(accessibilityCss).not.toMatch(/html\[data-accessibility-enabled="true"\][\s\S]*?overflow-x:\s*(?:hidden|clip)/s);
+    const rootBlocks = [...accessibilityCss.matchAll(/html\[data-accessibility-enabled="true"\](?:\[[^\]]+\])*\s*\{([^}]*)\}/g)]
+      .map((match) => match[1]).join('\n');
+    expect(rootBlocks).not.toMatch(/overflow-x:\s*(?:hidden|clip)/);
+    expect(accessibilityCss).not.toMatch(/html\[data-accessibility-enabled="true"\][^{]*\s+body\s*\{[^}]*overflow-x:\s*(?:hidden|clip)/s);
+  });
+
+  it('contains page actions and footer contacts at 320px with 200% text', () => {
+    const consumerRule = accessibilityCss.match(/html\[data-accessibility-enabled="true"\]\[data-accessibility-scale="200"\]\s+:where\(main, \.site-footer\)\s+:where\(\.button, a\)\s*\{([^}]*)\}/)?.[1] ?? '';
+
+    expect(consumerRule).toMatch(/min-inline-size:\s*var\(--space-0\)/);
+    expect(consumerRule).toMatch(/max-inline-size:\s*100%/);
+    expect(consumerRule).toMatch(/overflow-wrap:\s*anywhere/);
+    expect(consumerRule).not.toMatch(/min-block-size:/);
+  });
+
+  it('contains readable section headings and decoration for every 200% spacing combination', () => {
+    const headingLayoutRule = accessibilityCss.match(/html\[data-accessibility-enabled="true"\]\[data-accessibility-scale="200"\]\s+:where\(\.section-heading, \.about-section__heading, \.specialists-section__heading\)\s*>\s*\*\s*\{([^}]*)\}/)?.[1] ?? '';
+    const readableHeadingRule = accessibilityCss.match(/html\[data-accessibility-enabled="true"\]\[data-accessibility-scale="200"\]\s+main\s+:where\(h1, h2, h3, h4, h5, h6, \.eyebrow\)\s*\{([^}]*)\}/)?.[1] ?? '';
+    const decorationRule = accessibilityCss.match(/html\[data-accessibility-enabled="true"\]\[data-accessibility-scale="200"\]\s+\.home-decor\s*\{([^}]*)\}/)?.[1] ?? '';
+
+    expect(headingLayoutRule).toMatch(/min-inline-size:\s*var\(--space-0\)/);
+    expect(headingLayoutRule).toMatch(/max-inline-size:\s*100%/);
+    expect(readableHeadingRule).toMatch(/max-inline-size:\s*100%/);
+    expect(readableHeadingRule).toMatch(/overflow-wrap:\s*anywhere/);
+    expect(decorationRule).toMatch(/max-inline-size:\s*100%/);
+    expect(accessibilityCss).not.toMatch(/html\[data-accessibility-enabled="true"\][^{]*overflow-x:\s*(?:hidden|clip)/s);
+  });
+
+  it('collapses intrinsic card widths at the 320px maximum text-spacing combination', () => {
+    const maximumSettings = 'html\\[data-accessibility-enabled="true"\\]\\[data-accessibility-scale="200"\\]\\[data-accessibility-letter-spacing="large"\\]\\[data-accessibility-line-height="large"\\]\\[data-accessibility-paragraph-spacing="large"\\]';
+    const grids = accessibilityCss.match(new RegExp(`${maximumSettings}\\s+:where\\(\\.quick-links__grid, \\.home-services__grid, \\.home-staff__grid, \\.home-patients__grid, \\.home-documents__cards, \\.footer-grid\\)\\s*\\{([^}]*)\\}`))?.[1] ?? '';
+    const cards = accessibilityCss.match(new RegExp(`${maximumSettings}\\s+:where\\(\\.quick-card, \\.home-service-card, \\.home-staff-card, \\.home-price-panel, \\.patient-link-card, \\.document-card, \\.footer-grid > section\\)\\s*\\{([^}]*)\\}`))?.[1] ?? '';
+    const text = accessibilityCss.match(new RegExp(`${maximumSettings}\\s+:where\\(main, \\.site-footer\\)\\s+:where\\(h1, h2, h3, h4, h5, h6, p, ul, ol, li, a, strong, small, span\\)\\s*\\{([^}]*)\\}`))?.[1] ?? '';
+    const cardActions = accessibilityCss.match(new RegExp(`${maximumSettings}\\s+:where\\(\\.quick-card a, \\.home-service-card a, \\.text-link\\)\\s*\\{([^}]*)\\}`))?.[1] ?? '';
+    const endDecoration = accessibilityCss.match(/html\[data-accessibility-enabled="true"\]\[data-accessibility-scale="200"\]\s+:where\(\.home-decor--hero-tooth, \.home-decor--quick-tooth, \.home-decor--services-dental, \.home-decor--patients-docs\)\s*\{([^}]*)\}/)?.[1] ?? '';
+    const startDecoration = accessibilityCss.match(/html\[data-accessibility-enabled="true"\]\[data-accessibility-scale="200"\]\s+:where\(\.home-decor--hero-smile, \.home-decor--staff-jaw\)\s*\{([^}]*)\}/)?.[1] ?? '';
+
+    expect(grids).toMatch(/grid-template-columns:\s*minmax\(var\(--space-0\),\s*1fr\)/);
+    expect(cards).toMatch(/min-inline-size:\s*var\(--space-0\)/);
+    expect(cards).toMatch(/inline-size:\s*100%/);
+    expect(cards).toMatch(/max-inline-size:\s*100%/);
+    expect(text).toMatch(/max-inline-size:\s*100%/);
+    expect(text).toMatch(/overflow-wrap:\s*anywhere/);
+    expect(cardActions).toMatch(/grid-template-columns:\s*minmax\(var\(--space-0\),\s*1fr\)\s+auto/);
+    expect(endDecoration).toMatch(/inset-inline-end:\s*var\(--space-0\)/);
+    expect(startDecoration).toMatch(/inset-inline-start:\s*var\(--space-0\)/);
+  });
+
+  it('keeps the advanced dialog vertical-only and usable at the maximum text-spacing combination', () => {
+    const maximumSettings = 'html\\[data-accessibility-enabled="true"\\]\\[data-accessibility-scale="200"\\]\\[data-accessibility-letter-spacing="large"\\]\\[data-accessibility-line-height="large"\\]\\[data-accessibility-paragraph-spacing="large"\\]';
+    const panel = accessibilityCss.match(new RegExp(`${maximumSettings}\\s+\\.accessibility-settings-dialog__panel\\s*\\{([^}]*)\\}`))?.[1] ?? '';
+    const titleAndLegend = accessibilityCss.match(new RegExp(`${maximumSettings}\\s+\\.accessibility-settings-dialog\\s+:where\\(h2, legend\\)\\s*\\{([^}]*)\\}`))?.[1] ?? '';
+    const internals = accessibilityCss.match(new RegExp(`${maximumSettings}\\s+:where\\(\\.accessibility-settings-dialog__groups, \\.accessibility-settings-dialog \\.accessibility-panel__group, \\.accessibility-settings-dialog \\.accessibility-panel__choices\\)\\s*\\{([^}]*)\\}`))?.[1] ?? '';
+
+    expect(panel).toMatch(/overflow-x:\s*hidden/);
+    expect(panel).toMatch(/padding:\s*var\(--space-3\)/);
+    expect(titleAndLegend).toMatch(/max-inline-size:\s*100%/);
+    expect(titleAndLegend).toMatch(/letter-spacing:\s*normal/);
+    expect(titleAndLegend).toMatch(/overflow-wrap:\s*anywhere/);
+    expect(internals).toMatch(/min-inline-size:\s*var\(--space-0\)/);
+    expect(internals).toMatch(/max-inline-size:\s*100%/);
+  });
+
+  it('uses compact layout primitives at 200% even on desktop viewports', () => {
+    const scaleLayout = accessibilityCss.match(/html\[data-accessibility-enabled="true"\]\[data-accessibility-scale="200"\]\s*\{([^}]*)\}/)?.[1] ?? '';
+
+    expect(scaleLayout).toMatch(/--layout-footer-columns:\s*minmax\(var\(--space-0\),\s*1fr\)/);
+    expect(scaleLayout).toMatch(/--layout-service-columns:\s*minmax\(var\(--space-0\),\s*1fr\)/);
+    expect(scaleLayout).toMatch(/--layout-card-columns:\s*minmax\(var\(--space-0\),\s*1fr\)/);
+    expect(scaleLayout).toMatch(/--layout-feature-columns:\s*minmax\(var\(--space-0\),\s*1fr\)/);
+    expect(scaleLayout).toMatch(/--layout-split-columns:\s*minmax\(var\(--space-0\),\s*1fr\)/);
+    expect(scaleLayout).toMatch(/--layout-services-tabs-display:\s*none/);
+    expect(scaleLayout).toMatch(/--layout-services-disclosures-display:\s*grid/);
+
+    const maximumGridRule = accessibilityCss.indexOf('html[data-accessibility-enabled="true"][data-accessibility-scale="200"][data-accessibility-letter-spacing="large"][data-accessibility-line-height="large"][data-accessibility-paragraph-spacing="large"] :where(.quick-links__grid');
+    expect(maximumGridRule).toBeGreaterThanOrEqual(0);
+    expect(maximumGridRule).toBeLessThan(accessibilityCss.indexOf('@media (max-width: 48rem)'));
   });
 
   it.each(['standard', 'black-white', 'white-black', 'blue-light'])(

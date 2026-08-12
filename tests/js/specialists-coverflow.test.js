@@ -25,6 +25,24 @@ describe('specialists coverflow', () => {
     expect(root().querySelector('[data-specialist-detail-name]').textContent).toBe('Первый');
   });
 
+  it('keeps only the active front card exposed and tabbable while arrows remain controls', () => {
+    initSpecialistsCoverflow();
+    const slides = [...root().querySelectorAll('[data-specialist-slide]')];
+    const selects = [...root().querySelectorAll('[data-specialist-select]')];
+    const previous = root().querySelector('[data-specialist-prev]');
+    const next = root().querySelector('[data-specialist-next]');
+
+    expect(selects.map((button) => button.tabIndex)).toEqual([0, -1, -1, -1, -1]);
+    expect(slides.map((slide) => slide.getAttribute('aria-hidden'))).toEqual([null, 'true', 'true', 'true', 'true']);
+    expect(previous.tabIndex).toBe(0);
+    expect(next.tabIndex).toBe(0);
+
+    next.click();
+
+    expect(selects.map((button) => button.tabIndex)).toEqual([-1, 0, -1, -1, -1]);
+    expect(slides.map((slide) => slide.getAttribute('aria-hidden'))).toEqual(['true', null, 'true', 'true', 'true']);
+  });
+
   it('does not carry a visual counter contract in the interaction module', () => {
     expect(readFileSync('src/js/components/specialists-coverflow.js', 'utf8'))
       .not.toContain('[data-specialist-counter]');

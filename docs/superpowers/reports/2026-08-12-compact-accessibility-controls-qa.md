@@ -2,80 +2,95 @@
 
 Date: 12 August 2026
 
-Scope: Compact Accessibility Tasks 1–7
+Scope: Compact Accessibility Tasks 1–7, including the Task 7 live Browser follow-up.
 
-Build under test: production output generated from `eb6654ffeb4d395033a4b234e96f65e7e13ab57a` plus the Task 7 image-caption change recorded below.
+Build under test: production output from Task 7 commit `424a7bd926c05d3c9feb180eb931844275612cc7` plus the Browser-demonstrated fixes and regressions recorded below.
 
 ## Result and evidence boundary
 
-The automated Task 7 gate passed. The required in-app Browser instance was unavailable after the complete supported reconnection workflow, so no viewport, visual, live console/network, live focus, or live speech result is represented as a pass in this report. Automated checks are recorded separately from the unexecuted Browser matrix.
+The automated production gate and required in-app Browser route, viewport, interaction, console, and network checks passed after four Browser-demonstrated defects were fixed. Speech state and the exact latest action phrase were observed with an available local Russian voice; the Browser surface could not capture audible output, so this report does not claim that sound was heard.
 
-This report is implementation and QA evidence only. It does not certify compliance with WCAG, ГОСТ, or another accessibility standard. Any public conformance statement still requires the completed manual 21-page audit and written clinic/legal approval recorded in `CONTENT_CHECKLIST.md`.
+This is implementation and QA evidence, not certification of WCAG, ГОСТ, or another accessibility standard. Any public conformance statement still requires the clinic/legal approval and manual audit recorded in `CONTENT_CHECKLIST.md`.
 
-## Carried image-caption Minor: RED to GREEN
+## Image-caption Minor: RED to GREEN
 
-Root cause: caption equivalence collapsed whitespace and compared case-insensitively, but retained punctuation. Consequently, `alt="Лицензия клиники"` and a whitespace/case variant ending with `ЛИЦЕНЗИЯ клиники.` were treated as different.
+Caption equivalence previously collapsed whitespace and compared case-insensitively but retained punctuation. Consequently, `alt="Лицензия клиники"` and a whitespace/case variant ending with `ЛИЦЕНЗИЯ клиники.` were treated as different.
 
-RED command:
+`pnpm test tests/js/accessibility-images.test.js` was RED with 1 failed and 10 passed. Equivalence comparison now applies Unicode NFKC normalization, replaces Unicode punctuation runs with spaces, collapses whitespace, and compares Russian text with base sensitivity. Display text is not destructively normalized. The same command was GREEN with 11/11; a genuinely additive caption, `Лицензия клиники. Выписка из реестра`, remains intact.
+
+## Browser-demonstrated defects: RED to GREEN
+
+Four defects were reproduced in the production preview. Each received a production-shaped failing test before the minimal implementation.
+
+1. At `specialists.html` / 320px, partially off-screen side-card controls remained tabbable. The failing coverflow state was `[0, 0, -1, -1, 0]`. Only the active front card is now exposed and tabbable; every non-active slide has `aria-hidden="true"` and its selection button has `tabindex="-1"`. Carousel arrows remain controls. The focused coverflow suite passes 8/8, and the live rerun confirmed one active `tabindex=0` control and four hidden/non-tabbable slides.
+2. At `index.html` / 320px / 200%, eight visible actions or footer links crossed the viewport. The scale-200 consumer rule now permits intrinsic shrinkage, caps inline size, and wraps long labels without changing their minimum block target. The live rerun reported document overflow 0 and no clipped controls.
+3. At the maximum combination—200% text plus large letter, line, and paragraph spacing—cards, list content, footer content, and rem-scaled decoration caused overflow at mobile and desktop widths. Scale-200 layout tokens now use single-column reflow; maximum-spacing grids/cards/readable descendants collapse intrinsic widths; decorative elements are size/offset constrained without hiding page overflow. The exact combination passed at 320, 390, 480, 481, 600, 768, 1280, and 1440px with document overflow 0. The fixed 320, 1280, and 1440 reruns also reported no clipped controls.
+4. At 320px under the same maximum combination, the advanced dialog panel had `clientWidth=249` and `scrollWidth=318`, a horizontal scrollbar, and an impractically narrow title. The dialog now has vertical-only internal scrolling, constrained fieldsets/groups, reduced extreme-mode padding, and normal control-surface heading/legend spacing. Live reruns showed panel `scrollWidth === clientWidth` at 320 (249/249), 1280 (1224/1224), and 1440 (1384/1384); the title and controls remained contained and readable through aggressive but expected wrapping.
+
+The combined changed-scope command is:
 
 ```powershell
-pnpm test tests/js/accessibility-images.test.js
+pnpm test tests/styles/accessibility.test.js tests/js/specialists-coverflow.test.js
 ```
 
-Observed result: exit 1; 1 failed and 10 passed. The failing regression received `ЛИЦЕНЗИЯ клиники.` instead of the equivalent alt text `Лицензия клиники`.
+It passes 39/39 tests across 2 files. No rule hides horizontal overflow on the root page or body; horizontal containment is limited to the dialog's own scroll panel.
 
-Implementation: equivalence comparison now applies Unicode NFKC normalization, replaces Unicode punctuation runs with spaces, collapses whitespace, and compares Russian text with base sensitivity. Display text is not destructively normalized. A caption with genuinely additional information, `Лицензия клиники. Выписка из реестра`, remains intact.
+## Route and viewport matrix
 
-GREEN command: the same focused command exited 0 with 11/11 tests passed.
+A production preview at `http://127.0.0.1:4176/` was tested only through the in-app Browser, with a fresh navigation/reload for route checks.
+
+- All 21 routes were checked at both 320 and 1280px: 42 checks, 0 failures.
+- `index.html`, `services.html`, `specialists.html`, `patients.html`, `privacy.html`, and `contacts.html` were checked at 390, 480, 481, 600, 768, and 1440px: 36 checks, 0 failures.
+- The maximum typography-spacing combination on `index.html` was additionally checked at 320, 390, 480, 481, 600, 768, 1280, and 1440px: document overflow 0 at every width.
+
+The 21-route set was `index.html`, `about.html`, `contacts.html`, `services.html`, `specialists.html`, `prices.html`, `reviews.html`, `vacancies.html`, `patients.html`, `license.html`, `payment.html`, `benefits.html`, `waiting-periods.html`, `oms.html`, `informed-consent.html`, `guarantees.html`, `complaints.html`, `standards.html`, `personal-data-consent.html`, `privacy.html`, and `cookies.html`.
+
+Each route check inspected document overflow, the rendered H1, visible/clipped tabbable controls, and remote DOM resources. No route failure remained. The final Browser tab had 0 console warnings and 0 console errors. Its asset inventory was 13 page assets—1 script, 1 stylesheet, 11 images, 0 fonts—plus 70 inline SVGs and 0 external resources. No remote request was observed.
+
+Screenshots were visually inspected for the 320px normal compact panel; the reproduced 320px maximum-spacing overflow; the reproduced 320px dialog horizontal overflow; the fixed 320px maximum-spacing vertical-only dialog; and the reproduced 1280px maximum-spacing overflow. The post-fix geometry checks at 320, 1280, and 1440 confirm those overflow defects are removed.
+
+## Live interaction and state matrix
+
+- Size progression 100/125/150/200 was checked; the initial 320px route stayed contained at 100/125/150, and the 200% defects above were fixed and rerun.
+- All four themes transitioned with the correct pressed state. A persisted `blue-light` state hydrated correctly.
+- A 150% setting persisted across reload.
+- Search for `лицензия` returned 2 results, caused no overflow, and Escape closed the search.
+- The advanced dialog initially focused its close control; Shift+Tab wrapped to reset; Escape hid the dialog, released the scroll lock, and returned focus to the gear control.
+- Reset left the dialog open, disabled accessibility mode, removed presentation attributes, set speech to false, announced exactly `Настройки сброшены`, and kept document overflow at 0.
+- Ordinary-version behavior after 125% removed presentation attributes, retained the 125% output/value, announced the expected status, and intentionally left the toolbar open.
+- The mobile menu opened with its lock. Opening accessibility controls while the menu is open is not exposed, so the live coexistence path is safe. Appointment/accessibility nested modal ownership and two-stage Escape ordering remain covered by the production-shaped automated regression.
+- The specialists coverflow live rerun confirmed active-only tabbing and hidden side/back slides.
+
+Automated coverage additionally passes for v1/legacy migration, malformed and unknown storage, image hide/restore, toolbar nonmodal focus behavior, backdrop close, tabs, disclosures, cookie controls, horizontally scrollable tables, appointment/accessibility reference-counted locking, and focus restoration.
+
+## Speech matrix and limitation
+
+The in-app Browser exposed a qualifying local Russian voice, so the speech button was enabled. After enabling confirmations, a scale action produced the exact live status `Размер шрифта — 150 процентов`; no Browser errors or remote assets/requests appeared. The Browser surface cannot capture audible output, so actual sound was not asserted.
+
+Unit tests pass for qualifying and unavailable local-voice paths, exact short phrases, hydration and panel-opening silence, latest-only cancellation, pagehide/beforeunload/ordinary/reset cancellation, reset's final confirmation, and absence of remote fallback. No third-party TTS resource or page-reading control was added.
 
 ## Automated production gate
 
-Commands executed before the Browser attempt:
+Final verification after the Browser fixes:
 
 ```powershell
+pnpm test
 pnpm generate
-pnpm verify
+pnpm generate
+pnpm build
+pnpm verify:site
 git diff --check
 ```
 
-Results:
+The fresh full test run passes 36 files and 407/407 tests. Both generation runs are stable. The production build transforms 43 modules and emits all 21 HTML entries. The site verifier reports `Verified 21 HTML pages`. The diff whitespace check passes.
 
-- generation: exit 0;
-- full test suite: 36 files, 401/401 tests passed;
-- production build: exit 0; 43 modules transformed and all 21 HTML entries emitted;
-- generated-site verifier: `Verified 21 HTML pages`;
-- diff whitespace check: exit 0.
+One earlier full-suite run under transient load timed out in the unrelated public-page visualization-label test at its 5-second limit. Its immediate isolated rerun passed 13/13 in 2.18 seconds, and the fresh final full run passed 407/407; no production change was made for the timing event.
 
-Focused accessibility matrix:
+The generated `dist` scan finds no Lidrekon, ResponsiveVoice, Yandex VoiceTech, jQuery, `data-speech-read`, `data-speech-pause`, `data-speech-stop`, `Читать страницу`, or `Озвучивание страницы` match.
 
-```powershell
-pnpm test tests/js/accessibility-preferences.test.js tests/js/accessibility-mode.test.js tests/js/accessibility-settings-dialog.test.js tests/js/accessibility-speech.test.js tests/js/accessibility-images.test.js tests/js/dialog.test.js tests/templates/accessibility-panel.test.js tests/project/accessibility-conformance.test.js tests/styles/accessibility.test.js tests/styles/design-system.test.js
-```
+## Contrast evidence
 
-`tests/js/dialog.test.js` is not present and was reported as a missing path by the file-discovery scan; Vitest ran the nine existing requested files and passed 124/124 tests. Their production-shaped coverage includes:
-
-- exact v2 defaults, persistence, v1 and legacy migration, malformed/unknown/failing storage, and reset removal;
-- 100/125/150/200 stepping and boundaries, four themes, font/letter/line/paragraph choices, image hide/restore, ordinary-version retention, and final reset semantics;
-- hydration and panel-opening silence, exact action messages, latest-only cancellation, pagehide/beforeunload/standard/reset cancellation, local-Russian-only voice selection, disabled unavailable state, and no network fallback;
-- normal toolbar focus without a trap/scroll lock; advanced-dialog open/close, Tab and Shift+Tab wrapping, backdrop/button/Escape, ref-counted lock, focus return, and nested appointment/accessibility Escape ordering;
-- one compact toolbar and one advanced dialog, unique IDs, valid static ARIA references, no positive tabindex, all image alt attributes, no reader controls/copy, and local active resources across all 21 rendered pages;
-- continuous 320–768 reflow rules at 200%, 44px targets, compact intrinsic wrapping, safe-area dialog layout, reduced motion, readable typography cascade, and four-theme consumer contrast.
-
-## Prohibited and stale runtime scan
-
-The requested terms were scanned across `src`, `tests`, and `dist` after the production build. Every match was reviewed:
-
-- Lidrekon, ResponsiveVoice, and Yandex VoiceTech occur only as verifier/test rejection fixtures or banned-host patterns;
-- `data-speech-read`, `data-speech-pause`, and `data-speech-stop` occur only in negative assertions;
-- `vision-mode` occurs only in the intentional backwards-compatible migration path and migration/absence tests;
-- generated HTML contains none of those hooks, hosts, or stale copy;
-- no `jquery`, `Читать страницу`, or `Озвучивание страницы` match was found.
-
-The only `vision-mode` string in the production JavaScript bundle is the deliberate one-time migration key. It is removed after a successful v2 save; it is not a current preference schema or UI hook.
-
-## Contrast evidence encoded in the automated suite
-
-These ratios are calculated from the final theme declarations and their actual text, control, border, notice, dialog, and focus consumers. Text thresholds are 4.5:1 and essential UI/focus thresholds are 3:1.
+The automated suite calculates actual consumer chains with 4.5:1 text and 3:1 essential UI/focus thresholds.
 
 | Theme | Text/page | Link/page | Primary | Selected | Unselected | Border/page | Border/raised | Strong/dialog | Strong/notice | Focus/page | Focus/dialog |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
@@ -84,57 +99,6 @@ These ratios are calculated from the final theme declarations and their actual t
 | white-black | 21.00 | 15.81 | 21.00 | 21.00 | 15.81 | 21.00 | 21.00 | 21.00 | 21.00 | 15.81 | 15.81 |
 | blue-light | 14.01 | 9.50 | 10.84 | 10.84 | 10.39 | 6.28 | 6.87 | 6.87 | 5.34 | 9.50 | 10.39 |
 
-## Production preview and Browser connection
+## Remaining limitations
 
-A fresh Vite production preview was started in a hidden process. Ports 4173–4175 were already occupied by unrelated listeners, so this task's preview selected `http://127.0.0.1:4176/`. Its log confirmed the local URL. The exact listener process was inspected and stopped after the Browser connection attempt; port 4176 was no longer listening.
-
-The in-app Browser connection sequence was:
-
-1. explicit selection of the required in-app Browser: unavailable;
-2. built-in Browser connection troubleshooting consulted;
-3. one supported discovery check: no browser instances (`[]`);
-4. explicit in-app Browser retry: unavailable.
-
-No Chrome, standalone Playwright, external browser-control server, screenshot parser, or source-code approximation was substituted for the requested in-app Browser.
-
-## Required route/viewport matrix
-
-Status: **not executed — in-app Browser unavailable**.
-
-The 21 routes scheduled at both 320px and 1280px were:
-
-`index.html`, `about.html`, `contacts.html`, `services.html`, `specialists.html`, `prices.html`, `reviews.html`, `vacancies.html`, `patients.html`, `license.html`, `payment.html`, `benefits.html`, `waiting-periods.html`, `oms.html`, `informed-consent.html`, `guarantees.html`, `complaints.html`, `standards.html`, `personal-data-consent.html`, `privacy.html`, and `cookies.html`.
-
-The representative routes scheduled at 390, 480, 481, 600, 768, and 1440px were `index.html`, `services.html`, `specialists.html`, `patients.html`, `privacy.html`, and `contacts.html`.
-
-The following live observations remain unverified: document horizontal overflow; visible clipping; header logo/wordmark/search/burger; rendered H1 and skip-link behavior; live same-origin requests; and browser console errors. The static/generated verifier covers one H1, working skip targets, local active resources, and generated structure, but those results are not presented as Browser observations.
-
-## Required interaction matrix
-
-Status: **not executed — in-app Browser unavailable**.
-
-No live claim is made for:
-
-- visual behavior at 100/125/150/200 and all four themes;
-- large letter, line, and paragraph spacing; hidden/visible images;
-- reload persistence, v1 migration, malformed/unknown records, ordinary-version retention, and complete reset in an actual browser profile;
-- eye/collapse/Escape toolbar flows;
-- gear, focus trap, Shift+Tab, backdrop, Escape, ref-counted lock, and focus return;
-- coexistence with burger, search dropdown, appointment dialog, cookie banner, tabs, disclosures, specialists coverflow, and horizontally scrollable tables;
-- nested modal Escape ordering in the live event loop.
-
-The corresponding automated results are enumerated above and passed, but do not replace this matrix.
-
-## Speech matrix
-
-Status: **not executed — in-app Browser unavailable**.
-
-The environment therefore did not establish whether a qualifying local Russian voice was installed. No live utterance, cancellation, hydration silence, navigation cancellation, disabled button/status, or network trace was observed. Unit tests passed for both qualifying local-voice and unavailable-voice paths, exact short phrases, latest-only cancellation, silence, reset final confirmation, and absence of remote fallback. No remote speech service was invoked or added.
-
-## Browser-demonstrated defects
-
-None were available to diagnose because no in-app Browser session could be established. Consequently, Task 7 made no speculative CSS/template/controller change. The only production change is the separately reproduced image-caption normalization fix.
-
-## Remaining limitation and follow-up
-
-The complete route/viewport, live interaction, live console/network, and live speech matrices must be rerun in the in-app Browser when an instance is connected. Until then, this report supports automated implementation confidence but not a completed manual accessibility audit or certification claim.
+The Browser could not capture audible speech, so only voice availability, enabled state, exact phrase/state, error absence, and no-network behavior were observed live. The live nested appointment/accessibility modal stack was not recreated during the resumed Browser session; its production-shaped automated regression passed. These limitations do not justify a public WCAG or ГОСТ certification claim.
