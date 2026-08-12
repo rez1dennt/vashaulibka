@@ -78,6 +78,9 @@ export function initSpecialistsCoverflow() {
     });
 
     root.classList.add('is-enhanced');
-    activate(0);
+    const fragmentIndex = Number(window.location.hash.match(/^#specialist-(\d+)$/)?.[1]) - 1;
+    activate(Number.isInteger(fragmentIndex) && fragmentIndex >= 0 && fragmentIndex < slides.length
+      ? fragmentIndex
+      : 0);
   });
 }

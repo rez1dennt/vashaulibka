@@ -26,6 +26,10 @@ export function initTabs() {
     });
 
     const initialTab = tabs.find((tab) => tab.getAttribute('aria-selected') === 'true') || tabs[0];
-    if (initialTab) activate(initialTab);
+    const serviceSlug = window.location.hash.match(/^#service-([a-z0-9-]+)$/)?.[1];
+    const fragmentTab = serviceSlug
+      ? tabs.find((tab) => tab.id === `services-tab-${serviceSlug}`)
+      : null;
+    if (fragmentTab || initialTab) activate(fragmentTab || initialTab);
   });
 }

@@ -4,7 +4,7 @@ import { initSpecialistsCoverflow } from '../../src/js/components/specialists-co
 
 const names = ['Первый', 'Второй', 'Третий', 'Четвёртый', 'Пятый'];
 const fixture = () => `<section data-specialists-coverflow><div data-specialist-viewport tabindex="0"><ol>${names.map((name, index) => `
-  <li data-specialist-slide data-specialist-index="${index}"><article><h3 class="specialist-card__name">${name}</h3><p class="specialist-card__role">Должность ${index + 1}</p><button type="button" data-specialist-select>Выбрать</button></article></li>`).join('')}</ol></div>
+  <li id="specialist-${index + 1}" data-specialist-slide data-specialist-index="${index}"><article><h3 class="specialist-card__name">${name}</h3><p class="specialist-card__role">Должность ${index + 1}</p><button type="button" data-specialist-select>Выбрать</button></article></li>`).join('')}</ol></div>
   <button type="button" data-specialist-prev>Назад</button><button type="button" data-specialist-next>Вперёд</button>
   <h3 data-specialist-detail-name></h3><p data-specialist-detail-role></p></section>`;
 
@@ -83,5 +83,13 @@ describe('specialists coverflow', () => {
     originalCard.click();
 
     expect(activeIndex()).toBe(1);
+  });
+
+  it('activates the specialist named by a safe location fragment', () => {
+    window.history.replaceState({}, '', '#specialist-4');
+
+    initSpecialistsCoverflow();
+
+    expect(activeIndex()).toBe(3);
   });
 });

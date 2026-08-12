@@ -14,6 +14,19 @@ afterEach(() => {
 });
 
 describe('progressive interactions', () => {
+  it('activates matching service tab and disclosure from a safe search fragment', () => {
+    window.history.replaceState({}, '', '#service-therapy');
+    document.body.innerHTML = '<div role="tablist"><button role="tab" id="services-tab-therapy" aria-selected="false" aria-controls="services-panel-therapy">Терапия</button><button role="tab" id="services-tab-other" aria-selected="true" aria-controls="services-panel-other">Другое</button></div><section id="services-panel-therapy"></section><section id="services-panel-other"></section><button data-disclosure-button id="services-disclosure-therapy" aria-controls="services-disclosure-panel-therapy">Терапия</button><div id="services-disclosure-panel-therapy"></div>';
+
+    initTabs();
+    initDisclosures();
+
+    expect(document.querySelector('#services-tab-therapy').getAttribute('aria-selected')).toBe('true');
+    expect(document.querySelector('#services-panel-therapy').hidden).toBe(false);
+    expect(document.querySelector('#services-disclosure-therapy').getAttribute('aria-expanded')).toBe('true');
+    expect(document.querySelector('#services-disclosure-panel-therapy').hidden).toBe(false);
+  });
+
   it('opens and closes the appointment dialog without submitting data', () => {
     document.body.innerHTML = '<button data-appointment-open>Запись</button><div id="appointment-dialog" role="dialog" hidden><div data-dialog-backdrop></div><button data-dialog-close>Закрыть</button></div>';
     const provider = createAppointmentProvider();
