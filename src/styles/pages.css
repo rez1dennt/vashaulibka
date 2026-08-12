@@ -179,7 +179,15 @@
 }
 
 .specialists-section__heading {
+  inline-size: 100%;
   max-inline-size: var(--text-body-measure);
+  display: grid;
+  justify-items: center;
+  margin-inline: auto;
+  text-align: center;
+}
+
+.specialists-section__heading .eyebrow {
   margin-inline: auto;
   text-align: center;
 }
@@ -204,10 +212,9 @@
 }
 
 .specialists-coverflow__toolbar {
-  position: absolute;
-  inset-block-start: var(--space-0);
-  inset-inline-end: var(--space-0);
-  z-index: var(--coverflow-z-toolbar);
+  display: flex;
+  justify-content: flex-end;
+  margin-block-start: var(--space-4);
 }
 
 .specialists-coverflow__viewport {

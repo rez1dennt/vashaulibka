@@ -36,6 +36,8 @@ describe('specialists coverflow content', () => {
     expect(root.querySelector('[data-specialist-counter]')).toBeNull();
     expect(root.querySelector('.specialists-coverflow__gesture')).toBeNull();
     expect(root.querySelector('.specialists-coverflow__toolbar')?.querySelectorAll('button')).toHaveLength(2);
+    const viewport = root.querySelector('.specialists-coverflow__viewport');
+    expect(viewport?.nextElementSibling?.classList.contains('specialists-coverflow__toolbar')).toBe(true);
     expect(document.body.textContent).not.toContain('Выберите карточку');
     expect(document.body.textContent).not.toContain('Листайте карточки');
     expect(document.querySelector('#specialists-coverflow-instructions')?.classList.contains('sr-only')).toBe(true);

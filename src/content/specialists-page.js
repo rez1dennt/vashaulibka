@@ -46,13 +46,13 @@ export const SPECIALISTS_PAGE = Object.freeze({
     <div class="specialists-coverflow" data-specialists-coverflow aria-label="Специалисты клиники" aria-describedby="specialists-coverflow-instructions">
       <p class="sr-only" id="specialists-coverflow-instructions">Используйте стрелки, клавиши влево и вправо или свайп, чтобы выбрать сотрудника.</p>
       <div class="specialists-coverflow__stage">
+        <div class="specialists-coverflow__viewport" data-specialist-viewport tabindex="0"><ol class="specialists-coverflow__track">${staffSlides}</ol></div>
         <div class="specialists-coverflow__toolbar">
           <div class="specialists-coverflow__controls">
             <button type="button" class="specialists-coverflow__arrow specialists-coverflow__arrow--previous" data-specialist-prev aria-label="Предыдущий специалист">${renderIcon('arrow')}</button>
             <button type="button" class="specialists-coverflow__arrow" data-specialist-next aria-label="Следующий специалист">${renderIcon('arrow')}</button>
           </div>
         </div>
-        <div class="specialists-coverflow__viewport" data-specialist-viewport tabindex="0"><ol class="specialists-coverflow__track">${staffSlides}</ol></div>
       </div>
       <article class="specialist-detail" aria-live="polite" aria-atomic="true">
         <div><p class="eyebrow">Выбранный сотрудник</p><h3 data-specialist-detail-name>${escapeHtml(STAFF[0].name)}</h3><p class="specialist-detail__role" data-specialist-detail-role>${escapeHtml(STAFF[0].role)}</p></div>

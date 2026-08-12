@@ -22,10 +22,11 @@ describe('specialists coverflow styles', () => {
     expect(pages).toMatch(/\.no-js\s+\.specialist-card__select,[\s\S]*?display:\s*none/s);
   });
 
-  it('places a compact two-button toolbar at the top end of the wide stage', () => {
-    expect(pages).toMatch(/\.specialists-coverflow__toolbar\s*{[^}]*position:\s*absolute[^}]*inset-block-start:\s*var\(--space-0\)[^}]*inset-inline-end:\s*var\(--space-0\)[^}]*z-index:\s*var\(--coverflow-z-toolbar\)/s);
+  it('centers the heading and places a compact toolbar below at the end edge', () => {
+    expect(pages).toMatch(/\.specialists-section__heading\s*{[^}]*inline-size:\s*100%[^}]*display:\s*grid[^}]*justify-items:\s*center[^}]*text-align:\s*center/s);
+    expect(pages).toMatch(/\.specialists-coverflow__toolbar\s*{[^}]*display:\s*flex[^}]*justify-content:\s*flex-end[^}]*margin-block-start:\s*var\(--space-4\)/s);
+    expect(pages).not.toMatch(/\.specialists-coverflow__toolbar\s*{[^}]*position:\s*absolute/s);
     expect(pages).toMatch(/\.specialists-coverflow__controls\s*{[^}]*display:\s*none[^}]*gap:\s*var\(--space-3\)/s);
-    expect(tokens).toMatch(/--coverflow-z-toolbar:/);
     expect(tokens).toMatch(/--primitive-size-coverflow-card-desktop:\s*min\(34vw,\s*26rem\)/);
     expect(tokens).toMatch(/--primitive-offset-coverflow-side-desktop:\s*92%/);
   });
