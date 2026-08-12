@@ -13,8 +13,8 @@ describe('compact responsive action layouts', () => {
     expect(components).toMatch(/@media\s*\(min-width:\s*24rem\)[\s\S]*?\.cookie-banner\s*{[^}]*grid-template-columns:\s*repeat\(2,/s);
   });
 
-  it('centers a dominant home action above the secondary action', () => {
-    expect(pages).toMatch(/\.home-hero__actions\s*{[^}]*display:\s*grid[^}]*justify-items:\s*center[^}]*margin-inline:\s*auto/s);
+  it('aligns a dominant home action above the secondary action', () => {
+    expect(pages).toMatch(/\.home-hero__actions\s*{[^}]*display:\s*grid[^}]*justify-items:\s*start[^}]*margin-inline:\s*var\(--space-0\)/s);
     expect(pages).toMatch(/\.home-hero__actions\s*>\s*\.button-primary\s*{[^}]*inline-size:\s*100%/s);
   });
 

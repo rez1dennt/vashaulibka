@@ -1149,7 +1149,6 @@
 
 .home-hero__copy {
   min-inline-size: var(--space-0);
-  text-align: center;
 }
 
 .eyebrow {
@@ -1163,7 +1162,6 @@
 
 .home-hero__lead {
   max-inline-size: var(--text-body-measure);
-  margin-inline: auto;
   color: var(--color-text-muted);
   font-size: var(--text-lead-size);
 }
@@ -1171,9 +1169,9 @@
 .home-hero__actions {
   inline-size: min(100%, 22rem);
   display: grid;
-  justify-items: center;
+  justify-items: start;
   gap: var(--space-3);
-  margin-inline: auto;
+  margin-inline: var(--space-0);
 }
 
 .home-hero__actions > .button-primary {
@@ -1189,13 +1187,11 @@
 .home-hero__trust {
   display: flex;
   align-items: flex-start;
-  justify-content: center;
   gap: var(--space-3);
   margin-block-start: var(--space-6);
   margin-block-end: var(--space-0);
   color: var(--color-text-muted);
   font-size: var(--text-small-size);
-  text-align: start;
 }
 
 .home-hero__media,
@@ -2371,23 +2367,6 @@
   .home-hero__inner {
     grid-template-columns: minmax(var(--space-0), 0.88fr) minmax(30rem, 1.12fr);
     padding-block: var(--space-12);
-  }
-
-  .home-hero__copy {
-    text-align: start;
-  }
-
-  .home-hero__lead,
-  .home-hero__actions {
-    margin-inline: var(--space-0);
-  }
-
-  .home-hero__actions {
-    justify-items: start;
-  }
-
-  .home-hero__trust {
-    justify-content: flex-start;
   }
 }
 
