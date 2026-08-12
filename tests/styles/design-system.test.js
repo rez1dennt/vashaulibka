@@ -42,6 +42,7 @@ describe('design system contract', () => {
       'base',
       'layout',
       'components',
+      'site-search',
       'pages',
     ]);
   });
