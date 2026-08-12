@@ -1,5 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { initAccessibilitySettingsDialog } from '../../src/js/components/accessibility-settings-dialog.js';
+import { initDialog } from '../../src/js/components/dialog.js';
+import { createAppointmentProvider } from '../../src/js/core/appointment-provider.js';
 import { lockScroll, unlockScroll } from '../../src/js/core/scroll-lock.js';
 import { renderHeader } from '../../src/templates/site-chrome.js';
 
@@ -65,7 +67,7 @@ describe('accessibility settings dialog', () => {
   });
 
   it('wraps focus in both directions while open', () => {
-    const { close, opener, reset } = setup();
+    const { close, controller, opener, reset } = setup();
     opener.click();
 
     close.dispatchEvent(new KeyboardEvent('keydown', {
@@ -82,6 +84,7 @@ describe('accessibility settings dialog', () => {
       cancelable: true,
     }));
     expect(document.activeElement).toBe(close);
+    controller.close();
   });
 
   it('owns exactly one ref-counted scroll lock and preserves a background lock', () => {
@@ -97,5 +100,43 @@ describe('accessibility settings dialog', () => {
     controller.close();
     unlockScroll();
     expect(document.body.classList.contains('is-locked')).toBe(false);
+  });
+
+  it('closes stacked modals by open order when appointment initializes first', () => {
+    document.body.innerHTML = [
+      renderHeader('index.html'),
+      '<button type="button" data-appointment-open>Запись</button>',
+      '<div id="appointment-dialog" role="dialog" aria-modal="true" hidden>',
+      '<div data-dialog-backdrop></div>',
+      '<button type="button" data-dialog-close>Закрыть запись</button>',
+      '</div>',
+    ].join('');
+    initDialog({ provider: createAppointmentProvider() });
+    initAccessibilitySettingsDialog();
+    const appointmentOpener = document.querySelector('[data-appointment-open]');
+    const appointment = document.querySelector('#appointment-dialog');
+    const appointmentClose = appointment.querySelector('[data-dialog-close]');
+    const settingsOpener = document.querySelector('[data-accessibility-advanced-open]');
+    const settings = document.querySelector('#accessibility-settings-dialog');
+    const settingsClose = settings.querySelector('[data-accessibility-dialog-close]');
+
+    appointmentOpener.focus();
+    appointmentOpener.click();
+    expect(document.activeElement).toBe(appointmentClose);
+    settingsOpener.click();
+    expect(document.activeElement).toBe(settingsClose);
+
+    document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
+
+    expect(settings.hidden).toBe(true);
+    expect(appointment.hidden).toBe(false);
+    expect(document.body.classList.contains('is-locked')).toBe(true);
+    expect(document.activeElement).toBe(settingsOpener);
+
+    document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
+
+    expect(appointment.hidden).toBe(true);
+    expect(document.body.classList.contains('is-locked')).toBe(false);
+    expect(document.activeElement).toBe(appointmentOpener);
   });
 });

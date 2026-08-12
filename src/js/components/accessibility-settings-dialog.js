@@ -1,4 +1,5 @@
 import { createFocusTrap } from '../core/focus-trap.js';
+import { claimModal, isTopModal, releaseModal } from '../core/modal-stack.js';
 import { lockScroll, unlockScroll } from '../core/scroll-lock.js';
 
 export function initAccessibilitySettingsDialog({ root = document } = {}) {
@@ -28,6 +29,7 @@ export function initAccessibilitySettingsDialog({ root = document } = {}) {
     openState = false;
     dialog.hidden = true;
     opener.setAttribute('aria-expanded', 'false');
+    releaseModal(dialog);
     unlockScroll();
     if (restoreFocus) returnFocus?.focus();
     returnFocus = null;
@@ -40,6 +42,7 @@ export function initAccessibilitySettingsDialog({ root = document } = {}) {
     returnFocus = opener;
     dialog.hidden = false;
     opener.setAttribute('aria-expanded', 'true');
+    claimModal(dialog);
     lockScroll();
     (closer || dialog.querySelector('button:not([disabled]), a[href], [tabindex]'))?.focus();
   };
@@ -49,7 +52,7 @@ export function initAccessibilitySettingsDialog({ root = document } = {}) {
   backdrop?.addEventListener('click', () => close());
   dialog.addEventListener('keydown', trap);
   eventRoot.addEventListener('keydown', (event) => {
-    if (event.key !== 'Escape' || !openState) return;
+    if (event.key !== 'Escape' || !openState || !isTopModal(dialog)) return;
 
     event.stopImmediatePropagation();
     close();
