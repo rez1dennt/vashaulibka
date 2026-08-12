@@ -9,6 +9,7 @@ describe('site search markup', () => {
 
     expect(trigger.getAttribute('aria-controls')).toBe('site-search-dialog');
     expect(trigger.getAttribute('aria-haspopup')).toBe('dialog');
+    expect(trigger.getAttribute('aria-label')).toBe('Поиск по сайту');
     expect(trigger.textContent).toContain('Поиск по сайту');
     expect(trigger.querySelector('svg[aria-hidden="true"]')).not.toBeNull();
     expect(document.querySelector('.site-search-fallback[href="patients.html"]')).not.toBeNull();

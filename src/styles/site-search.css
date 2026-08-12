@@ -132,6 +132,10 @@
   color: var(--color-text-muted);
 }
 
+.site-search__field input::-webkit-search-cancel-button {
+  appearance: none;
+}
+
 .site-search__field button {
   border: var(--space-0);
   border-radius: var(--radius-md);

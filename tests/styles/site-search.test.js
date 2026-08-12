@@ -29,4 +29,8 @@ describe('responsive site search styles', () => {
     expect(tokensCss).toContain('--z-search:');
     expect(mainCss).toContain("@import './site-search.css';");
   });
+
+  it('removes the browser-native search clear control in favor of the labelled SVG button', () => {
+    expect(searchCss).toMatch(/input::?-webkit-search-cancel-button[\s\S]*appearance:\s*none/);
+  });
 });

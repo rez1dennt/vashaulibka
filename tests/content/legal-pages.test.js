@@ -246,7 +246,8 @@ describe('patient and legal page manifest', () => {
 
     for (const file of legalFiles) {
       const document = pageDocument(file);
-      expect(document.querySelector('form, input, textarea, select')).toBeNull();
+      expect(document.querySelector('form, textarea, select, input:not([data-search-input])')).toBeNull();
+      expect(document.querySelectorAll('input[data-search-input]:not([name])')).toHaveLength(1);
     }
   });
 
@@ -297,7 +298,8 @@ describe('patient and legal page manifest', () => {
     expect(text).toMatch(/Роскомнадзор|уполномоченн.*орган/i);
     expect(text).toMatch(/до подключения МИС.*политик.*согласи/i);
     expect(text).not.toMatch(/что требуется завершить|будут.*уточнены.*до публикации|CONTENT_CHECKLIST/i);
-    expect(document.querySelector('form, input, textarea, select')).toBeNull();
+    expect(document.querySelector('form, textarea, select, input:not([data-search-input])')).toBeNull();
+    expect(document.querySelectorAll('input[data-search-input]:not([name])')).toHaveLength(1);
   });
 
   it('introduces no unsupported service claims or broken internal page/document links', () => {

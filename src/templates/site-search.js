@@ -2,7 +2,7 @@ import { renderIcon } from './icons.js';
 
 export function renderSearchTrigger() {
   return [
-    '<button class="site-search-trigger" type="button" data-search-open aria-controls="site-search-dialog" aria-haspopup="dialog">',
+    '<button class="site-search-trigger" type="button" data-search-open aria-controls="site-search-dialog" aria-haspopup="dialog" aria-label="Поиск по сайту">',
     renderIcon('search', 'site-search-trigger__icon'),
     '<span class="site-search-trigger__label">Поиск по сайту</span>',
     '<kbd>Ctrl K</kbd>',

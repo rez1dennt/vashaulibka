@@ -1,7 +1,7 @@
 export const SEARCH_PAGE_META = Object.freeze({
   'index.html': { category: 'Клиника', keywords: ['стоматология', 'зубы', 'Белгород', 'главная'] },
   'about.html': { category: 'Клиника', keywords: ['о клинике', 'стоматология', 'лицензия', 'Белгород'] },
-  'services.html': { category: 'Услуги', keywords: ['услуги', 'лечение зубов', 'болит зуб', 'стоматологическая помощь'] },
+  'services.html': { category: 'Услуги', keywords: ['услуги', 'направления помощи', 'стоматологическая помощь'] },
   'specialists.html': { category: 'Специалисты', keywords: ['врач', 'доктор', 'стоматолог', 'специалист', 'сотрудник', 'команда'] },
   'prices.html': { category: 'Цены', keywords: ['цена', 'стоимость', 'прейскурант', 'сколько стоит'] },
   'reviews.html': { category: 'Клиника', keywords: ['отзывы', 'мнение пациентов'] },

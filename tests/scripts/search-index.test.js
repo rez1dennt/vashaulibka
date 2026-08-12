@@ -7,6 +7,7 @@ import {
   isSafeSearchHref,
   serializeSearchIndex,
 } from '../../scripts/generate-search-index.mjs';
+import { searchItems } from '../../src/js/core/search-engine.js';
 
 const build = () => buildSearchIndex({
   pages: PAGES,
@@ -65,6 +66,12 @@ describe('generated local search index', () => {
     for (const unsupported of ['имплантация', 'ортодонтия', 'хирургия', 'детская стоматология']) {
       expect(corpus).not.toContain(unsupported);
     }
+  });
+
+  it('ranks a concrete licensed service above the generic services overview', () => {
+    const matches = searchItems(build().items, 'болит зуб');
+
+    expect(matches[0].item.href).toBe('services.html#service-therapy');
   });
 
   it('rejects missing metadata and empty public fields', () => {
