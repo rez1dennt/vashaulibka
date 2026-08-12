@@ -173,6 +173,29 @@ describe('accessibility preferences', () => {
     expect(second).not.toBe(first);
   });
 
+  it('does not consult or overwrite legacy preferences after the current-key read fails', () => {
+    const reads = [];
+    const writes = [];
+    const removals = [];
+    const storage = {
+      get(key) {
+        reads.push(key);
+        if (key === ACCESSIBILITY_STORAGE_KEY) throw new Error('blocked');
+        return 'on';
+      },
+      set: (...args) => writes.push(args),
+      remove: (key) => removals.push(key),
+    };
+
+    const preferences = loadAccessibilityPreferences(storage);
+
+    expect(preferences).toEqual(DEFAULT_ACCESSIBILITY_PREFERENCES);
+    expect(preferences).not.toBe(DEFAULT_ACCESSIBILITY_PREFERENCES);
+    expect(reads).toEqual([ACCESSIBILITY_STORAGE_KEY]);
+    expect(writes).toEqual([]);
+    expect(removals).toEqual([]);
+  });
+
   it('handles storage set and remove failures gracefully', () => {
     expect(saveAccessibilityPreferences({ set: () => { throw new Error('blocked'); }, remove: () => true }, enabledPreferences)).toBe(false);
     expect(resetAccessibilityPreferences({ remove: () => { throw new Error('blocked'); } })).toEqual(DEFAULT_ACCESSIBILITY_PREFERENCES);

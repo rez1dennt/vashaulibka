@@ -82,14 +82,23 @@ function safely(storage, method, ...args) {
   }
 }
 
+function readPreference(storage, key) {
+  try {
+    return { ok: true, value: storage?.get?.(key) };
+  } catch {
+    return { ok: false, value: null };
+  }
+}
+
 export function parseAccessibilityPreferences(raw) {
   return normalizePreferences(parseRawPreferences(raw));
 }
 
 export function loadAccessibilityPreferences(storage) {
-  const raw = safely(storage, 'get', ACCESSIBILITY_STORAGE_KEY);
-  if (raw != null) {
-    const value = parseRawPreferences(raw);
+  const current = readPreference(storage, ACCESSIBILITY_STORAGE_KEY);
+  if (!current.ok) return freshDefaults();
+  if (current.value != null) {
+    const value = parseRawPreferences(current.value);
     const preferences = normalizePreferences(value);
     if (preferences) return preferences;
     const version1Preferences = normalizeV1Preferences(value);
@@ -99,7 +108,8 @@ export function loadAccessibilityPreferences(storage) {
     return migrated;
   }
 
-  if (safely(storage, 'get', LEGACY_STORAGE_KEY) === 'on') {
+  const legacy = readPreference(storage, LEGACY_STORAGE_KEY);
+  if (legacy.ok && legacy.value === 'on') {
     const migrated = { ...freshDefaults(), enabled: true, scale: '125' };
     saveAccessibilityPreferences(storage, migrated);
     return migrated;
