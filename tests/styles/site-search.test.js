@@ -35,11 +35,11 @@ describe('responsive site search styles', () => {
     expect(searchCss).not.toMatch(/body[^}]*overflow/);
   });
 
-  it('honors no-JS, reduced motion and vision mode with semantic tokens', () => {
+  it('honors no-JS, reduced motion and accessibility mode with semantic tokens', () => {
     expect(searchCss).toMatch(/\.no-js \.site-search__toggle/);
     expect(searchCss).toMatch(/\.js \.site-search-fallback/);
     expect(searchCss).toMatch(/prefers-reduced-motion: reduce/);
-    expect(searchCss).toMatch(/\.vision-mode \.site-search__dropdown/);
+    expect(searchCss).toMatch(/\[data-accessibility-enabled="true"\] \.site-search__dropdown/);
     expect(searchCss).not.toMatch(/var\(--primitive-/);
     expect(tokensCss).toContain('--z-search:');
     expect(tokensCss).toContain('--search-closed-scale:');

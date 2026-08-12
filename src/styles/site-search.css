@@ -296,7 +296,7 @@
   display: none;
 }
 
-.vision-mode .site-search__dropdown {
+[data-accessibility-enabled="true"] .site-search__dropdown {
   border: var(--border-width-strong) solid var(--color-border-strong);
 }
 

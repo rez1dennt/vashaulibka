@@ -1,0 +1,334 @@
+html[data-accessibility-enabled="true"][data-accessibility-scale="100"] { font-size: 100%; }
+html[data-accessibility-enabled="true"][data-accessibility-scale="125"] { font-size: 125%; }
+html[data-accessibility-enabled="true"][data-accessibility-scale="150"] { font-size: 150%; }
+html[data-accessibility-enabled="true"][data-accessibility-scale="200"] { font-size: 200%; }
+
+html[data-accessibility-enabled="true"][data-accessibility-theme="standard"] {
+  color-scheme: light;
+  --color-primary: var(--accessibility-theme-standard-link);
+  --color-primary-strong: var(--accessibility-theme-standard-link);
+  --color-primary-active: var(--accessibility-theme-standard-link-active);
+  --color-text: var(--accessibility-theme-standard-foreground);
+  --color-text-muted: var(--accessibility-theme-standard-muted);
+  --color-text-on-primary: var(--accessibility-theme-standard-button-text);
+  --color-surface-page: var(--accessibility-theme-standard-background);
+  --color-surface-raised: var(--accessibility-theme-standard-raised);
+  --color-surface-subtle: var(--accessibility-theme-standard-subtle);
+  --color-surface-brand-soft: var(--accessibility-theme-standard-accent-surface);
+  --color-surface-warm: var(--accessibility-theme-standard-notice);
+  --color-border: var(--accessibility-theme-standard-border);
+  --color-border-strong: var(--accessibility-theme-standard-border-strong);
+  --color-focus: var(--accessibility-theme-standard-focus);
+  --color-overlay: var(--accessibility-theme-standard-overlay);
+  --button-primary-background: var(--accessibility-theme-standard-button-background);
+  --button-primary-background-hover: var(--accessibility-theme-standard-link-active);
+  --button-primary-background-active: var(--accessibility-theme-standard-link-active);
+  --button-primary-text: var(--accessibility-theme-standard-button-text);
+  --button-secondary-background: var(--accessibility-theme-standard-raised);
+  --button-secondary-background-hover: var(--accessibility-theme-standard-accent-surface);
+  --button-secondary-text: var(--accessibility-theme-standard-link);
+  --button-border: var(--accessibility-theme-standard-link);
+  --notice-background: var(--accessibility-theme-standard-notice);
+}
+
+html[data-accessibility-enabled="true"][data-accessibility-theme="black-white"] {
+  color-scheme: light;
+  --color-primary: var(--accessibility-theme-black-white-foreground);
+  --color-primary-strong: var(--accessibility-theme-black-white-foreground);
+  --color-primary-active: var(--accessibility-theme-black-white-foreground);
+  --color-text: var(--accessibility-theme-black-white-foreground);
+  --color-text-muted: var(--accessibility-theme-black-white-foreground);
+  --color-text-on-primary: var(--accessibility-theme-black-white-background);
+  --color-surface-page: var(--accessibility-theme-black-white-background);
+  --color-surface-raised: var(--accessibility-theme-black-white-background);
+  --color-surface-subtle: var(--accessibility-theme-black-white-subtle);
+  --color-surface-brand-soft: var(--accessibility-theme-black-white-subtle);
+  --color-surface-warm: var(--accessibility-theme-black-white-background);
+  --color-border: var(--accessibility-theme-black-white-foreground);
+  --color-border-strong: var(--accessibility-theme-black-white-foreground);
+  --color-focus: var(--accessibility-theme-black-white-foreground);
+  --color-overlay: var(--accessibility-theme-black-white-overlay);
+  --button-primary-background: var(--accessibility-theme-black-white-foreground);
+  --button-primary-background-hover: var(--accessibility-theme-black-white-foreground);
+  --button-primary-background-active: var(--accessibility-theme-black-white-foreground);
+  --button-primary-text: var(--accessibility-theme-black-white-background);
+  --button-secondary-background: var(--accessibility-theme-black-white-background);
+  --button-secondary-background-hover: var(--accessibility-theme-black-white-subtle);
+  --button-secondary-text: var(--accessibility-theme-black-white-foreground);
+  --button-border: var(--accessibility-theme-black-white-foreground);
+  --notice-background: var(--accessibility-theme-black-white-background);
+}
+
+html[data-accessibility-enabled="true"][data-accessibility-theme="white-black"] {
+  color-scheme: dark;
+  --color-primary: var(--accessibility-theme-white-black-link);
+  --color-primary-strong: var(--accessibility-theme-white-black-link);
+  --color-primary-active: var(--accessibility-theme-white-black-link);
+  --color-text: var(--accessibility-theme-white-black-foreground);
+  --color-text-muted: var(--accessibility-theme-white-black-foreground);
+  --color-text-on-primary: var(--accessibility-theme-white-black-background);
+  --color-surface-page: var(--accessibility-theme-white-black-background);
+  --color-surface-raised: var(--accessibility-theme-white-black-background);
+  --color-surface-subtle: var(--accessibility-theme-white-black-background);
+  --color-surface-brand-soft: var(--accessibility-theme-white-black-background);
+  --color-surface-warm: var(--accessibility-theme-white-black-background);
+  --color-border: var(--accessibility-theme-white-black-foreground);
+  --color-border-strong: var(--accessibility-theme-white-black-foreground);
+  --color-focus: var(--accessibility-theme-white-black-link);
+  --color-overlay: var(--accessibility-theme-white-black-overlay);
+  --button-primary-background: var(--accessibility-theme-white-black-foreground);
+  --button-primary-background-hover: var(--accessibility-theme-white-black-foreground);
+  --button-primary-background-active: var(--accessibility-theme-white-black-foreground);
+  --button-primary-text: var(--accessibility-theme-white-black-background);
+  --button-secondary-background: var(--accessibility-theme-white-black-background);
+  --button-secondary-background-hover: var(--accessibility-theme-white-black-background);
+  --button-secondary-text: var(--accessibility-theme-white-black-link);
+  --button-border: var(--accessibility-theme-white-black-foreground);
+  --notice-background: var(--accessibility-theme-white-black-background);
+}
+
+html[data-accessibility-enabled="true"][data-accessibility-theme="blue-light"] {
+  color-scheme: light;
+  --color-primary: var(--accessibility-theme-blue-light-link);
+  --color-primary-strong: var(--accessibility-theme-blue-light-link);
+  --color-primary-active: var(--accessibility-theme-blue-light-link-active);
+  --color-text: var(--accessibility-theme-blue-light-foreground);
+  --color-text-muted: var(--accessibility-theme-blue-light-foreground);
+  --color-text-on-primary: var(--accessibility-theme-standard-button-text);
+  --color-surface-page: var(--accessibility-theme-blue-light-background);
+  --color-surface-raised: var(--accessibility-theme-blue-light-raised);
+  --color-surface-subtle: var(--accessibility-theme-blue-light-subtle);
+  --color-surface-brand-soft: var(--accessibility-theme-blue-light-subtle);
+  --color-surface-warm: var(--accessibility-theme-blue-light-notice);
+  --color-border: var(--accessibility-theme-blue-light-border);
+  --color-border-strong: var(--accessibility-theme-blue-light-border);
+  --color-focus: var(--accessibility-theme-blue-light-link);
+  --color-overlay: var(--accessibility-theme-blue-light-overlay);
+  --button-primary-background: var(--accessibility-theme-blue-light-link);
+  --button-primary-background-hover: var(--accessibility-theme-blue-light-link-active);
+  --button-primary-background-active: var(--accessibility-theme-blue-light-link-active);
+  --button-primary-text: var(--accessibility-theme-standard-button-text);
+  --button-secondary-background: var(--accessibility-theme-blue-light-raised);
+  --button-secondary-background-hover: var(--accessibility-theme-blue-light-subtle);
+  --button-secondary-text: var(--accessibility-theme-blue-light-link);
+  --button-border: var(--accessibility-theme-blue-light-link);
+  --notice-background: var(--accessibility-theme-blue-light-notice);
+}
+
+html[data-accessibility-enabled="true"][data-accessibility-font="sans"] {
+  --font-body: var(--accessibility-font-sans);
+  --font-heading: var(--accessibility-font-sans);
+}
+
+html[data-accessibility-enabled="true"][data-accessibility-letter-spacing="medium"] {
+  --accessibility-letter-spacing: var(--accessibility-letter-spacing-medium);
+}
+
+html[data-accessibility-enabled="true"][data-accessibility-letter-spacing="large"] {
+  --accessibility-letter-spacing: var(--accessibility-letter-spacing-large);
+}
+
+html[data-accessibility-enabled="true"][data-accessibility-line-height="medium"] {
+  --accessibility-line-height: var(--accessibility-line-height-medium);
+}
+
+html[data-accessibility-enabled="true"][data-accessibility-line-height="large"] {
+  --accessibility-line-height: var(--accessibility-line-height-large);
+}
+
+html[data-accessibility-enabled="true"][data-accessibility-paragraph-spacing="large"] {
+  --accessibility-paragraph-spacing: var(--accessibility-paragraph-spacing-large);
+}
+
+[data-accessibility-enabled="true"] :where(main, .site-footer, [role="dialog"], .site-search__dropdown, .cookie-banner, .accessibility-panel) :where(h1, h2, h3, h4, h5, h6, p, li, dt, dd, blockquote, figcaption, label, legend, a, th, td, .footer-bottom > span) {
+  letter-spacing: var(--accessibility-letter-spacing);
+  line-height: var(--accessibility-line-height);
+}
+
+[data-accessibility-enabled="true"] :where(main, .site-footer, [role="dialog"], .site-search__dropdown, .cookie-banner, .accessibility-panel) p {
+  margin-block-end: var(--accessibility-paragraph-spacing);
+}
+
+[data-accessibility-enabled="true"] .brand,
+[data-accessibility-enabled="true"] .brand * {
+  letter-spacing: normal;
+}
+
+.site-header:has(.accessibility-panel:not([hidden])) {
+  position: static;
+}
+
+.accessibility-panel {
+  max-inline-size: 100%;
+  overflow-wrap: anywhere;
+  color: var(--color-text);
+  background: var(--accessibility-panel-background);
+  border-block: var(--border-width-strong) solid var(--accessibility-panel-border);
+  box-shadow: var(--accessibility-panel-shadow);
+  animation: accessibility-panel-enter var(--motion-duration-fast) var(--motion-easing-standard) both;
+}
+
+.accessibility-panel__inner {
+  min-inline-size: var(--space-0);
+  max-inline-size: 100%;
+  padding-block: var(--space-4);
+}
+
+.accessibility-panel__heading {
+  min-inline-size: var(--space-0);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  margin-block-end: var(--space-4);
+}
+
+.accessibility-panel__heading h2 {
+  max-inline-size: none;
+  margin: var(--space-0);
+  font-size: var(--text-h3-size);
+}
+
+.accessibility-panel__groups {
+  min-inline-size: var(--space-0);
+  display: grid;
+  grid-template-columns: minmax(var(--space-0), 1fr);
+  gap: var(--space-3);
+}
+
+.accessibility-panel__group {
+  min-inline-size: var(--space-0);
+  margin: var(--space-0);
+  padding: var(--space-3);
+  border: var(--border-width) solid var(--accessibility-panel-border);
+  border-radius: var(--radius-sm);
+}
+
+.accessibility-panel__group legend {
+  max-inline-size: 100%;
+  padding-inline: var(--space-1);
+  color: var(--color-text);
+  font-weight: var(--text-label-weight);
+}
+
+.accessibility-panel__choices {
+  min-inline-size: var(--space-0);
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.accessibility-panel button {
+  min-inline-size: var(--accessibility-control-min-block-size);
+  min-block-size: var(--accessibility-control-min-block-size);
+  max-inline-size: 100%;
+  flex: 1 1 auto;
+  padding: var(--space-2) var(--space-3);
+  border: var(--border-width-strong) solid var(--button-border);
+  border-radius: var(--button-radius);
+  color: var(--button-secondary-text);
+  background: var(--button-secondary-background);
+  font-weight: var(--text-label-weight);
+  line-height: var(--button-line-height);
+  overflow-wrap: anywhere;
+  cursor: pointer;
+  transition: var(--transition-interactive);
+}
+
+.accessibility-panel__heading button,
+.accessibility-panel__actions button {
+  min-block-size: var(--accessibility-action-min-block-size);
+}
+
+.accessibility-panel__heading button {
+  flex: none;
+  padding-inline: var(--space-4);
+  font-size: var(--dialog-close-font-size);
+}
+
+.accessibility-panel button:hover {
+  color: var(--color-primary-active);
+  background: var(--button-secondary-background-hover);
+}
+
+.accessibility-panel button:active {
+  color: var(--button-primary-text);
+  background: var(--button-primary-background-active);
+  transform: translateY(var(--space-0-5));
+}
+
+.accessibility-panel button[aria-pressed="true"] {
+  color: var(--button-primary-text);
+  background: var(--button-primary-background);
+  text-decoration: underline;
+  text-decoration-thickness: var(--border-width-strong);
+  text-underline-offset: var(--space-1);
+}
+
+.accessibility-panel button:focus-visible {
+  outline: var(--focus-ring-width) solid var(--color-focus);
+  outline-offset: var(--focus-ring-offset);
+}
+
+.accessibility-panel button:disabled {
+  cursor: not-allowed;
+  transform: none;
+}
+
+.accessibility-panel__actions {
+  min-inline-size: var(--space-0);
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin-block-start: var(--space-4);
+}
+
+.accessibility-image-alternative {
+  display: block;
+  max-inline-size: 100%;
+  margin-block: var(--space-2);
+  padding: var(--space-3);
+  border: var(--border-width-strong) solid var(--color-border-strong);
+  border-radius: var(--radius-sm);
+  color: var(--color-text);
+  background: var(--notice-background);
+  font-size: var(--text-small-size);
+  line-height: var(--accessibility-line-height);
+  overflow-wrap: anywhere;
+}
+
+@keyframes accessibility-panel-enter {
+  from {
+    opacity: 0;
+    transform: translateY(var(--accessibility-panel-motion-distance));
+  }
+
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@media (min-width: 48rem) {
+  .accessibility-panel__groups {
+    grid-template-columns: repeat(auto-fit, minmax(var(--accessibility-panel-group-min-inline-size), 1fr));
+  }
+
+  .accessibility-panel__actions {
+    justify-content: flex-end;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .accessibility-panel {
+    animation: none;
+    transform: none;
+  }
+
+  .accessibility-panel button,
+  .accessibility-panel button:active {
+    transition: none;
+    transform: none;
+  }
+}

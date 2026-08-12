@@ -108,7 +108,7 @@ describe('premium light visual contract', () => {
     expect(pages).toMatch(/\.home-hero__inner,\s*\.quick-links__grid,[\s\S]*?position:\s*relative[^}]*z-index:\s*var\(--home-decor-content-layer\)/s);
     expect(pages).toMatch(/@media\s*\(min-width:\s*48rem\)[\s\S]*?\.home-decor--hero-tooth\s*{[^}]*display:\s*block/s);
     expect(pages).toMatch(/@media\s*\(min-width:\s*75rem\)[\s\S]*?\.home-decor--services-dental/s);
-    expect(components).toMatch(/\.vision-mode\s+\.home-decor\s*{[^}]*opacity:\s*var\(--home-decor-opacity-vision\)/s);
+    expect(components).toMatch(/\[data-accessibility-enabled="true"\]\s+\.home-decor\s*{[^}]*opacity:\s*var\(--home-decor-opacity-accessibility\)/s);
   });
 
   it('moves only two decorations and preserves the reduced-motion contract', () => {

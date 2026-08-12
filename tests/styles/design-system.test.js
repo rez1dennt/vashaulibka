@@ -44,6 +44,7 @@ describe('design system contract', () => {
       'components',
       'site-search',
       'pages',
+      'accessibility',
     ]);
   });
 
@@ -95,7 +96,7 @@ describe('design system contract', () => {
     expect(css).toMatch(/body\.is-locked/);
     expect(css).toMatch(/\.dialog[^{]*{[^}]*z-index:\s*var\(--z-dialog\)/s);
     expect(css).toMatch(/\.cookie-banner[^{]*{[^}]*z-index:\s*var\(--z-cookie\)/s);
-    expect(css).toMatch(/\.vision-mode/);
+    expect(css).toMatch(/\[data-accessibility-enabled="true"\]/);
   });
 
   it('keeps the mobile menu toggle above the open drawer', () => {
@@ -165,7 +166,7 @@ describe('design system contract', () => {
   });
 
   it('keeps primitive tokens private to the token layer', () => {
-    const consumingLayers = ['base', 'layout', 'components', 'pages']
+    const consumingLayers = ['base', 'layout', 'components', 'site-search', 'pages', 'accessibility']
       .map(readStyle)
       .join('\n');
 
@@ -232,7 +233,7 @@ describe('design system contract', () => {
     }
   });
 
-  it('keeps the hero visualization label contained and readable in vision mode', () => {
+  it('keeps the hero visualization label contained and readable in accessibility mode', () => {
     const layout = readStyle('layout');
     const components = readStyle('components');
 
@@ -241,7 +242,7 @@ describe('design system contract', () => {
     expect(layout).toMatch(/\.hero-visualization-label\s*{[^}]*overflow-wrap:\s*anywhere/s);
     expect(layout).toMatch(/\.hero-visualization-label\s*{[^}]*background:\s*var\(--color-surface-raised\)/s);
     expect(layout).toMatch(/\.hero-visualization-label\s*{[^}]*font-size:\s*var\(--text-caption-size\)/s);
-    expect(components).toMatch(/\.vision-mode\s+\.hero-visualization-label\s*{[^}]*border-width:\s*var\(--border-width-strong\)/s);
+    expect(components).toMatch(/\[data-accessibility-enabled="true"\]\s+\.hero-visualization-label\s*{[^}]*border-width:\s*var\(--border-width-strong\)/s);
   });
 
   it('provides a reduced-motion mode without removing focus treatment', () => {

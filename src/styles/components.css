@@ -324,37 +324,33 @@ button.card:active {
   }
 }
 
-.vision-mode {
-  font-size: var(--vision-scale);
-}
-
-.vision-mode body {
+[data-accessibility-enabled="true"] body {
   color: var(--color-text);
   background: var(--color-surface-page);
 }
 
-.vision-mode a {
+[data-accessibility-enabled="true"] a {
   text-decoration: underline;
   text-decoration-thickness: var(--border-width-strong);
 }
 
-.vision-mode .card,
-.vision-mode .notice,
-.vision-mode .dialog__panel,
-.vision-mode .cookie-banner {
+[data-accessibility-enabled="true"] .card,
+[data-accessibility-enabled="true"] .notice,
+[data-accessibility-enabled="true"] .dialog__panel,
+[data-accessibility-enabled="true"] .cookie-banner {
   border-width: var(--border-width-strong);
   box-shadow: none;
 }
 
-.vision-mode .hero-visualization-label {
+[data-accessibility-enabled="true"] .hero-visualization-label {
   border-width: var(--border-width-strong);
 }
 
-.vision-mode .home-decor {
-  opacity: var(--home-decor-opacity-vision);
+[data-accessibility-enabled="true"] .home-decor {
+  opacity: var(--home-decor-opacity-accessibility);
 }
 
-.vision-mode :focus-visible {
+[data-accessibility-enabled="true"] :focus-visible {
   outline-width: calc(var(--focus-ring-width) + var(--border-width));
 }
 
