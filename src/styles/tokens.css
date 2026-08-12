@@ -72,7 +72,8 @@
   --primitive-size-dialog: 32.5rem;
   --primitive-size-search-panel: 46rem;
   --primitive-size-search-results: min(31rem, 52dvh);
-  --primitive-size-search-trigger: 28rem;
+  --primitive-size-search-trigger: 36rem;
+  --primitive-size-search-dropdown-min: 12rem;
   --primitive-size-cookie: 28rem;
   --primitive-size-header-mobile: 4.5rem;
   --primitive-size-header-desktop: 5.75rem;
@@ -146,6 +147,7 @@
   --primitive-opacity-decor: 0.1;
   --primitive-opacity-decor-vision: 0.035;
   --primitive-scale-pressed: 0.96;
+  --primitive-scale-search-closed: 0.985;
   --primitive-motion-instant: 0.001ms;
   --primitive-motion-fast: 160ms;
   --primitive-motion-panel: 280ms;
@@ -305,6 +307,8 @@
   --search-panel-max-inline-size: var(--primitive-size-search-panel);
   --search-results-max-block-size: var(--primitive-size-search-results);
   --search-trigger-max-inline-size: var(--primitive-size-search-trigger);
+  --search-dropdown-min-block-size: var(--primitive-size-search-dropdown-min);
+  --search-closed-scale: var(--primitive-scale-search-closed);
   --search-viewport-block-size: var(--primitive-viewport-full);
   --search-backdrop-color: var(--color-overlay);
   --search-panel-shadow: var(--shadow-card-hover);

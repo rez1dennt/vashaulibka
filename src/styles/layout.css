@@ -101,6 +101,7 @@ body {
 }
 
 .brand-row__inner {
+  position: relative;
   min-block-size: var(--layout-header-block-size);
   display: grid;
   grid-template-columns: minmax(var(--space-0), 1fr) auto auto;

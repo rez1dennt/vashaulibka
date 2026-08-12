@@ -7,26 +7,39 @@ const tokensCss = readFileSync('src/styles/tokens.css', 'utf8');
 const mainCss = readFileSync('src/styles/main.css', 'utf8');
 
 describe('responsive site search styles', () => {
-  it('uses a fullscreen mobile surface and a central tablet/desktop panel', () => {
-    expect(searchCss).toMatch(/\.site-search__panel[\s\S]*block-size:\s*var\(--search-viewport-block-size\)/);
-    expect(searchCss).toMatch(/@media \(min-width: 48rem\)/);
-    expect(searchCss).toMatch(/max-inline-size:\s*var\(--search-panel-max-inline-size\)/);
+  it('anchors a hidden dropdown instead of rendering a fullscreen fixed modal', () => {
+    expect(searchCss).not.toMatch(/\.site-search\s*\{[\s\S]*?position:\s*fixed/);
+    expect(searchCss).not.toMatch(/site-search__backdrop|site-search__panel|search-viewport-block-size/);
+    expect(searchCss).toMatch(/\.site-search__dropdown[\s\S]*visibility:\s*hidden/);
+    expect(searchCss).toMatch(/\.site-search\.is-open[\s\S]*site-search__dropdown[\s\S]*visibility:\s*visible/);
+    expect(searchCss).toMatch(/site-search__results[\s\S]*overflow-y:\s*auto/);
   });
 
-  it('centers a labelled trigger on desktop and keeps the compact icon before the burger', () => {
+  it('keeps a compact mobile toggle and a persistent central desktop field', () => {
     expect(layoutCss).toMatch(/grid-template-columns:\s*minmax\([^;]+auto auto/);
     expect(layoutCss).toMatch(/@media \(min-width: 75rem\)[\s\S]*grid-template-columns:\s*auto minmax/);
-    expect(searchCss).toMatch(/@media \(min-width: 75rem\)[\s\S]*site-search-trigger__label/);
-    expect(searchCss).toMatch(/@media \(max-width: 74\.999rem\)[\s\S]*site-search-trigger kbd/);
+    expect(layoutCss).toMatch(/\.brand-row__inner[\s\S]*position:\s*relative/);
+    expect(searchCss).toMatch(/@media \(max-width: 74\.999rem\)[\s\S]*site-search__surface[\s\S]*position:\s*absolute/);
+    expect(searchCss).toMatch(/@media \(min-width: 75rem\)[\s\S]*site-search__toggle[\s\S]*display:\s*none/);
+    expect(searchCss).toMatch(/@media \(min-width: 75rem\)[\s\S]*site-search__surface[\s\S]*visibility:\s*visible/);
+  });
+
+  it('uses delayed visibility motion without changing page overflow or layout', () => {
+    expect(searchCss).toMatch(/\.site-search__dropdown[\s\S]*opacity:\s*0[\s\S]*transform:/);
+    expect(searchCss).toMatch(/transition:\s*var\(--transition-navigation-close\)/);
+    expect(searchCss).toMatch(/transition:\s*var\(--transition-navigation-open\)/);
+    expect(searchCss).not.toMatch(/body[^}]*overflow/);
   });
 
   it('honors no-JS, reduced motion and vision mode with semantic tokens', () => {
-    expect(searchCss).toMatch(/\.no-js \.site-search-trigger/);
+    expect(searchCss).toMatch(/\.no-js \.site-search__toggle/);
     expect(searchCss).toMatch(/\.js \.site-search-fallback/);
     expect(searchCss).toMatch(/prefers-reduced-motion: reduce/);
-    expect(searchCss).toMatch(/\.vision-mode \.site-search__panel/);
+    expect(searchCss).toMatch(/\.vision-mode \.site-search__dropdown/);
     expect(searchCss).not.toMatch(/var\(--primitive-/);
     expect(tokensCss).toContain('--z-search:');
+    expect(tokensCss).toContain('--search-closed-scale:');
+    expect(tokensCss).toContain('--search-dropdown-min-block-size:');
     expect(mainCss).toContain("@import './site-search.css';");
   });
 
