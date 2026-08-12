@@ -34,4 +34,21 @@ describe('release handoff contract', () => {
     expect(readme).toContain('`public/assets/documents/`');
     expect(readme).toContain('«Визуализация интерьера»');
   });
+
+  it('keeps site search queries local and memory-only', () => {
+    const source = read('src/js/components/site-search.js');
+
+    for (const forbidden of [
+      'localStorage',
+      'sessionStorage',
+      'document.cookie',
+      'URLSearchParams',
+      'sendBeacon',
+      'XMLHttpRequest',
+      'analytics',
+    ]) expect(source).not.toContain(forbidden);
+    expect(source).toContain("const INDEX_URL = 'search-index.json'");
+    expect(source).toContain("credentials: 'same-origin'");
+    expect(source).not.toMatch(/https?:\/\//);
+  });
 });

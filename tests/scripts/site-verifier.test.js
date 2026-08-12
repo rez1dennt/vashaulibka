@@ -2,6 +2,7 @@ import {
   mkdirSync,
   mkdtempSync,
   readFileSync,
+  unlinkSync,
   writeFileSync,
 } from 'node:fs';
 import { tmpdir } from 'node:os';
@@ -49,6 +50,20 @@ const writeSeo = (directory, pages, origin) => {
   write(directory, 'sitemap.xml', seo.sitemap);
 };
 
+const searchItemFor = (page) => ({
+  id: `page-${page.file.replace(/\.html$/, '')}`,
+  href: page.file,
+  category: 'Страницы',
+  title: `Страница ${page.file}`,
+  summary: 'Краткое описание страницы',
+  content: 'Опубликованное содержание страницы',
+  keywords: ['страница'],
+});
+
+const writeSearchIndex = (directory, pages, items = pages.map(searchItemFor)) => {
+  write(directory, 'search-index.json', `${JSON.stringify({ version: 1, items }, null, 2)}\n`);
+};
+
 const writeValidFixture = ({
   pages = [INDEXABLE_PAGE],
   origin,
@@ -64,6 +79,7 @@ const writeValidFixture = ({
     }));
   }
   writeSeo(directory, pages, origin);
+  writeSearchIndex(directory, pages);
   return directory;
 };
 
@@ -143,6 +159,55 @@ describe('SEO output generation', () => {
 });
 
 describe('production site verifier', () => {
+  it('requires a generated search index', () => {
+    const directory = writeValidFixture();
+    unlinkSync(join(directory, 'search-index.json'));
+
+    const codes = verifyDirectory(directory, { pages: [INDEXABLE_PAGE] }).errors.map((error) => error.code);
+
+    expect(codes).toContain('search-index.missing');
+  });
+
+  it('rejects invalid search JSON and invalid schema', () => {
+    const malformed = writeValidFixture();
+    write(malformed, 'search-index.json', '{broken');
+    expect(verifyDirectory(malformed, { pages: [INDEXABLE_PAGE] }).errors.map((error) => error.code))
+      .toContain('search-index.parse');
+
+    const wrongSchema = writeValidFixture();
+    write(wrongSchema, 'search-index.json', JSON.stringify({ version: 2, items: 'no' }));
+    expect(verifyDirectory(wrongSchema, { pages: [INDEXABLE_PAGE] }).errors.map((error) => error.code))
+      .toContain('search-index.schema');
+  });
+
+  it('rejects duplicate search ids and external result links', () => {
+    const directory = writeValidFixture();
+    const valid = searchItemFor(INDEXABLE_PAGE);
+    writeSearchIndex(directory, [INDEXABLE_PAGE], [
+      valid,
+      { ...valid, href: 'https://example.com' },
+    ]);
+
+    const codes = verifyDirectory(directory, { pages: [INDEXABLE_PAGE] }).errors.map((error) => error.code);
+
+    expect(codes).toContain('search-index.duplicate');
+    expect(codes).toContain('search-index.href');
+  });
+
+  it('rejects missing search fragments and missing page-level records', () => {
+    const pages = [INDEXABLE_PAGE, { file: 'about.html', noindex: false }];
+    const directory = writeValidFixture({ pages });
+    writeSearchIndex(directory, pages, [
+      { ...searchItemFor(INDEXABLE_PAGE), href: 'index.html#absent' },
+      searchItemFor(pages[1]),
+    ]);
+
+    const codes = verifyDirectory(directory, { pages }).errors.map((error) => error.code);
+
+    expect(codes).toContain('search-index.fragment');
+    expect(codes).toContain('search-index.page');
+  });
+
   it('rejects a directory without generated HTML pages', () => {
     const directory = makeDirectory();
     writeSeo(directory, []);

@@ -20,6 +20,8 @@ const PASSIVE_SCHEMES = /^(?:mailto|tel|data):/i;
 const UNSAFE_SCHEMES = /^(?:javascript|vbscript):/i;
 const ABSOLUTE_SCHEME = /^[a-z][a-z\d+.-]*:/i;
 const ACTIVE_LINK_RELS = new Set(['stylesheet', 'icon', 'preload', 'modulepreload', 'manifest']);
+const SEARCH_ITEM_FIELDS = Object.freeze(['id', 'href', 'category', 'title', 'summary', 'content', 'keywords']);
+const SEARCH_INDEX_MAX_BYTES = 250 * 1024;
 
 const normalizeNewlines = (value) => value.replaceAll('\r\n', '\n');
 
@@ -305,6 +307,71 @@ export function verifyDirectory(directory, { pages = PAGES, origin } = {}) {
     const file = relativeName(root, stylesheet);
     for (const reference of cssReferences(readFileSync(stylesheet, 'utf8'))) {
       checkLocalReference(reference, file, 'resource');
+    }
+  }
+
+  const searchIndexFile = resolve(root, 'search-index.json');
+  if (!existsSync(searchIndexFile)) {
+    add('search-index.missing', 'search-index.json is missing', { file: 'search-index.json' });
+  } else if (statSync(searchIndexFile).size > SEARCH_INDEX_MAX_BYTES) {
+    add('search-index.schema', 'search-index.json exceeds the 250 KiB limit', { file: 'search-index.json' });
+  } else {
+    let searchIndex;
+    try {
+      searchIndex = JSON.parse(readFileSync(searchIndexFile, 'utf8'));
+    } catch {
+      add('search-index.parse', 'search-index.json is not valid JSON', { file: 'search-index.json' });
+    }
+
+    if (searchIndex) {
+      if (searchIndex.version !== 1 || !Array.isArray(searchIndex.items)) {
+        add('search-index.schema', 'search-index.json must contain version 1 and an items array', { file: 'search-index.json' });
+      } else {
+        const ids = new Set();
+        const pageHrefs = new Set();
+
+        for (const item of searchIndex.items) {
+          const exactFields = item && typeof item === 'object'
+            && SEARCH_ITEM_FIELDS.every((field) => Object.hasOwn(item, field))
+            && Object.keys(item).every((field) => SEARCH_ITEM_FIELDS.includes(field));
+          const validStrings = exactFields
+            && SEARCH_ITEM_FIELDS.filter((field) => field !== 'keywords')
+              .every((field) => typeof item[field] === 'string' && item[field].trim());
+          const validKeywords = exactFields
+            && Array.isArray(item.keywords)
+            && item.keywords.length > 0
+            && item.keywords.every((keyword) => typeof keyword === 'string' && keyword.trim());
+
+          if (!exactFields || !validStrings || !validKeywords) {
+            add('search-index.schema', 'search index item has an invalid shape or empty field', { file: 'search-index.json' });
+            continue;
+          }
+          if (ids.has(item.id)) {
+            add('search-index.duplicate', `duplicate search item id: ${item.id}`, { file: 'search-index.json' });
+          }
+          ids.add(item.id);
+
+          const resolved = resolveReference(item.href, 'index.html');
+          if (resolved.kind !== 'local' || !item.href.match(/^[a-z0-9-]+\.html(?:#[a-z][a-z0-9-]*)?$/)) {
+            add('search-index.href', `search item href must be a safe local HTML target: ${item.href}`, { file: 'search-index.json' });
+            continue;
+          }
+          if (!existsSync(resolve(root, resolved.pathname))) {
+            add('search-index.href', `search item target does not exist: ${item.href}`, { file: 'search-index.json' });
+            continue;
+          }
+          if (resolved.fragment && !documents.get(resolved.pathname)?.getElementById(resolved.fragment)) {
+            add('search-index.fragment', `search item fragment does not exist: ${item.href}`, { file: 'search-index.json' });
+          }
+          if (!resolved.fragment) pageHrefs.add(resolved.pathname);
+        }
+
+        for (const page of pages) {
+          if (!pageHrefs.has(page.file)) {
+            add('search-index.page', `search index lacks a page-level item for ${page.file}`, { file: 'search-index.json' });
+          }
+        }
+      }
     }
   }
 
