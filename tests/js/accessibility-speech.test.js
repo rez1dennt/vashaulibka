@@ -147,6 +147,27 @@ describe('browser-local Russian speech controller', () => {
     expect(controls.status.textContent).toBe('Начато озвучивание страницы');
   });
 
+  it('preserves readable parent prefix and suffix around nested blocks in document order', () => {
+    const controls = renderFixture(`
+      <ul><li>Начало пункта<ul><li>Дочерний пункт</li></ul>Конец пункта</li></ul>
+      <dl><dd>Начало определения<p>Вложенный абзац</p>Конец определения</dd></dl>
+      <table><tbody><tr><td>Начало ячейки<div><p>Вложенная ячейка</p></div>Конец ячейки</td></tr></tbody></table>
+    `);
+    const synth = createSynth([LOCAL_RUSSIAN_VOICE]);
+    const controller = createAccessibilitySpeechController({ synth, Utterance: FakeUtterance, root: document });
+    controllers.push(controller);
+    controller.init();
+    controller.setEnabled(true);
+
+    controls.read.click();
+
+    expect(synth.speak).toHaveBeenCalledTimes(1);
+    expect(synth.speak.mock.calls[0][0].text).toBe(
+      'Начало пункта. Дочерний пункт. Конец пункта. Начало определения. Вложенный абзац. '
+        + 'Конец определения. Начало ячейки. Вложенная ячейка. Конец ячейки.',
+    );
+  });
+
   it('splits long content into bounded chunks and queues every chunk in order', () => {
     const longText = Array.from({ length: 120 }, (_, index) => `слово${index}`).join(' ');
     const controls = renderFixture(`<p>${longText}</p>`);
@@ -204,6 +225,41 @@ describe('browser-local Russian speech controller', () => {
     expect(controls.pause.disabled).toBe(true);
     expect(controls.stop.disabled).toBe(true);
     expect(controls.status.textContent).toBe('Не удалось озвучить страницу');
+  });
+
+  it('returns to idle controls and announces an asynchronous utterance error', () => {
+    const { controller, controls, synth } = setup();
+    controller.setEnabled(true);
+    controls.read.click();
+
+    synth.speak.mock.calls[0][0].onerror();
+
+    expect(synth.cancel).toHaveBeenCalledTimes(2);
+    expect(controls.read.disabled).toBe(false);
+    expect(controls.pause.disabled).toBe(true);
+    expect(controls.stop.disabled).toBe(true);
+    expect(controls.status.textContent).toBe('Не удалось озвучить страницу');
+  });
+
+  it.each([
+    ['explicit stop', ({ controls }) => controls.stop.click(), false],
+    ['mode disable', ({ controller }) => controller.setEnabled(false), true],
+  ])('ignores stale completion and error callbacks after %s', (_, endReading, readDisabled) => {
+    const context = setup();
+    context.controller.setEnabled(true);
+    context.controls.read.click();
+    const utterance = context.synth.speak.mock.calls[0][0];
+
+    endReading(context);
+    const stoppedStatus = context.controls.status.textContent;
+    utterance.onend();
+    utterance.onerror();
+
+    expect(stoppedStatus).toBe('Озвучивание остановлено');
+    expect(context.controls.status.textContent).toBe(stoppedStatus);
+    expect(context.controls.read.disabled).toBe(readDisabled);
+    expect(context.controls.pause.disabled).toBe(true);
+    expect(context.controls.stop.disabled).toBe(true);
   });
 
   it('cancels on stop, mode disable, pagehide, and beforeunload', () => {

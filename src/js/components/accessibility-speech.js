@@ -42,30 +42,56 @@ function isHidden(element, main) {
   return false;
 }
 
-function readableText(element, main) {
-  const walker = element.ownerDocument.createTreeWalker(element, 4);
-  const parts = [];
-
-  while (walker.nextNode()) {
-    const node = walker.currentNode;
-    if (!isHidden(node.parentElement, main)) parts.push(node.nodeValue);
-  }
-
-  return normalizedText(parts.join(''));
-}
-
 function readableBlocks(root) {
   const main = mainElement(root);
   if (!main) return [];
 
-  const candidates = [...main.querySelectorAll(READABLE_SELECTOR)];
-  return candidates
-    .filter((element) => !isHidden(element, main))
-    .filter((element) => ![...element.querySelectorAll(READABLE_SELECTOR)]
-      .some((child) => !isHidden(child, main)))
-    .map((element) => readableText(element, main))
-    .filter(Boolean)
-    .map((text) => (/[.!?…:;]$/.test(text) ? text : `${text}.`));
+  const blocks = [];
+
+  function append(text) {
+    const normalized = normalizedText(text);
+    if (normalized) blocks.push(/[.!?…:;]$/.test(normalized) ? normalized : `${normalized}.`);
+  }
+
+  function collectReadable(element) {
+    let text = '';
+
+    function flush() {
+      append(text);
+      text = '';
+    }
+
+    function visit(container) {
+      for (const child of container.childNodes) {
+        if (child.nodeType === 3) {
+          text += child.nodeValue;
+          continue;
+        }
+        if (child.nodeType !== 1 || isHidden(child, main)) continue;
+
+        if (child.matches(READABLE_SELECTOR)) {
+          flush();
+          collectReadable(child);
+        } else {
+          visit(child);
+        }
+      }
+    }
+
+    visit(element);
+    flush();
+  }
+
+  function visitMain(container) {
+    for (const child of container.children) {
+      if (isHidden(child, main)) continue;
+      if (child.matches(READABLE_SELECTOR)) collectReadable(child);
+      else visitMain(child);
+    }
+  }
+
+  visitMain(main);
+  return blocks;
 }
 
 function chunksFor(blocks) {
