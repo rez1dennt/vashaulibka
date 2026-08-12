@@ -4,6 +4,18 @@ import { describe, expect, it } from 'vitest';
 const read = (file) => readFileSync(file, 'utf8');
 
 describe('release handoff contract', () => {
+  it('documents the connected MIS boundary and unresolved production legal inputs', () => {
+    const readme = read('README.md');
+    const checklist = read('CONTENT_CHECKLIST.md');
+
+    expect(readme).toMatch(/МИС 32top.*подключ/is);
+    expect(readme).toContain('144e96ac-dbc8-4f44-a6c2-e27f96a783a6');
+    expect(readme).toMatch(/только после.*соглас|явн.*разреш/is);
+    for (const fact of ['договор', 'локализац', 'срок хранения', 'инцидент', 'юрист']) {
+      expect(checklist.toLowerCase()).toContain(fact);
+    }
+  });
+
   it('pins the supported Node and pnpm toolchain and documents it exactly', () => {
     const packageJson = JSON.parse(read('package.json'));
     const readme = read('README.md');

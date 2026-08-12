@@ -5,6 +5,7 @@ import { LEGAL_PAGES } from '../../src/content/legal-pages.js';
 import { PAGES } from '../../src/content/page-manifest.js';
 import { CLINIC, CONTACTS, LICENSE } from '../../src/data/clinic.js';
 import { BENEFITS, GUARANTEES } from '../../src/data/legal.js';
+import { ONLINE_BOOKING } from '../../src/data/online-booking.js';
 import { renderPage } from '../../src/templates/render-page.js';
 
 const legalFiles = [
@@ -229,8 +230,13 @@ describe('patient and legal page manifest', () => {
 
     expect(privacy).toContain(CLINIC.legalName);
     expect(privacy).toContain(CONTACTS.email);
-    expect(privacy).toMatch(/нет.*МИС|МИС.*не.*подключ/i);
-    expect(privacy).toMatch(/телефон.*диалог/i);
+    expect(privacy).toContain(ONLINE_BOOKING.providerName);
+    expect(privacy).toContain('book-app.32top.ru');
+    expect(privacy).toMatch(/фамили.*имя.*отчеств.*телефон/i);
+    expect(privacy).toMatch(/врач.*дат.*врем/i);
+    expect(privacy).toMatch(/только.*разрешен|явн.*выбор/i);
+    expect(privacy).toMatch(/запис.*телефон/i);
+    expect(privacy).not.toMatch(/МИС не подключена|нет подключ[её]нной МИС/i);
     expect(privacy).toMatch(/серверн.*журнал|техническ.*лог/i);
     expect(privacy).not.toContain('CONTENT_CHECKLIST.md');
     expect(privacy).not.toMatch(/что требуется завершить|будут.*уточнены.*до публикации/i);
@@ -238,6 +244,9 @@ describe('patient and legal page manifest', () => {
     expect(cookies).toContain('localStorage');
     expect(cookies).toContain('cookie-consent');
     expect(cookies).toContain('accessibility-preferences');
+    expect(cookies).toContain('32top');
+    expect(cookies).toMatch(/onlineBooking.*верси[яи]\s*2/i);
+    expect(cookieDocument.querySelector(`a[href="${ONLINE_BOOKING.privacyUrl}"]`)).not.toBeNull();
     expect(cookies).toMatch(/accessibility-preferences.*верси[яи]\s*2/i);
     expect(cookies).toMatch(/настройк.*отображен.*логическ.*голосов.*подтвержд/i);
     expect(cookies).toMatch(/не сохраняются.*медицинск.*контактн.*текст.*фраз.*истори.*действ/i);
@@ -251,7 +260,7 @@ describe('patient and legal page manifest', () => {
     expect(cookies).toMatch(/не.*HTTP-cookie|не.*файл.*cookie/i);
     expect(cookies).toMatch(/пока.*пользователь.*измен|очист.*данн/i);
     expect(cookies).toMatch(/аналитик.*реклам.*идентификатор.*пиксел/i);
-    expect(cookies).toMatch(/удал[её]нн.*шрифт.*карт.*виджет/i);
+    expect(cookies).toMatch(/аналитик.*реклам.*пиксел.*не загруж/i);
     expect(cookieDocument.querySelector('[data-cookie-settings]')).not.toBeNull();
 
     expect(privacy).toContain('accessibility-preferences');
@@ -260,7 +269,7 @@ describe('patient and legal page manifest', () => {
 
     for (const file of legalFiles) {
       const document = pageDocument(file);
-      expect(document.querySelector('form, textarea, select, input:not([data-search-input])')).toBeNull();
+      expect(document.querySelector('form, textarea, select, input:not([data-search-input]):not([data-cookie-online-booking])')).toBeNull();
       expect(document.querySelectorAll('input[data-search-input]:not([name])')).toHaveLength(1);
     }
   });
@@ -305,14 +314,14 @@ describe('patient and legal page manifest', () => {
     }
 
     expect(text).toContain('Редакция от 12 августа 2026 года');
-    expect(text).toMatch(/МИС не подключена.*форм.*отсутств/i);
+    expect(text).toMatch(/МИС 32top.*явн.*разреш|явн.*разреш.*МИС 32top/i);
     expect(text).toMatch(/IP-адрес.*дат.*врем.*запрос.*адрес.*страниц.*браузер.*устройств/i);
-    expect(text).toMatch(/специальн.*категор.*биометрическ.*не.*собира/i);
+    expect(text).toMatch(/биометрическ.*не.*собира/i);
     expect(text).toMatch(/уточнен.*блокирован.*удален.*отзыв.*соглас/i);
     expect(text).toMatch(/Роскомнадзор|уполномоченн.*орган/i);
-    expect(text).toMatch(/до подключения МИС.*политик.*согласи/i);
+    expect(text).toMatch(/договорн.*рол.*локализац.*срок.*инцидент/i);
     expect(text).not.toMatch(/что требуется завершить|будут.*уточнены.*до публикации|CONTENT_CHECKLIST/i);
-    expect(document.querySelector('form, textarea, select, input:not([data-search-input])')).toBeNull();
+    expect(document.querySelector('form, textarea, select, input:not([data-search-input]):not([data-cookie-online-booking])')).toBeNull();
     expect(document.querySelectorAll('input[data-search-input]:not([name])')).toHaveLength(1);
   });
 
