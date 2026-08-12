@@ -1,3 +1,4 @@
+import { readFileSync } from 'node:fs';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { createAccessibilitySpeechController } from '../../src/js/components/accessibility-speech.js';
 
@@ -20,8 +21,6 @@ function createSynth(voices = []) {
   return {
     cancel: vi.fn(),
     getVoices: vi.fn(() => availableVoices),
-    pause: vi.fn(),
-    resume: vi.fn(),
     speak: vi.fn(),
     addEventListener: vi.fn((type, listener) => listeners.set(type, listener)),
     removeEventListener: vi.fn((type, listener) => {
@@ -36,22 +35,17 @@ function createSynth(voices = []) {
   };
 }
 
-function renderFixture(main = '<h1>Заголовок</h1>') {
+function renderFixture() {
   document.body.innerHTML = `
     <section data-accessibility-panel>
-      <button type="button" data-speech-read disabled>Читать страницу</button>
-      <button type="button" data-speech-pause disabled>Пауза/Продолжить</button>
-      <button type="button" data-speech-stop disabled>Остановить</button>
+      <button type="button" data-speech-announcements aria-pressed="false" disabled>Голосовые подтверждения</button>
       <p data-accessibility-status role="status" aria-live="polite"></p>
     </section>
-    <main>${main}</main>
   `;
 
   return {
-    pause: document.querySelector('[data-speech-pause]'),
-    read: document.querySelector('[data-speech-read]'),
+    speaker: document.querySelector('[data-speech-announcements]'),
     status: document.querySelector('[data-accessibility-status]'),
-    stop: document.querySelector('[data-speech-stop]'),
   };
 }
 
@@ -65,7 +59,7 @@ function setup({ synth = createSynth([LOCAL_RUSSIAN_VOICE]), Utterance = FakeUtt
   return { controller, controls, synth };
 }
 
-describe('browser-local Russian speech controller', () => {
+describe('browser-local Russian action announcements', () => {
   beforeEach(() => {
     document.body.innerHTML = '';
   });
@@ -73,20 +67,35 @@ describe('browser-local Russian speech controller', () => {
   afterEach(() => {
     for (const controller of controllers.splice(0)) controller.destroy();
     vi.restoreAllMocks();
+    vi.unstubAllGlobals();
   });
 
-  it('keeps controls disabled and announces when Web Speech is absent', () => {
+  it('exposes only the short-announcement controller surface', () => {
+    const { controller } = setup();
+
+    expect(Object.keys(controller).sort()).toEqual([
+      'announce',
+      'confirmAndDisable',
+      'destroy',
+      'init',
+      'setEnabled',
+      'stop',
+    ]);
+  });
+
+  it('keeps the speaker unavailable when Web Speech is absent', () => {
     const { controller, controls } = setup({ synth: null, Utterance: null });
 
     controller.setEnabled(true);
+    controller.announce('Изображения скрыты');
 
-    expect(controls.read.disabled).toBe(true);
-    expect(controls.pause.disabled).toBe(true);
-    expect(controls.stop.disabled).toBe(true);
-    expect(controls.status.textContent).toBe('Локальный русский голос недоступен в этом браузере');
+    expect(controls.speaker.disabled).toBe(true);
+    expect(controls.speaker.getAttribute('aria-pressed')).toBe('false');
+    expect(controls.speaker.getAttribute('aria-label')).toContain('Локальный русский голос недоступен');
+    expect(controls.status.textContent).toBe('Изображения скрыты');
   });
 
-  it('fails closed when voices include remote Russian and local non-Russian options only', () => {
+  it('rejects remote Russian and local non-Russian voices', () => {
     const synth = createSynth([
       { lang: 'ru-RU', localService: false, name: 'Remote Russian' },
       { lang: 'en-US', localService: true, name: 'Local English' },
@@ -94,13 +103,14 @@ describe('browser-local Russian speech controller', () => {
     const { controller, controls } = setup({ synth });
 
     controller.setEnabled(true);
+    controller.announce('Цветовая схема — стандартная');
 
-    expect(controls.read.disabled).toBe(true);
-    expect(controls.status.textContent).toBe('Локальный русский голос недоступен в этом браузере');
+    expect(controls.speaker.disabled).toBe(true);
+    expect(controls.speaker.getAttribute('aria-pressed')).toBe('false');
     expect(synth.speak).not.toHaveBeenCalled();
   });
 
-  it('enables reading after voiceschanged supplies a qualifying voice', () => {
+  it('reflects a stored enabled state after voiceschanged supplies a local Russian voice', () => {
     const synth = createSynth([]);
     const { controller, controls } = setup({ synth });
     controller.setEnabled(true);
@@ -108,110 +118,87 @@ describe('browser-local Russian speech controller', () => {
     synth.setVoices([LOCAL_RUSSIAN_VOICE]);
     synth.emit('voiceschanged');
 
-    expect(controls.read.disabled).toBe(false);
-    expect(controls.status.textContent).toBe('Локальный русский голос доступен');
+    expect(controls.speaker.disabled).toBe(false);
+    expect(controls.speaker.getAttribute('aria-pressed')).toBe('true');
+    expect(controls.speaker.hasAttribute('aria-label')).toBe(false);
+    expect(controls.status.textContent).toBe('');
   });
 
-  it('reads ordered leaf blocks from main and excludes hidden, decorative, and interface content', () => {
-    const controls = renderFixture(`
-      <h1> Заголовок </h1>
-      <p>Первый <span hidden>скрытый фрагмент</span> абзац</p>
-      <ul><li>Пункт списка</li><li><p>Вложенный абзац</p></li></ul>
-      <dl><dt>Термин</dt><dd>Определение</dd></dl>
-      <table><thead><tr><th>Колонка</th></tr></thead><tbody><tr><td>Значение</td></tr></tbody></table>
-      <p hidden>Скрыто атрибутом</p>
-      <div aria-hidden="true"><p>Скрыто ARIA</p></div>
-      <p class="sr-only">Скрыто визуально</p>
-      <nav><p>Навигационный шум</p></nav>
-      <div role="toolbar"><p>Панельный шум</p></div>
-      <div data-cookie-consent><p>Cookie шум</p></div>
-      <div role="presentation"><p>Декоративный шум</p></div>
-      <p style="display: none">Скрыто стилем</p>
-      <script>Сценарий</script><style>Стили</style>
-    `);
-    const synth = createSynth([LOCAL_RUSSIAN_VOICE]);
-    const controller = createAccessibilitySpeechController({ synth, Utterance: FakeUtterance, root: document });
-    controllers.push(controller);
-    controller.init();
-    controller.setEnabled(true);
-
-    controls.read.click();
-
-    expect(synth.speak).toHaveBeenCalledTimes(1);
-    const utterance = synth.speak.mock.calls[0][0];
-    expect(utterance.text).toBe(
-      'Заголовок. Первый абзац. Пункт списка. Вложенный абзац. Термин. Определение. Колонка. Значение.',
-    );
-    expect(utterance.lang).toBe('ru-RU');
-    expect(utterance.voice).toBe(LOCAL_RUSSIAN_VOICE);
-    expect(controls.status.textContent).toBe('Начато озвучивание страницы');
-  });
-
-  it('preserves readable parent prefix and suffix around nested blocks in document order', () => {
-    const controls = renderFixture(`
-      <ul><li>Начало пункта<ul><li>Дочерний пункт</li></ul>Конец пункта</li></ul>
-      <dl><dd>Начало определения<p>Вложенный абзац</p>Конец определения</dd></dl>
-      <table><tbody><tr><td>Начало ячейки<div><p>Вложенная ячейка</p></div>Конец ячейки</td></tr></tbody></table>
-    `);
-    const synth = createSynth([LOCAL_RUSSIAN_VOICE]);
-    const controller = createAccessibilitySpeechController({ synth, Utterance: FakeUtterance, root: document });
-    controllers.push(controller);
-    controller.init();
-    controller.setEnabled(true);
-
-    controls.read.click();
-
-    expect(synth.speak).toHaveBeenCalledTimes(1);
-    expect(synth.speak.mock.calls[0][0].text).toBe(
-      'Начало пункта. Дочерний пункт. Конец пункта. Начало определения. Вложенный абзац. '
-        + 'Конец определения. Начало ячейки. Вложенная ячейка. Конец ячейки.',
-    );
-  });
-
-  it('splits long content into bounded chunks and queues every chunk in order', () => {
-    const longText = Array.from({ length: 120 }, (_, index) => `слово${index}`).join(' ');
-    const controls = renderFixture(`<p>${longText}</p>`);
-    const synth = createSynth([LOCAL_RUSSIAN_VOICE]);
-    const controller = createAccessibilitySpeechController({ synth, Utterance: FakeUtterance, root: document });
-    controllers.push(controller);
-    controller.init();
-    controller.setEnabled(true);
-
-    controls.read.click();
-
-    const texts = synth.speak.mock.calls.map(([utterance]) => utterance.text);
-    expect(texts.length).toBeGreaterThan(1);
-    expect(texts.every((text) => text.length <= 240)).toBe(true);
-    expect(texts.join(' ').replace(/\.$/, '')).toBe(longText);
-  });
-
-  it('exposes pause and resume state, then announces completion', () => {
+  it('speaks one normalized short phrase with the qualifying local voice', () => {
     const { controller, controls, synth } = setup();
     controller.setEnabled(true);
-    controls.read.click();
 
-    controls.pause.click();
+    controller.announce('  Размер   шрифта — 150 процентов  ');
 
-    expect(synth.pause).toHaveBeenCalledTimes(1);
-    expect(controls.pause.textContent).toBe('Продолжить');
-    expect(controls.pause.getAttribute('aria-pressed')).toBe('true');
-    expect(controls.status.textContent).toBe('Озвучивание приостановлено');
-
-    controls.pause.click();
-
-    expect(synth.resume).toHaveBeenCalledTimes(1);
-    expect(controls.pause.textContent).toBe('Пауза');
-    expect(controls.pause.getAttribute('aria-pressed')).toBe('false');
-    expect(controls.status.textContent).toBe('Озвучивание продолжено');
-
-    synth.speak.mock.calls.at(-1)[0].onend();
-
-    expect(controls.pause.disabled).toBe(true);
-    expect(controls.stop.disabled).toBe(true);
-    expect(controls.status.textContent).toBe('Озвучивание страницы завершено');
+    expect(synth.cancel).toHaveBeenCalledTimes(1);
+    expect(synth.speak).toHaveBeenCalledTimes(1);
+    const utterance = synth.speak.mock.calls[0][0];
+    expect(utterance.text).toBe('Размер шрифта — 150 процентов');
+    expect(utterance.lang).toBe('ru-RU');
+    expect(utterance.voice).toBe(LOCAL_RUSSIAN_VOICE);
+    expect(controls.status.textContent).toBe('Размер шрифта — 150 процентов');
   });
 
-  it('returns to idle controls and announces a synchronous synthesis error', () => {
+  it('cancels a stale phrase and ignores its callbacks when a newer phrase wins', () => {
+    const { controller, controls, synth } = setup();
+    controller.setEnabled(true);
+    controller.announce('Первая фраза');
+    const stale = synth.speak.mock.calls[0][0];
+
+    controller.announce('Вторая фраза');
+    stale.onerror();
+    stale.onend();
+
+    expect(synth.cancel).toHaveBeenCalledTimes(2);
+    expect(synth.speak).toHaveBeenCalledTimes(2);
+    expect(synth.speak.mock.calls[1][0].text).toBe('Вторая фраза');
+    expect(controls.status.textContent).toBe('Вторая фраза');
+  });
+
+  it('stops immediately on disable and ignores announcements until re-enabled', () => {
+    const { controller, controls, synth } = setup();
+    controller.setEnabled(true);
+    controller.announce('До выключения');
+
+    controller.setEnabled(false);
+    controller.announce('После выключения');
+
+    expect(synth.cancel).toHaveBeenCalledTimes(2);
+    expect(synth.speak).toHaveBeenCalledTimes(1);
+    expect(controls.speaker.getAttribute('aria-pressed')).toBe('false');
+    expect(controls.status.textContent).toBe('После выключения');
+  });
+
+  it('cancels on explicit stop, pagehide, beforeunload, and destroy', () => {
+    const { controller, synth } = setup();
+    controller.setEnabled(true);
+    controller.announce('Фраза');
+    expect(synth.cancel).toHaveBeenCalledTimes(1);
+
+    controller.stop();
+    window.dispatchEvent(new Event('pagehide'));
+    window.dispatchEvent(new Event('beforeunload'));
+    controller.destroy();
+
+    expect(synth.cancel).toHaveBeenCalledTimes(5);
+  });
+
+  it('speaks one final reset confirmation, disables immediately, and does not cancel it afterward', () => {
+    const { controller, controls, synth } = setup();
+    controller.setEnabled(true);
+    controller.announce('Старая фраза');
+
+    controller.confirmAndDisable('Настройки сброшены');
+    controller.announce('Не должна прозвучать');
+
+    expect(synth.cancel).toHaveBeenCalledTimes(2);
+    expect(synth.speak).toHaveBeenCalledTimes(2);
+    expect(synth.speak.mock.calls[1][0].text).toBe('Настройки сброшены');
+    expect(controls.speaker.getAttribute('aria-pressed')).toBe('false');
+    expect(controls.status.textContent).toBe('Не должна прозвучать');
+  });
+
+  it('fails closed on a synchronous synthesis error', () => {
     const synth = createSynth([LOCAL_RUSSIAN_VOICE]);
     synth.speak.mockImplementation(() => {
       throw new Error('synthesis failed');
@@ -219,74 +206,32 @@ describe('browser-local Russian speech controller', () => {
     const { controller, controls } = setup({ synth });
     controller.setEnabled(true);
 
-    controls.read.click();
-
-    expect(controls.read.disabled).toBe(false);
-    expect(controls.pause.disabled).toBe(true);
-    expect(controls.stop.disabled).toBe(true);
-    expect(controls.status.textContent).toBe('Не удалось озвучить страницу');
-  });
-
-  it('returns to idle controls and announces an asynchronous utterance error', () => {
-    const { controller, controls, synth } = setup();
-    controller.setEnabled(true);
-    controls.read.click();
-
-    synth.speak.mock.calls[0][0].onerror();
+    controller.announce('Фраза');
 
     expect(synth.cancel).toHaveBeenCalledTimes(2);
-    expect(controls.read.disabled).toBe(false);
-    expect(controls.pause.disabled).toBe(true);
-    expect(controls.stop.disabled).toBe(true);
-    expect(controls.status.textContent).toBe('Не удалось озвучить страницу');
+    expect(controls.status.textContent).toBe('Не удалось озвучить подтверждение');
+    expect(controls.speaker.getAttribute('aria-pressed')).toBe('true');
   });
 
-  it.each([
-    ['explicit stop', ({ controls }) => controls.stop.click(), false],
-    ['mode disable', ({ controller }) => controller.setEnabled(false), true],
-  ])('ignores stale completion and error callbacks after %s', (_, endReading, readDisabled) => {
-    const context = setup();
-    context.controller.setEnabled(true);
-    context.controls.read.click();
-    const utterance = context.synth.speak.mock.calls[0][0];
-
-    endReading(context);
-    const stoppedStatus = context.controls.status.textContent;
-    utterance.onend();
-    utterance.onerror();
-
-    expect(stoppedStatus).toBe('Озвучивание остановлено');
-    expect(context.controls.status.textContent).toBe(stoppedStatus);
-    expect(context.controls.read.disabled).toBe(readDisabled);
-    expect(context.controls.pause.disabled).toBe(true);
-    expect(context.controls.stop.disabled).toBe(true);
-  });
-
-  it('cancels on stop, mode disable, pagehide, and beforeunload', () => {
+  it('fails closed on a current asynchronous error and ignores it after stop', () => {
     const { controller, controls, synth } = setup();
     controller.setEnabled(true);
-    controls.read.click();
+    controller.announce('Фраза');
+    const current = synth.speak.mock.calls[0][0];
 
-    controls.stop.click();
+    current.onerror();
     expect(synth.cancel).toHaveBeenCalledTimes(2);
-    expect(controls.status.textContent).toBe('Озвучивание остановлено');
+    expect(controls.status.textContent).toBe('Не удалось озвучить подтверждение');
 
-    controls.read.click();
-    controller.setEnabled(false);
-    expect(synth.cancel).toHaveBeenCalledTimes(4);
-    expect(controls.read.disabled).toBe(true);
-
-    controller.setEnabled(true);
-    controls.read.click();
-    window.dispatchEvent(new Event('pagehide'));
-    expect(synth.cancel).toHaveBeenCalledTimes(6);
-
-    controls.read.click();
-    window.dispatchEvent(new Event('beforeunload'));
-    expect(synth.cancel).toHaveBeenCalledTimes(8);
+    controller.announce('Новая фраза');
+    const stale = synth.speak.mock.calls[1][0];
+    controller.stop();
+    const stoppedStatus = controls.status.textContent;
+    stale.onerror();
+    expect(controls.status.textContent).toBe(stoppedStatus);
   });
 
-  it('does not attempt any network or script fallback while reading', () => {
+  it('does not create a network or script fallback', () => {
     const fetchSpy = vi.fn();
     const xhrSpy = vi.fn();
     const socketSpy = vi.fn();
@@ -294,15 +239,24 @@ describe('browser-local Russian speech controller', () => {
     vi.stubGlobal('XMLHttpRequest', xhrSpy);
     vi.stubGlobal('WebSocket', socketSpy);
     const createElement = vi.spyOn(document, 'createElement');
-    const { controller, controls } = setup();
+    const { controller } = setup();
     controller.setEnabled(true);
 
-    controls.read.click();
+    controller.announce('Изображения показаны');
 
     expect(fetchSpy).not.toHaveBeenCalled();
     expect(xhrSpy).not.toHaveBeenCalled();
     expect(socketSpy).not.toHaveBeenCalled();
     expect(createElement.mock.calls.some(([tagName]) => String(tagName).toLowerCase() === 'script')).toBe(false);
     expect(document.querySelector('script[src], link[href]')).toBeNull();
+  });
+
+  it('contains no page-reading selectors, extraction, chunks, or playback controls', () => {
+    const source = readFileSync('src/js/components/accessibility-speech.js', 'utf8');
+
+    expect(source).not.toMatch(/data-speech-(?:read|pause|stop)/);
+    expect(source).not.toMatch(/READABLE_SELECTOR|readableBlocks|chunksFor|MAX_CHUNK_LENGTH/);
+    expect(source).not.toMatch(/querySelector\(['"]main|\.pause\?\.|\.resume\?\./);
+    expect(source).not.toMatch(/Читать страницу|Озвучивание страницы|Пауза\/Продолжить/);
   });
 });

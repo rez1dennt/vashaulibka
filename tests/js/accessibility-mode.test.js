@@ -6,16 +6,16 @@ import {
 } from '../../src/js/core/accessibility-preferences.js';
 import { renderHeader } from '../../src/templates/site-chrome.js';
 
-const ACTIVE_ATTRIBUTES = [
-  'data-accessibility-enabled',
-  'data-accessibility-scale',
-  'data-accessibility-theme',
-  'data-accessibility-font',
-  'data-accessibility-letter-spacing',
-  'data-accessibility-line-height',
-  'data-accessibility-paragraph-spacing',
-  'data-accessibility-images',
-];
+const ACTIVE_ATTRIBUTES = {
+  enabled: 'data-accessibility-enabled',
+  scale: 'data-accessibility-scale',
+  theme: 'data-accessibility-theme',
+  font: 'data-accessibility-font',
+  letterSpacing: 'data-accessibility-letter-spacing',
+  lineHeight: 'data-accessibility-line-height',
+  paragraphSpacing: 'data-accessibility-paragraph-spacing',
+  images: 'data-accessibility-images',
+};
 
 function createStorage(initial = {}) {
   const values = new Map(Object.entries(initial));
@@ -33,16 +33,37 @@ function createStorage(initial = {}) {
   };
 }
 
+function createSpeechController() {
+  return {
+    announce: vi.fn(),
+    confirmAndDisable: vi.fn(),
+    init: vi.fn(),
+    setEnabled: vi.fn(),
+    stop: vi.fn(),
+  };
+}
+
 function setup(storage = createStorage(), controllers = {}) {
   document.body.innerHTML = renderHeader('index.html');
-  initAccessibilityMode({ storage, ...controllers });
+  const imageController = controllers.imageController ?? { setHidden: vi.fn() };
+  const speechController = controllers.speechController ?? createSpeechController();
+  initAccessibilityMode({ storage, imageController, speechController });
   return {
+    advanced: document.querySelector('[data-accessibility-advanced-open]'),
+    close: document.querySelector('[data-accessibility-close]'),
+    dialog: document.querySelector('#accessibility-settings-dialog'),
+    imageController,
+    panel: document.querySelector('[data-accessibility-panel]'),
+    reset: document.querySelector('[data-accessibility-reset]'),
+    scaleDecrease: document.querySelector('[data-accessibility-scale-decrease]'),
+    scaleIncrease: document.querySelector('[data-accessibility-scale-increase]'),
+    scaleValue: document.querySelector('[data-accessibility-scale-value]'),
+    speaker: document.querySelector('[data-speech-announcements]'),
+    speechController,
+    standard: document.querySelector('[data-accessibility-standard]'),
+    status: document.querySelector('[data-accessibility-status]'),
     storage,
     toggle: document.querySelector('[data-vision-toggle]'),
-    panel: document.querySelector('[data-accessibility-panel]'),
-    close: document.querySelector('[data-accessibility-close]'),
-    reset: document.querySelector('[data-accessibility-reset]'),
-    status: document.querySelector('[data-accessibility-status]'),
   };
 }
 
@@ -52,19 +73,28 @@ function settingButton(setting, value) {
   );
 }
 
+function expectNoActiveAttributes() {
+  expect(Object.values(ACTIVE_ATTRIBUTES).every(
+    (attribute) => !document.documentElement.hasAttribute(attribute),
+  )).toBe(true);
+}
+
 describe('accessibility mode controller', () => {
   beforeEach(() => {
     document.documentElement.removeAttribute('class');
+    document.body.className = '';
   });
 
-  it('opens from the eye button, exposes the panel, and moves focus inside', () => {
-    const { toggle, panel, close } = setup();
+  it('opens from the eye button, exposes the normal-flow panel, and moves focus inside', () => {
+    const { close, panel, toggle } = setup();
 
     toggle.click();
 
     expect(panel.hidden).toBe(false);
+    expect(panel.matches('[role="dialog"], [aria-modal="true"]')).toBe(false);
     expect(toggle.getAttribute('aria-expanded')).toBe('true');
     expect(document.activeElement).toBe(close);
+    expect(document.body.classList.contains('is-locked')).toBe(false);
   });
 
   it.each([
@@ -82,177 +112,8 @@ describe('accessibility mode controller', () => {
     expect(document.activeElement).toBe(controls.toggle);
   });
 
-  it('keeps active preferences when the panel closes', () => {
-    const { toggle, panel, storage } = setup();
-    toggle.click();
-    settingButton('theme', 'white-black').click();
-    toggle.click();
-
-    expect(panel.hidden).toBe(true);
-    expect(document.documentElement.getAttribute('data-accessibility-enabled')).toBe('true');
-    expect(document.documentElement.getAttribute('data-accessibility-theme')).toBe('white-black');
-    expect(JSON.parse(storage.values.get(ACCESSIBILITY_STORAGE_KEY))).toMatchObject({
-      enabled: true,
-      theme: 'white-black',
-    });
-  });
-
-  it('applies image visibility whenever enabled image preferences change or reset', () => {
-    const imageController = { setHidden: vi.fn() };
-    const { reset } = setup(createStorage(), { imageController });
-
-    settingButton('images', 'hidden').click();
-    reset.click();
-
-    expect(imageController.setHidden).toHaveBeenNthCalledWith(1, false);
-    expect(imageController.setHidden).toHaveBeenNthCalledWith(2, true);
-    expect(imageController.setHidden).toHaveBeenNthCalledWith(3, false);
-  });
-
-  it('initializes speech once and applies enabled state without stopping when the panel closes', () => {
-    const speechController = {
-      init: vi.fn(),
-      setEnabled: vi.fn(),
-      stop: vi.fn(),
-    };
-    const { toggle, reset } = setup(createStorage(), { speechController });
-
-    expect(speechController.init).toHaveBeenCalledTimes(1);
-    expect(speechController.setEnabled).toHaveBeenNthCalledWith(1, false);
-
-    settingButton('theme', 'black-white').click();
-    expect(speechController.setEnabled).toHaveBeenNthCalledWith(2, true);
-
-    toggle.click();
-    toggle.click();
-    expect(speechController.setEnabled).toHaveBeenCalledTimes(2);
-    expect(speechController.stop).not.toHaveBeenCalled();
-
-    reset.click();
-    expect(speechController.setEnabled).toHaveBeenNthCalledWith(3, false);
-  });
-
-  it('updates one setting, persists one validated record, synchronizes choices, and announces it', () => {
-    const { storage, status } = setup();
-    const selected = settingButton('theme', 'black-white');
-    const previous = settingButton('theme', 'standard');
-
-    selected.click();
-
-    expect(storage.set).toHaveBeenCalledTimes(1);
-    expect(storage.set).toHaveBeenCalledWith(ACCESSIBILITY_STORAGE_KEY, JSON.stringify({
-      ...DEFAULT_ACCESSIBILITY_PREFERENCES,
-      enabled: true,
-      theme: 'black-white',
-    }));
-    expect(selected.getAttribute('aria-pressed')).toBe('true');
-    expect(previous.getAttribute('aria-pressed')).toBe('false');
-    expect(document.documentElement.getAttribute('data-accessibility-enabled')).toBe('true');
-    expect(document.documentElement.getAttribute('data-accessibility-theme')).toBe('black-white');
-    expect(status.textContent).toBe('Цветовая схема: Чёрный текст на белом фоне');
-  });
-
-  it('hydrates disabled stored choices without presentation attributes or an announcement', () => {
-    const stored = {
-      ...DEFAULT_ACCESSIBILITY_PREFERENCES,
-      scale: '150',
-      theme: 'white-black',
-    };
-    const { status } = setup(createStorage({
-      [ACCESSIBILITY_STORAGE_KEY]: JSON.stringify(stored),
-    }));
-
-    expect(settingButton('theme', 'white-black').getAttribute('aria-pressed')).toBe('true');
-    expect(ACTIVE_ATTRIBUTES.every((attribute) => !document.documentElement.hasAttribute(attribute))).toBe(true);
-    expect(status.textContent).toBe('');
-  });
-
-  it('enables and reapplies retained choices when a non-default setting is selected', () => {
-    const stored = {
-      ...DEFAULT_ACCESSIBILITY_PREFERENCES,
-      scale: '150',
-      theme: 'white-black',
-    };
-    setup(createStorage({ [ACCESSIBILITY_STORAGE_KEY]: JSON.stringify(stored) }));
-
-    settingButton('theme', 'white-black').click();
-
-    expect(document.documentElement.getAttribute('data-accessibility-enabled')).toBe('true');
-    expect(document.documentElement.getAttribute('data-accessibility-scale')).toBe('150');
-    expect(document.documentElement.getAttribute('data-accessibility-theme')).toBe('white-black');
-  });
-
-  it('resets storage and DOM defaults while leaving the panel open', () => {
-    const storage = createStorage({ 'vision-mode': 'on' });
-    const { toggle, panel, reset } = setup(storage);
-    toggle.click();
-    settingButton('theme', 'black-white').click();
-
-    reset.click();
-
-    expect(panel.hidden).toBe(false);
-    expect(toggle.getAttribute('aria-expanded')).toBe('true');
-    expect(storage.remove).toHaveBeenCalledWith(ACCESSIBILITY_STORAGE_KEY);
-    expect(storage.remove).toHaveBeenCalledWith('vision-mode');
-    expect(storage.values.has(ACCESSIBILITY_STORAGE_KEY)).toBe(false);
-    expect(storage.values.has('vision-mode')).toBe(false);
-    expect(ACTIVE_ATTRIBUTES.every((attribute) => !document.documentElement.hasAttribute(attribute))).toBe(true);
-    expect(settingButton('theme', 'standard').getAttribute('aria-pressed')).toBe('true');
-    expect(settingButton('theme', 'black-white').getAttribute('aria-pressed')).toBe('false');
-  });
-
-  it('ignores malformed stored preferences and hydrates defaults silently', () => {
-    const { storage, status } = setup(createStorage({
-      [ACCESSIBILITY_STORAGE_KEY]: '{not-json',
-    }));
-
-    expect(settingButton('theme', 'standard').getAttribute('aria-pressed')).toBe('true');
-    expect(ACTIVE_ATTRIBUTES.every((attribute) => !document.documentElement.hasAttribute(attribute))).toBe(true);
-    expect(storage.set).not.toHaveBeenCalled();
-    expect(status.textContent).toBe('');
-  });
-
-  it('migrates legacy vision mode to enabled 125 percent preferences', () => {
-    const { storage, status } = setup(createStorage({ 'vision-mode': 'on' }));
-    const migrated = {
-      ...DEFAULT_ACCESSIBILITY_PREFERENCES,
-      enabled: true,
-      scale: '125',
-    };
-
-    expect(document.documentElement.getAttribute('data-accessibility-enabled')).toBe('true');
-    expect(document.documentElement.getAttribute('data-accessibility-scale')).toBe('125');
-    expect(storage.values.get(ACCESSIBILITY_STORAGE_KEY)).toBe(JSON.stringify(migrated));
-    expect(storage.values.has('vision-mode')).toBe(false);
-    expect(status.textContent).toBe('Локальный русский голос недоступен в этом браузере');
-  });
-
-  it('uses normal document flow without a backdrop, modal, body lock, or focus trap', () => {
-    const imageController = { setHidden: vi.fn() };
-    const speechController = { init: vi.fn(), setEnabled: vi.fn() };
-    const { toggle, panel } = setup(createStorage(), { imageController, speechController });
-    toggle.click();
-    const lastButton = panel.querySelector('[data-accessibility-close]');
-    lastButton.focus();
-    const tabEvent = new KeyboardEvent('keydown', {
-      key: 'Tab',
-      bubbles: true,
-      cancelable: true,
-    });
-    lastButton.dispatchEvent(tabEvent);
-
-    expect(panel.matches('[role="dialog"], [aria-modal="true"]')).toBe(false);
-    expect(document.querySelector('[data-accessibility-backdrop]')).toBeNull();
-    expect(document.body.classList.contains('is-locked')).toBe(false);
-    expect(document.body.style.overflow).toBe('');
-    expect(tabEvent.defaultPrevented).toBe(false);
-    expect(document.activeElement).toBe(lastButton);
-  });
-
-  it('closes the advanced dialog before collapsing the toolbar and returns focus to the eye button', () => {
-    const { close, panel, toggle } = setup();
-    const advanced = document.querySelector('[data-accessibility-advanced-open]');
-    const dialog = document.querySelector('#accessibility-settings-dialog');
+  it('closes the advanced dialog before the toolbar and returns final focus to the eye button', () => {
+    const { advanced, close, dialog, panel, toggle } = setup();
     toggle.click();
     advanced.click();
 
@@ -263,5 +124,301 @@ describe('accessibility mode controller', () => {
     expect(panel.hidden).toBe(true);
     expect(document.body.classList.contains('is-locked')).toBe(false);
     expect(document.activeElement).toBe(toggle);
+  });
+
+  it('hydrates disabled v2 choices and scale output without applying or announcing them', () => {
+    const stored = {
+      ...DEFAULT_ACCESSIBILITY_PREFERENCES,
+      scale: '150',
+      theme: 'white-black',
+      font: 'sans',
+    };
+    const controls = setup(createStorage({
+      [ACCESSIBILITY_STORAGE_KEY]: JSON.stringify(stored),
+    }));
+
+    expect(controls.scaleValue.textContent).toBe('150%');
+    expect(settingButton('theme', 'white-black').getAttribute('aria-pressed')).toBe('true');
+    expect(settingButton('font', 'sans').getAttribute('aria-pressed')).toBe('true');
+    expectNoActiveAttributes();
+    expect(controls.status.textContent).toBe('');
+    expect(controls.speechController.announce).not.toHaveBeenCalled();
+    expect(controls.speechController.setEnabled).toHaveBeenCalledWith(false);
+  });
+
+  it('hydrates every active v2 presentation attribute, images, and speaker silently', () => {
+    const stored = {
+      ...DEFAULT_ACCESSIBILITY_PREFERENCES,
+      enabled: true,
+      scale: '200',
+      theme: 'black-white',
+      font: 'sans',
+      letterSpacing: 'large',
+      lineHeight: 'medium',
+      paragraphSpacing: 'large',
+      images: 'hidden',
+      speechAnnouncements: true,
+    };
+    const controls = setup(createStorage({
+      [ACCESSIBILITY_STORAGE_KEY]: JSON.stringify(stored),
+    }));
+
+    expect(document.documentElement.getAttribute(ACTIVE_ATTRIBUTES.enabled)).toBe('true');
+    for (const [setting, attribute] of Object.entries(ACTIVE_ATTRIBUTES)) {
+      if (setting !== 'enabled') expect(document.documentElement.getAttribute(attribute)).toBe(stored[setting]);
+    }
+    expect(controls.imageController.setHidden).toHaveBeenCalledWith(true);
+    expect(controls.speechController.setEnabled).toHaveBeenCalledWith(true);
+    expect(controls.speechController.announce).not.toHaveBeenCalled();
+    expect(controls.status.textContent).toBe('');
+  });
+
+  it('migrates an enabled v1 record to exact v2 without announcing hydration', () => {
+    const version1 = {
+      version: 1,
+      enabled: true,
+      scale: '150',
+      theme: 'white-black',
+      font: 'sans',
+      letterSpacing: 'medium',
+      lineHeight: 'large',
+      paragraphSpacing: 'large',
+      images: 'hidden',
+    };
+    const storage = createStorage({
+      [ACCESSIBILITY_STORAGE_KEY]: JSON.stringify(version1),
+    });
+    const controls = setup(storage);
+    const migrated = { ...version1, version: 2, speechAnnouncements: false };
+
+    expect(storage.values.get(ACCESSIBILITY_STORAGE_KEY)).toBe(JSON.stringify(migrated));
+    expect(document.documentElement.getAttribute(ACTIVE_ATTRIBUTES.scale)).toBe('150');
+    expect(controls.scaleValue.textContent).toBe('150%');
+    expect(controls.speechController.setEnabled).toHaveBeenCalledWith(false);
+    expect(controls.speechController.announce).not.toHaveBeenCalled();
+    expect(controls.status.textContent).toBe('');
+  });
+
+  it('migrates legacy vision mode to enabled 125 percent v2 preferences silently', () => {
+    const storage = createStorage({ 'vision-mode': 'on' });
+    const controls = setup(storage);
+    const migrated = {
+      ...DEFAULT_ACCESSIBILITY_PREFERENCES,
+      enabled: true,
+      scale: '125',
+    };
+
+    expect(document.documentElement.getAttribute(ACTIVE_ATTRIBUTES.enabled)).toBe('true');
+    expect(document.documentElement.getAttribute(ACTIVE_ATTRIBUTES.scale)).toBe('125');
+    expect(controls.scaleValue.textContent).toBe('125%');
+    expect(storage.values.get(ACCESSIBILITY_STORAGE_KEY)).toBe(JSON.stringify(migrated));
+    expect(storage.values.has('vision-mode')).toBe(false);
+    expect(controls.speechController.announce).not.toHaveBeenCalled();
+    expect(controls.status.textContent).toBe('');
+  });
+
+  it('updates an advanced setting, persists exact v2, applies it, and reports the closed message', () => {
+    const controls = setup();
+    const selected = settingButton('lineHeight', 'large');
+    const previous = settingButton('lineHeight', 'standard');
+
+    selected.click();
+
+    const expected = {
+      ...DEFAULT_ACCESSIBILITY_PREFERENCES,
+      enabled: true,
+      lineHeight: 'large',
+    };
+    expect(controls.storage.set).toHaveBeenCalledWith(
+      ACCESSIBILITY_STORAGE_KEY,
+      JSON.stringify(expected),
+    );
+    expect(selected.getAttribute('aria-pressed')).toBe('true');
+    expect(previous.getAttribute('aria-pressed')).toBe('false');
+    expect(document.documentElement.getAttribute(ACTIVE_ATTRIBUTES.lineHeight)).toBe('large');
+    expect(controls.status.textContent).toBe('Межстрочный интервал — двойной');
+    expect(controls.speechController.announce).toHaveBeenCalledWith('Межстрочный интервал — двойной');
+  });
+
+  it('enables and reapplies retained choices when a non-default choice is selected', () => {
+    const stored = {
+      ...DEFAULT_ACCESSIBILITY_PREFERENCES,
+      scale: '150',
+      theme: 'white-black',
+    };
+    setup(createStorage({ [ACCESSIBILITY_STORAGE_KEY]: JSON.stringify(stored) }));
+
+    settingButton('theme', 'white-black').click();
+
+    expect(document.documentElement.getAttribute(ACTIVE_ATTRIBUTES.enabled)).toBe('true');
+    expect(document.documentElement.getAttribute(ACTIVE_ATTRIBUTES.scale)).toBe('150');
+    expect(document.documentElement.getAttribute(ACTIVE_ATTRIBUTES.theme)).toBe('white-black');
+  });
+
+  it('steps through the exact scale list, updates bounds, persists, and announces each change', () => {
+    const controls = setup();
+
+    expect(controls.scaleValue.textContent).toBe('100%');
+    expect(controls.scaleDecrease.disabled).toBe(true);
+    expect(controls.scaleIncrease.disabled).toBe(false);
+
+    controls.scaleIncrease.click();
+    controls.scaleIncrease.click();
+    controls.scaleIncrease.click();
+    controls.scaleIncrease.click();
+
+    expect(controls.scaleValue.textContent).toBe('200%');
+    expect(controls.scaleIncrease.disabled).toBe(true);
+    expect(controls.scaleDecrease.disabled).toBe(false);
+    expect(document.documentElement.getAttribute(ACTIVE_ATTRIBUTES.scale)).toBe('200');
+    expect(controls.storage.set).toHaveBeenCalledTimes(3);
+    expect(controls.speechController.announce.mock.calls.map(([message]) => message)).toEqual([
+      'Размер шрифта — 125 процентов',
+      'Размер шрифта — 150 процентов',
+      'Размер шрифта — 200 процентов',
+    ]);
+
+    controls.scaleDecrease.click();
+    expect(controls.scaleValue.textContent).toBe('150%');
+  });
+
+  it('persists speaker enable/disable and speaks only the enable confirmation', () => {
+    const controls = setup();
+    controls.speaker.disabled = false;
+
+    controls.speaker.click();
+
+    expect(JSON.parse(controls.storage.values.get(ACCESSIBILITY_STORAGE_KEY))).toEqual({
+      ...DEFAULT_ACCESSIBILITY_PREFERENCES,
+      speechAnnouncements: true,
+    });
+    expect(controls.speechController.setEnabled).toHaveBeenLastCalledWith(true);
+    expect(controls.status.textContent).toBe('Голосовые подтверждения включены');
+    expect(controls.speechController.announce).toHaveBeenCalledWith('Голосовые подтверждения включены');
+
+    controls.speaker.click();
+
+    expect(JSON.parse(controls.storage.values.get(ACCESSIBILITY_STORAGE_KEY))).toEqual(DEFAULT_ACCESSIBILITY_PREFERENCES);
+    expect(controls.speechController.setEnabled).toHaveBeenLastCalledWith(false);
+    expect(controls.status.textContent).toBe('Голосовые подтверждения выключены');
+    expect(controls.speechController.announce).toHaveBeenCalledTimes(1);
+  });
+
+  it('leaves an unavailable disabled speaker inert', () => {
+    const controls = setup();
+
+    controls.speaker.click();
+
+    expect(controls.storage.set).not.toHaveBeenCalled();
+    expect(controls.speechController.announce).not.toHaveBeenCalled();
+  });
+
+  it('switches to the ordinary site without losing choices, closing the panel, or speaking', () => {
+    const stored = {
+      ...DEFAULT_ACCESSIBILITY_PREFERENCES,
+      enabled: true,
+      scale: '150',
+      theme: 'white-black',
+      speechAnnouncements: true,
+    };
+    const controls = setup(createStorage({
+      [ACCESSIBILITY_STORAGE_KEY]: JSON.stringify(stored),
+    }));
+    controls.toggle.click();
+
+    controls.standard.click();
+
+    const expected = { ...stored, enabled: false };
+    expect(controls.storage.values.get(ACCESSIBILITY_STORAGE_KEY)).toBe(JSON.stringify(expected));
+    expectNoActiveAttributes();
+    expect(controls.imageController.setHidden).toHaveBeenLastCalledWith(false);
+    expect(controls.speechController.stop).toHaveBeenCalledTimes(1);
+    expect(controls.speechController.announce).not.toHaveBeenCalled();
+    expect(controls.status.textContent).toBe('Обычная версия сайта включена');
+    expect(controls.panel.hidden).toBe(false);
+    expect(controls.scaleValue.textContent).toBe('150%');
+  });
+
+  it('resets exact defaults and image state without a voice confirmation when speech was off', () => {
+    const stored = {
+      ...DEFAULT_ACCESSIBILITY_PREFERENCES,
+      enabled: true,
+      theme: 'black-white',
+      images: 'hidden',
+    };
+    const controls = setup(createStorage({
+      [ACCESSIBILITY_STORAGE_KEY]: JSON.stringify(stored),
+    }));
+    controls.toggle.click();
+
+    controls.reset.click();
+
+    expect(controls.storage.remove).toHaveBeenCalledWith(ACCESSIBILITY_STORAGE_KEY);
+    expect(controls.storage.remove).toHaveBeenCalledWith('vision-mode');
+    expect(controls.storage.values.has(ACCESSIBILITY_STORAGE_KEY)).toBe(false);
+    expectNoActiveAttributes();
+    expect(settingButton('theme', 'standard').getAttribute('aria-pressed')).toBe('true');
+    expect(controls.scaleValue.textContent).toBe('100%');
+    expect(controls.imageController.setHidden).toHaveBeenLastCalledWith(false);
+    expect(controls.speechController.confirmAndDisable).not.toHaveBeenCalled();
+    expect(controls.speechController.setEnabled).toHaveBeenLastCalledWith(false);
+    expect(controls.status.textContent).toBe('Настройки сброшены');
+    expect(controls.panel.hidden).toBe(false);
+  });
+
+  it('uses one final reset confirmation before disabling stored speech', () => {
+    const stored = {
+      ...DEFAULT_ACCESSIBILITY_PREFERENCES,
+      enabled: true,
+      theme: 'white-black',
+      speechAnnouncements: true,
+    };
+    const controls = setup(createStorage({
+      [ACCESSIBILITY_STORAGE_KEY]: JSON.stringify(stored),
+    }));
+    controls.toggle.click();
+    controls.advanced.click();
+    controls.speechController.setEnabled.mockClear();
+
+    controls.reset.click();
+
+    expect(controls.speechController.setEnabled).not.toHaveBeenCalled();
+    expect(controls.speechController.confirmAndDisable).toHaveBeenCalledTimes(1);
+    expect(controls.speechController.confirmAndDisable).toHaveBeenCalledWith('Настройки сброшены');
+    expect(controls.speechController.announce).not.toHaveBeenCalled();
+    expect(controls.status.textContent).toBe('Настройки сброшены');
+    expect(controls.dialog.hidden).toBe(false);
+    expect(controls.panel.hidden).toBe(false);
+  });
+
+  it('ignores malformed stored preferences and hydrates exact defaults silently', () => {
+    const controls = setup(createStorage({
+      [ACCESSIBILITY_STORAGE_KEY]: '{not-json',
+    }));
+
+    expect(controls.scaleValue.textContent).toBe('100%');
+    expect(settingButton('theme', 'standard').getAttribute('aria-pressed')).toBe('true');
+    expectNoActiveAttributes();
+    expect(controls.storage.set).not.toHaveBeenCalled();
+    expect(controls.speechController.announce).not.toHaveBeenCalled();
+    expect(controls.status.textContent).toBe('');
+  });
+
+  it('does not trap focus or lock scrolling in the primary panel', () => {
+    const { close, panel, toggle } = setup();
+    toggle.click();
+    close.focus();
+    const tabEvent = new KeyboardEvent('keydown', {
+      key: 'Tab',
+      bubbles: true,
+      cancelable: true,
+    });
+
+    close.dispatchEvent(tabEvent);
+
+    expect(panel.matches('[role="dialog"], [aria-modal="true"]')).toBe(false);
+    expect(document.body.classList.contains('is-locked')).toBe(false);
+    expect(tabEvent.defaultPrevented).toBe(false);
+    expect(document.activeElement).toBe(close);
   });
 });

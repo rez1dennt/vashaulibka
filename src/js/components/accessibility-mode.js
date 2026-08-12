@@ -4,10 +4,10 @@ import {
   resetAccessibilityPreferences,
   saveAccessibilityPreferences,
 } from '../core/accessibility-preferences.js';
+import { safeStorage } from '../core/storage.js';
 import { createAccessibilityImageController } from './accessibility-images.js';
 import { initAccessibilitySettingsDialog } from './accessibility-settings-dialog.js';
 import { createAccessibilitySpeechController } from './accessibility-speech.js';
-import { safeStorage } from '../core/storage.js';
 
 const ACTIVE_ATTRIBUTES = Object.freeze({
   scale: 'data-accessibility-scale',
@@ -19,32 +19,44 @@ const ACTIVE_ATTRIBUTES = Object.freeze({
   images: 'data-accessibility-images',
 });
 
-const SETTING_LABELS = Object.freeze({
-  scale: 'Размер текста',
-  theme: 'Цветовая схема',
-  font: 'Шрифт',
-  letterSpacing: 'Межбуквенный интервал',
-  lineHeight: 'Межстрочный интервал',
-  paragraphSpacing: 'Интервал между абзацами',
-  images: 'Изображения',
+const SCALE_VALUES = Object.freeze(['100', '125', '150', '200']);
+
+const ANNOUNCEMENTS = Object.freeze({
+  scale: Object.freeze({
+    100: 'Размер шрифта — 100 процентов',
+    125: 'Размер шрифта — 125 процентов',
+    150: 'Размер шрифта — 150 процентов',
+    200: 'Размер шрифта — 200 процентов',
+  }),
+  theme: Object.freeze({
+    standard: 'Цветовая схема — стандартная',
+    'black-white': 'Цветовая схема — чёрный текст на белом фоне',
+    'white-black': 'Цветовая схема — белый текст на чёрном фоне',
+    'blue-light': 'Цветовая схема — тёмно-синий текст на светло-голубом фоне',
+  }),
+  images: Object.freeze({
+    visible: 'Изображения показаны',
+    hidden: 'Изображения скрыты',
+  }),
+  font: Object.freeze({
+    site: 'Шрифт — фирменный',
+    sans: 'Шрифт — без засечек',
+  }),
+  letterSpacing: Object.freeze({
+    standard: 'Межбуквенный интервал — стандартный',
+    medium: 'Межбуквенный интервал — средний',
+    large: 'Межбуквенный интервал — увеличенный',
+  }),
+  lineHeight: Object.freeze({
+    standard: 'Межстрочный интервал — стандартный',
+    medium: 'Межстрочный интервал — полуторный',
+    large: 'Межстрочный интервал — двойной',
+  }),
+  paragraphSpacing: Object.freeze({
+    standard: 'Интервал между абзацами — стандартный',
+    large: 'Интервал между абзацами — увеличенный',
+  }),
 });
-
-function readStorage(storage, key) {
-  try {
-    return storage?.get?.(key) ?? null;
-  } catch {
-    return null;
-  }
-}
-
-function announcementFor(button) {
-  const { accessibilitySetting: setting } = button.dataset;
-  const label = SETTING_LABELS[setting];
-  const value = setting === 'scale'
-    ? `${button.dataset.accessibilityValue} процентов`
-    : button.textContent.trim();
-  return `${label}: ${value}`;
-}
 
 export function initAccessibilityMode({
   storage = safeStorage,
@@ -57,6 +69,11 @@ export function initAccessibilityMode({
 
   const closeButton = panel.querySelector('[data-accessibility-close]');
   const resetButton = document.querySelector('[data-accessibility-reset]');
+  const standardButton = panel.querySelector('[data-accessibility-standard]');
+  const speechButton = panel.querySelector('[data-speech-announcements]');
+  const scaleDecrease = panel.querySelector('[data-accessibility-scale-decrease]');
+  const scaleIncrease = panel.querySelector('[data-accessibility-scale-increase]');
+  const scaleValue = panel.querySelector('[data-accessibility-scale-value]');
   const status = panel.querySelector('[data-accessibility-status]');
   const settingButtons = [...document.querySelectorAll('[data-accessibility-setting][data-accessibility-value]')];
   const resolvedImageController = imageController ?? createAccessibilityImageController();
@@ -66,7 +83,7 @@ export function initAccessibilityMode({
 
   resolvedSpeechController.init();
 
-  const apply = (nextPreferences) => {
+  const apply = (nextPreferences, { syncSpeech = true } = {}) => {
     preferences = nextPreferences;
     const root = document.documentElement;
 
@@ -77,18 +94,38 @@ export function initAccessibilityMode({
       }
     } else {
       root.removeAttribute('data-accessibility-enabled');
-      for (const attribute of Object.values(ACTIVE_ATTRIBUTES)) {
-        root.removeAttribute(attribute);
-      }
+      for (const attribute of Object.values(ACTIVE_ATTRIBUTES)) root.removeAttribute(attribute);
     }
 
     resolvedImageController.setHidden(preferences.enabled && preferences.images === 'hidden');
-    resolvedSpeechController.setEnabled(preferences.enabled);
+    if (syncSpeech) resolvedSpeechController.setEnabled(preferences.speechAnnouncements);
 
     for (const button of settingButtons) {
       const { accessibilitySetting: setting, accessibilityValue: value } = button.dataset;
       button.setAttribute('aria-pressed', String(preferences[setting] === value));
     }
+
+    const scaleIndex = SCALE_VALUES.indexOf(preferences.scale);
+    if (scaleValue) scaleValue.textContent = `${preferences.scale}%`;
+    if (scaleDecrease) scaleDecrease.disabled = scaleIndex <= 0;
+    if (scaleIncrease) scaleIncrease.disabled = scaleIndex === SCALE_VALUES.length - 1;
+  };
+
+  const setStatus = (message) => {
+    if (status) status.textContent = message;
+  };
+
+  const report = (message) => {
+    setStatus(message);
+    resolvedSpeechController.announce(message);
+  };
+
+  const updateSetting = (setting, value) => {
+    const enabled = preferences.enabled || value !== DEFAULT_ACCESSIBILITY_PREFERENCES[setting];
+    const nextPreferences = { ...preferences, enabled, [setting]: value };
+    saveAccessibilityPreferences(storage, nextPreferences);
+    apply(nextPreferences);
+    report(ANNOUNCEMENTS[setting][value]);
   };
 
   const closePanel = () => {
@@ -105,10 +142,14 @@ export function initAccessibilityMode({
     closeButton?.focus();
   };
 
+  const stepScale = (offset) => {
+    const currentIndex = SCALE_VALUES.indexOf(preferences.scale);
+    const nextIndex = Math.max(0, Math.min(SCALE_VALUES.length - 1, currentIndex + offset));
+    if (nextIndex === currentIndex) return;
+    updateSetting('scale', SCALE_VALUES[nextIndex]);
+  };
+
   apply(preferences);
-  if (readStorage(storage, 'vision-mode') === 'on') {
-    saveAccessibilityPreferences(storage, preferences);
-  }
 
   toggle.addEventListener('click', () => {
     if (panel.hidden) openPanel();
@@ -123,16 +164,35 @@ export function initAccessibilityMode({
   for (const button of settingButtons) {
     button.addEventListener('click', () => {
       const { accessibilitySetting: setting, accessibilityValue: value } = button.dataset;
-      const enabled = preferences.enabled || value !== DEFAULT_ACCESSIBILITY_PREFERENCES[setting];
-      const nextPreferences = { ...preferences, enabled, [setting]: value };
-      saveAccessibilityPreferences(storage, nextPreferences);
-      apply(nextPreferences);
-      if (status) status.textContent = announcementFor(button);
+      updateSetting(setting, value);
     });
   }
 
+  scaleDecrease?.addEventListener('click', () => stepScale(-1));
+  scaleIncrease?.addEventListener('click', () => stepScale(1));
+
+  speechButton?.addEventListener('click', () => {
+    const enabled = !preferences.speechAnnouncements;
+    const nextPreferences = { ...preferences, speechAnnouncements: enabled };
+    saveAccessibilityPreferences(storage, nextPreferences);
+    apply(nextPreferences);
+    if (enabled) report('Голосовые подтверждения включены');
+    else setStatus('Голосовые подтверждения выключены');
+  });
+
+  standardButton?.addEventListener('click', () => {
+    const nextPreferences = { ...preferences, enabled: false };
+    saveAccessibilityPreferences(storage, nextPreferences);
+    apply(nextPreferences);
+    resolvedSpeechController.stop();
+    setStatus('Обычная версия сайта включена');
+  });
+
   resetButton?.addEventListener('click', () => {
-    apply(resetAccessibilityPreferences(storage));
-    if (status) status.textContent = 'Настройки доступности сброшены';
+    const speechWasEnabled = preferences.speechAnnouncements;
+    const defaults = resetAccessibilityPreferences(storage);
+    apply(defaults, { syncSpeech: !speechWasEnabled });
+    setStatus('Настройки сброшены');
+    if (speechWasEnabled) resolvedSpeechController.confirmAndDisable('Настройки сброшены');
   });
 }
