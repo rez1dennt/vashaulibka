@@ -1,14 +1,13 @@
 import { CONTACTS } from '../data/clinic.js';
 import { SERVICES } from '../data/services.js';
-import { INCOMPLETE_CONTENT, STAFF } from '../data/staff.js';
+import { INCOMPLETE_CONTENT } from '../data/staff.js';
+import { SPECIALISTS_PAGE } from './specialists-page.js';
 
 const serviceDetails = (service) => `<p>${service.summary}</p><ul>${service.items.map((item) => `<li>${item}</li>`).join('')}</ul><p class="service-price-status"><strong>${service.priceStatus}</strong></p>`;
 
 const serviceTabs = `<div class="services-tabs-view"><div class="service-tabs"><div role="tablist" aria-label="Лицензированные направления">${SERVICES.map((service, index) => `<button type="button" role="tab" id="services-tab-${service.slug}" aria-selected="${index === 0}" tabindex="${index === 0 ? 0 : -1}" aria-controls="services-panel-${service.slug}">${service.title}</button>`).join('')}</div><div>${SERVICES.map((service) => `<section class="card" id="services-panel-${service.slug}" role="tabpanel" aria-labelledby="services-tab-${service.slug}"><h2>${service.title}</h2>${serviceDetails(service)}</section>`).join('')}</div></div></div>`;
 
 const serviceDisclosures = `<div class="services-disclosures-view">${SERVICES.map((service) => `<article class="card service-disclosure"><h2><button type="button" data-disclosure-button id="services-disclosure-${service.slug}" aria-expanded="true" aria-controls="services-disclosure-panel-${service.slug}">${service.title}</button></h2><div class="disclosure-panel" id="services-disclosure-panel-${service.slug}" role="region" aria-labelledby="services-disclosure-${service.slug}">${serviceDetails(service)}</div></article>`).join('')}</div>`;
-
-const staffCards = STAFF.map((person) => `<article class="staff-card"><div class="staff-avatar" aria-hidden="true">${person.initials}</div><div><h2>${person.name}</h2><p class="staff-role">${person.role}</p><p class="notice">${person.credentialNotice}</p></div></article>`).join('');
 
 const priceDisclosures = SERVICES.map((service) => `<article class="card price-disclosure"><h2><button type="button" data-disclosure-button id="price-disclosure-${service.slug}" aria-expanded="true" aria-controls="price-panel-${service.slug}">${service.title}</button></h2><div class="disclosure-panel" id="price-panel-${service.slug}" role="region" aria-labelledby="price-disclosure-${service.slug}">${serviceDetails(service)}</div></article>`).join('');
 
@@ -25,16 +24,7 @@ export const SERVICE_PAGES = Object.freeze([
     noindex: false,
     body: `<section class="section"><div class="container">${serviceTabs}${serviceDisclosures}</div></section>`,
   },
-  {
-    file: 'specialists.html',
-    title: 'Сотрудники стоматологии',
-    description: 'Подтверждённый список сотрудников ООО «Стоматология Ваша улыбка» без неподтверждённых сведений.',
-    heading: 'Сотрудники клиники',
-    lead: 'Пять сотрудников и их должности из предоставленных данных.',
-    heroImage: 'specialists',
-    noindex: INCOMPLETE_CONTENT.specialists.noindex,
-    body: `<section class="section"><div class="container"><p class="notice">${INCOMPLETE_CONTENT.specialists.reason}</p><div class="staff-list">${staffCards}</div></div></section>`,
-  },
+  SPECIALISTS_PAGE,
   {
     file: 'prices.html',
     title: 'Стоимость стоматологических услуг',

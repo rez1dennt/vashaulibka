@@ -94,14 +94,12 @@ describe('public page manifest', () => {
     const specialistDocument = new JSDOM(renderPage(specialists)).window.document;
     const serviceDocument = new JSDOM(renderPage(services)).window.document;
 
-    expect([...specialistDocument.querySelectorAll('.staff-card h2')].map((node) => node.textContent)).toEqual(
-      STAFF.map((person) => person.name),
-    );
-    expect([...specialistDocument.querySelectorAll('.staff-card .staff-role')].map((node) => node.textContent)).toEqual(
-      STAFF.map((person) => person.role),
-    );
-    expect(specialistDocument.querySelectorAll('.staff-card')).toHaveLength(5);
-    expect(specialistDocument.querySelector('.staff-list img')).toBeNull();
+    expect([...specialistDocument.querySelectorAll('[data-specialist-slide] .specialist-card__name')]
+      .map((node) => node.textContent.trim())).toEqual(STAFF.map((person) => person.name));
+    expect([...specialistDocument.querySelectorAll('[data-specialist-slide] .specialist-card__role')]
+      .map((node) => node.textContent.trim())).toEqual(STAFF.map((person) => person.role));
+    expect(specialistDocument.querySelectorAll('[data-specialist-slide]')).toHaveLength(STAFF.length);
+    expect(specialistDocument.querySelector('.specialists-coverflow img')).toBeNull();
 
     const tabLabels = [...serviceDocument.querySelectorAll('.services-tabs-view [role="tab"]')]
       .map((node) => node.textContent.trim());
