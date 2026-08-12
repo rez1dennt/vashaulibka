@@ -11,6 +11,7 @@ const QUICK_LINKS = Object.freeze([
 ]);
 
 const isVisible = (element) => element && !element.hidden;
+const isCompactSearch = () => globalThis.matchMedia?.('(max-width: 74.999rem)').matches ?? false;
 
 const createQuickLinks = (container) => {
   container.replaceChildren();
@@ -238,7 +239,7 @@ export function initSiteSearch({
   document.addEventListener('keydown', (event) => {
     if (event.key === 'Escape' && root.classList.contains('is-open')) {
       event.preventDefault();
-      close({ restoreToggle: document.activeElement !== input });
+      close({ restoreToggle: isCompactSearch() || document.activeElement !== input });
       return;
     }
     if (event.key.toLocaleLowerCase('ru-RU') !== 'k' || (!event.ctrlKey && !event.metaKey)) return;

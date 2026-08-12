@@ -37,6 +37,7 @@ const settle = async () => {
 };
 
 afterEach(() => {
+  vi.unstubAllGlobals();
   document.body.className = '';
   document.body.innerHTML = '';
 });
@@ -92,6 +93,20 @@ describe('inline site search dropdown', () => {
     expect(root.classList.contains('is-open')).toBe(true);
     toggle.click();
     expect(root.classList.contains('is-open')).toBe(false);
+    expect(document.activeElement).toBe(toggle);
+  });
+
+  it('returns focus to the visible toggle when Escape closes compact search', () => {
+    vi.stubGlobal('matchMedia', vi.fn(() => ({ matches: true })));
+    document.body.innerHTML = markup;
+    initSiteSearch({ fetchImpl: successfulFetch([]) });
+    const toggle = document.querySelector('[data-search-toggle]');
+    const input = document.querySelector('[data-search-input]');
+
+    toggle.click();
+    input.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
+
+    expect(document.querySelector('[data-site-search]').classList.contains('is-open')).toBe(false);
     expect(document.activeElement).toBe(toggle);
   });
 
