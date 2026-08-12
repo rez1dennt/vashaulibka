@@ -64,7 +64,9 @@ export function renderPage(page) {
     renderFooter(),
     `<a class="mobile-appointment button button-primary" href="${CONTACTS.phones[0].href}" data-appointment-open>Запись на приём</a>`,
     '<div id="appointment-dialog" class="dialog" role="dialog" aria-modal="true" aria-labelledby="appointment-title" hidden><div class="dialog__backdrop" data-dialog-backdrop aria-hidden="true"></div><div class="dialog__panel"><button type="button" data-dialog-close aria-label="Закрыть">×</button><h2 id="appointment-title">Запись на приём</h2><p>Онлайн-запись подключается. Пока запишитесь по телефону:</p>',
+    '<div class="dialog__actions"><div class="dialog__phones">',
     CONTACTS.phones.map((phone) => `<a class="button button-secondary" href="${phone.href}">${esc(phone.label)}</a>`).join(''),
+    '</div></div>',
     `<h3>Режим работы</h3><dl class="definition-list definition-list--compact">${appointmentHours}</dl><p><strong>${esc(HOURS.breakNote)}</strong></p></div></div>`,
     '<div class="cookie-banner" data-cookie-banner hidden><p>Сайт использует необходимые технологии хранения настроек. Необязательные технологии отключены.</p><button type="button" data-cookie-reject>Отклонить необязательные</button><button type="button" data-cookie-accept>Разрешить выбранные</button></div><script type="module" src="/src/js/main.js"></script></body></html>',
   ].join('');

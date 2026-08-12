@@ -94,6 +94,16 @@ describe('renderPage', () => {
     ]);
   });
 
+  it('groups official appointment phones for responsive layout', () => {
+    const document = new JSDOM(renderPage(page)).window.document;
+    const actions = document.querySelector('#appointment-dialog .dialog__actions');
+    const phones = actions?.querySelector('.dialog__phones');
+
+    expect(actions).not.toBeNull();
+    expect(phones?.querySelectorAll('a[href^="tel:"]')).toHaveLength(2);
+    expect(actions?.querySelector('form, input, textarea')).toBeNull();
+  });
+
   it('adds robots noindex only for controlled incomplete pages', () => {
     expect(renderPage({ ...page, noindex: true })).toContain('content="noindex, follow"');
     expect(renderPage(page)).not.toContain('content="noindex, follow"');

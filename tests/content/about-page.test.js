@@ -83,6 +83,10 @@ describe('patient-oriented about page', () => {
     expect(document.querySelector('.about-cta [data-appointment-open]')?.getAttribute('href')).toBe(CONTACTS.phones[0].href);
     expect(document.querySelectorAll('.about-cta a[href^="tel:"]')).toHaveLength(CONTACTS.phones.length + 1);
     expect(document.querySelector('.about-cta form, .about-cta input, .about-cta textarea')).toBeNull();
+    const actions = document.querySelector('.about-cta__actions');
+    const phones = actions?.querySelector('.about-cta__phones');
+    expect(actions?.querySelector(':scope > [data-appointment-open]')).not.toBeNull();
+    expect(phones?.querySelectorAll('a[href^="tel:"]')).toHaveLength(CONTACTS.phones.length);
   });
 
   it('renders the confirmed schedule as four compact semantic cells', () => {
