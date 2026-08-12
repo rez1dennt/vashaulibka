@@ -19,6 +19,7 @@ describe('site search markup', () => {
     expect(root.querySelector('[data-search-dropdown][aria-hidden="true"]')).not.toBeNull();
     expect(root.querySelector('#site-search-results[role="listbox"]')).not.toBeNull();
     expect(root.querySelector('[aria-live="polite"]')).not.toBeNull();
+    expect(root.querySelector('[data-search-hint][hidden]')).not.toBeNull();
     expect(root.querySelector('.site-search-fallback[href="patients.html"]')).not.toBeNull();
   });
 

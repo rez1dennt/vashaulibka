@@ -16,6 +16,7 @@
 - Preserve safe DOM construction with `textContent`/text nodes; never render index text through `innerHTML`.
 - The dropdown must not block body scrolling, trap focus, add a backdrop, or move header/page geometry.
 - Honor `prefers-reduced-motion: reduce`, vision mode, visible focus, 24×24 minimum targets, and the ARIA combobox/listbox pattern.
+- Let the dropdown height follow its current content: no minimum card-height reservation; keep only a maximum results height with internal scrolling. Reveal result cards with a short tokenized fade/slide animation.
 - Run every behavior change through a witnessed RED→GREEN cycle before production edits.
 
 ---

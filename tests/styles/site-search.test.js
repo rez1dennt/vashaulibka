@@ -13,6 +13,8 @@ describe('responsive site search styles', () => {
     expect(searchCss).toMatch(/\.site-search__dropdown[\s\S]*visibility:\s*hidden/);
     expect(searchCss).toMatch(/\.site-search\.is-open[\s\S]*site-search__dropdown[\s\S]*visibility:\s*visible/);
     expect(searchCss).toMatch(/site-search__results[\s\S]*overflow-y:\s*auto/);
+    expect(searchCss).not.toMatch(/\.site-search__dropdown\s*\{[^}]*min-block-size/s);
+    expect(tokensCss).not.toContain('--search-dropdown-min-block-size:');
   });
 
   it('keeps a compact mobile toggle and a persistent central desktop field', () => {
@@ -28,6 +30,8 @@ describe('responsive site search styles', () => {
     expect(searchCss).toMatch(/\.site-search__dropdown[\s\S]*opacity:\s*0[\s\S]*transform:/);
     expect(searchCss).toMatch(/transition:\s*var\(--transition-navigation-close\)/);
     expect(searchCss).toMatch(/transition:\s*var\(--transition-navigation-open\)/);
+    expect(searchCss).toMatch(/@keyframes\s+site-search-content-enter/);
+    expect(searchCss).toMatch(/\.site-search__result,[\s\S]*\.site-search__content[\s\S]*animation:\s*site-search-content-enter/);
     expect(searchCss).not.toMatch(/body[^}]*overflow/);
   });
 
@@ -39,7 +43,6 @@ describe('responsive site search styles', () => {
     expect(searchCss).not.toMatch(/var\(--primitive-/);
     expect(tokensCss).toContain('--z-search:');
     expect(tokensCss).toContain('--search-closed-scale:');
-    expect(tokensCss).toContain('--search-dropdown-min-block-size:');
     expect(mainCss).toContain("@import './site-search.css';");
   });
 

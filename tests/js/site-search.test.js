@@ -21,6 +21,7 @@ const markup = `
         <p data-search-status></p>
         <div data-search-content></div>
         <ul class="site-search__results" id="site-search-results" role="listbox"></ul>
+        <p data-search-hint hidden>Клавиатурная подсказка</p>
       </div>
     </div>
   </div>
@@ -65,6 +66,7 @@ describe('inline site search dropdown', () => {
     input.value = 'лицензия';
     input.dispatchEvent(new Event('input', { bubbles: true }));
     expect(document.querySelectorAll('[role="option"]')).toHaveLength(1);
+    expect(document.querySelector('[data-search-hint]').hidden).toBe(false);
     input.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowDown', bubbles: true }));
     input.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true }));
     expect(navigate).toHaveBeenCalledWith('license.html');
@@ -133,6 +135,7 @@ describe('inline site search dropdown', () => {
 
     expect(document.querySelector('[data-search-status]').textContent).toContain('не удалось загрузить');
     expect(document.querySelector('[data-search-content] a[href="patients.html"]')).not.toBeNull();
+    expect(document.querySelector('[data-search-hint]').hidden).toBe(true);
   });
 
   it.each([
@@ -160,6 +163,7 @@ describe('inline site search dropdown', () => {
     expect(input.value).toBe('');
     expect(document.querySelectorAll('[role="option"]')).toHaveLength(0);
     expect(document.querySelector('[data-search-content]').textContent).toContain('Карта сайта');
+    expect(document.querySelector('[data-search-hint]').hidden).toBe(true);
     expect(document.activeElement).toBe(input);
   });
 

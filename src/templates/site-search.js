@@ -12,7 +12,7 @@ export function renderSiteSearch() {
     '<p class="site-search__status" data-search-status aria-live="polite">Введите не менее двух символов</p>',
     '<div class="site-search__content" data-search-content></div>',
     '<ul class="site-search__results" id="site-search-results" role="listbox"></ul>',
-    '<p class="site-search__hint"><kbd>↑</kbd><kbd>↓</kbd> выбор <kbd>Enter</kbd> открыть <kbd>Esc</kbd> закрыть</p>',
+    '<p class="site-search__hint" data-search-hint hidden><kbd>↑</kbd><kbd>↓</kbd> выбор <kbd>Enter</kbd> открыть <kbd>Esc</kbd> закрыть</p>',
     '</div></div>',
     '<a class="site-search-fallback" href="patients.html">Карта сайта</a>',
     '</div>',

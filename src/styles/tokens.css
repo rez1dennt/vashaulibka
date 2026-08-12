@@ -73,7 +73,6 @@
   --primitive-size-search-panel: 46rem;
   --primitive-size-search-results: min(31rem, 52dvh);
   --primitive-size-search-trigger: 36rem;
-  --primitive-size-search-dropdown-min: 12rem;
   --primitive-size-cookie: 28rem;
   --primitive-size-header-mobile: 4.5rem;
   --primitive-size-header-desktop: 5.75rem;
@@ -307,7 +306,6 @@
   --search-panel-max-inline-size: var(--primitive-size-search-panel);
   --search-results-max-block-size: var(--primitive-size-search-results);
   --search-trigger-max-inline-size: var(--primitive-size-search-trigger);
-  --search-dropdown-min-block-size: var(--primitive-size-search-dropdown-min);
   --search-closed-scale: var(--primitive-scale-search-closed);
   --search-viewport-block-size: var(--primitive-viewport-full);
   --search-backdrop-color: var(--color-overlay);

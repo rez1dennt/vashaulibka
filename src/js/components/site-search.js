@@ -76,7 +76,8 @@ export function initSiteSearch({
   const status = root?.querySelector('[data-search-status]');
   const content = root?.querySelector('[data-search-content]');
   const results = root?.querySelector('#site-search-results');
-  if (!root || !toggle || !input || !clearButton || !dropdown || !status || !content || !results
+  const hint = root?.querySelector('[data-search-hint]');
+  if (!root || !toggle || !input || !clearButton || !dropdown || !status || !content || !results || !hint
     || typeof fetchImpl !== 'function') return;
 
   let indexPromise;
@@ -107,6 +108,7 @@ export function initSiteSearch({
     results.replaceChildren();
     currentMatches = matches;
     activeIndex = -1;
+    hint.hidden = !matches.length;
     input.removeAttribute('aria-activedescendant');
 
     matches.forEach((match, index) => {
