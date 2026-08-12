@@ -1,5 +1,7 @@
 # Local Accessibility Mode Implementation Plan
 
+> **Superseded on 12 August 2026:** Tasks 1–6 were partially implemented before the interaction design changed. Continue with `docs/superpowers/plans/2026-08-12-compact-accessibility-controls.md`; do not execute the remaining tasks in this file.
+
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Goal:** Replace the current one-switch visually-impaired mode with a fully local, persistent accessibility toolbar that targets WCAG 2.1 AA requirements adopted by ГОСТ Р 52872-2019 across all 21 generated pages, without third-party scripts, remote speech services, or unverified public conformance claims.
