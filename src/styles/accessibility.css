@@ -216,15 +216,20 @@ html[data-accessibility-enabled="true"][data-accessibility-paragraph-spacing="la
   background: var(--accessibility-toolbar-group-background);
 }
 
-.accessibility-toolbar__scale {
+.accessibility-toolbar > .accessibility-toolbar__scale {
   flex-basis: var(--accessibility-toolbar-scale-group-basis);
 }
 
-.accessibility-toolbar__themes {
+.accessibility-toolbar > .accessibility-toolbar__themes {
   flex-basis: var(--accessibility-toolbar-theme-group-basis);
 }
 
-.accessibility-toolbar__actions {
+.accessibility-toolbar > .accessibility-toolbar__images,
+.accessibility-toolbar > .accessibility-toolbar__speech {
+  flex-basis: var(--accessibility-toolbar-group-basis);
+}
+
+.accessibility-toolbar > .accessibility-toolbar__actions {
   flex-basis: var(--accessibility-toolbar-actions-group-basis);
 }
 
@@ -547,7 +552,9 @@ html[data-accessibility-enabled="true"][data-accessibility-paragraph-spacing="la
   }
 
   .accessibility-panel button,
-  .accessibility-panel button:active {
+  .accessibility-panel button:active,
+  .accessibility-settings-dialog button,
+  .accessibility-settings-dialog button:active {
     transition: none;
     transform: none;
   }

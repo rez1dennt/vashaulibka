@@ -37,6 +37,32 @@ const resolveToken = (values, name) => {
   return value;
 };
 
+const effectiveToolbarFlexBasis = (variantClass) => {
+  let winner = { specificity: -1, order: -1, value: undefined };
+  let order = 0;
+
+  for (const rule of accessibilityCss.matchAll(/([^{}]+)\{([^{}]*)\}/g)) {
+    for (const rawSelector of rule[1].split(',')) {
+      const selector = rawSelector.trim();
+      const matchesGeneric = selector === '.accessibility-toolbar > .accessibility-panel__group';
+      const matchesVariant = selector.endsWith(`.${variantClass}`);
+      if (!matchesGeneric && !matchesVariant) continue;
+
+      const flexBasis = rule[2].match(/(?:^|;)\s*flex-basis:\s*(var\(--[a-z0-9-]+\))/)?.[1]
+        ?? rule[2].match(/(?:^|;)\s*flex:\s*[^;]*?(var\(--[a-z0-9-]+\))\s*;?/)?.[1];
+      if (!flexBasis) continue;
+
+      const specificity = (selector.match(/\.[a-z0-9_-]+/gi) ?? []).length;
+      if (specificity > winner.specificity || (specificity === winner.specificity && order > winner.order)) {
+        winner = { specificity, order, value: flexBasis };
+      }
+      order += 1;
+    }
+  }
+
+  return winner.value;
+};
+
 const luminance = (hex) => {
   const channels = hex.slice(1).match(/../g).map((channel) => Number.parseInt(channel, 16) / 255);
   const [red, green, blue] = channels.map((channel) => (
@@ -251,6 +277,26 @@ describe('responsive accessibility visual system', () => {
     expect(panelButtonsBlock).not.toMatch(/(?:^|\s)inline-size:/m);
   });
 
+  it('computes the intended flex basis for every live toolbar group', () => {
+    const values = declarations(tokensCss);
+    const expected = new Map([
+      ['accessibility-toolbar__scale', '--accessibility-toolbar-scale-group-basis'],
+      ['accessibility-toolbar__themes', '--accessibility-toolbar-theme-group-basis'],
+      ['accessibility-toolbar__images', '--accessibility-toolbar-group-basis'],
+      ['accessibility-toolbar__speech', '--accessibility-toolbar-group-basis'],
+      ['accessibility-toolbar__actions', '--accessibility-toolbar-actions-group-basis'],
+    ]);
+
+    for (const [variant, token] of expected) {
+      expect(effectiveToolbarFlexBasis(variant), variant).toBe(`var(${token})`);
+    }
+
+    const actions = Number.parseFloat(resolveToken(values, '--accessibility-toolbar-actions-group-basis'));
+    for (const token of [...expected.values()].filter((name) => name !== '--accessibility-toolbar-actions-group-basis')) {
+      expect(actions).toBeGreaterThan(Number.parseFloat(resolveToken(values, token)));
+    }
+  });
+
   it('renders the advanced settings dialog as a safe-area-aware topmost scrollable overlay', () => {
     const values = declarations(tokensCss);
     const layer = (name) => Number(resolveToken(values, name));
@@ -287,6 +333,14 @@ describe('responsive accessibility visual system', () => {
     expect(accessibilityCss).not.toMatch(/@keyframes\s+accessibility-panel-enter\s*\{[\s\S]*translateX|scale\(/s);
     expect(accessibilityCss).toMatch(/@media\s*\(prefers-reduced-motion:\s*reduce\)\s*\{[\s\S]*?\.accessibility-panel\s*\{[^}]*animation:\s*none[^}]*transform:\s*none/s);
     expect(accessibilityCss).toMatch(/@media\s*\(prefers-reduced-motion:\s*reduce\)\s*\{[\s\S]*?\.accessibility-settings-dialog[^}]*\{[^}]*(?:animation|transition):\s*none/s);
+  });
+
+  it('removes transition and active transforms from panel and dialog buttons under reduced motion', () => {
+    const reducedMotion = accessibilityCss.slice(accessibilityCss.lastIndexOf('@media (prefers-reduced-motion: reduce)'));
+    const reset = reducedMotion.match(/\.accessibility-panel button,\s*\.accessibility-panel button:active,\s*\.accessibility-settings-dialog button,\s*\.accessibility-settings-dialog button:active\s*\{([^}]*)\}/)?.[1] ?? '';
+
+    expect(reset).toMatch(/transition:\s*none/);
+    expect(reset).toMatch(/transform:\s*none/);
   });
 
   it('keeps primitives and raw colors private to tokens.css and removes the legacy selector', () => {
