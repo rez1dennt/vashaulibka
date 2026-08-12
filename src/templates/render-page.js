@@ -71,7 +71,7 @@ export function renderPage(page) {
     `<p>Если сервис временно недоступен, <a href="${esc(ONLINE_BOOKING.bookingUrl)}" target="_blank" rel="noopener noreferrer">откройте форму 32top напрямую</a> или позвоните нам.</p></div><div class="dialog__phones">`,
     CONTACTS.phones.map((phone) => `<a class="button button-secondary" href="${phone.href}">${esc(phone.label)}</a>`).join(''),
     '</div></div>',
-    `<h3>Режим работы</h3><dl class="definition-list definition-list--compact">${appointmentHours}</dl><p><strong>${esc(HOURS.breakNote)}</strong></p></div></div>`,
+    `<div class="dialog__hours"><h3>Режим работы</h3><dl class="dialog__hours-grid">${appointmentHours}</dl><p class="dialog__break"><strong>${esc(HOURS.breakNote)}</strong></p></div></div></div>`,
     '<div class="cookie-banner" data-cookie-banner hidden><p>Сайт хранит необходимые настройки в браузере. Онлайн-запись 32top загружается только с вашего разрешения.</p><label class="cookie-banner__choice"><input type="checkbox" data-cookie-online-booking><span><strong>Разрешить онлайн-запись</strong><small>Подключает внешний сервис МИС 32top при выборе записи через интернет.</small></span></label><button type="button" data-cookie-reject>Отклонить необязательные</button><button type="button" data-cookie-save>Сохранить выбор</button></div><script type="module" src="/src/js/main.js"></script></body></html>',
   ].join('');
 }

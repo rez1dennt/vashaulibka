@@ -50,6 +50,38 @@ describe('MIS 32top appointment provider', () => {
     expect(widget.openModal).toHaveBeenCalledTimes(2);
   });
 
+  it('adds accessible dialog controls to the injected vendor modal and restores focus', async () => {
+    document.body.innerHTML = `
+      <button id="booking-return">Вернуться к записи</button>
+      <div id="modalContainer" style="display: block">
+        <button type="button"></button>
+        <iframe title="Онлайн-запись"></iframe>
+      </div>`;
+    const returnFocus = document.querySelector('#booking-return');
+    const closeButton = document.querySelector('#modalContainer > button');
+    closeButton.addEventListener('click', () => {
+      document.querySelector('#modalContainer').style.display = 'none';
+    });
+    window.BookMis32Top = {
+      initialized: () => true,
+      openModal: vi.fn(),
+    };
+    const provider = createAppointmentProvider({ windowRef: window, documentRef: document });
+
+    await provider.open({ returnFocus });
+
+    const modal = document.querySelector('#modalContainer');
+    expect(modal.getAttribute('role')).toBe('dialog');
+    expect(modal.getAttribute('aria-modal')).toBe('true');
+    expect(modal.getAttribute('aria-label')).toBe('Онлайн-запись');
+    expect(closeButton.getAttribute('aria-label')).toBe('Закрыть онлайн-запись');
+    expect(closeButton.classList.contains('mis-booking-modal__close')).toBe(true);
+
+    document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
+    expect(modal.style.display).toBe('none');
+    expect(document.activeElement).toBe(returnFocus);
+  });
+
   it('rejects a failed load and can retry with a fresh script', async () => {
     const provider = createAppointmentProvider({ windowRef: window, documentRef: document, timeoutMs: 1000 });
     const failed = provider.open();

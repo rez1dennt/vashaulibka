@@ -17,6 +17,8 @@ export function createAppointmentProvider({
 } = {}) {
   let state = 'idle';
   let loading = null;
+  let returnFocus = null;
+  let enhancedModal = null;
 
   const widget = () => windowRef[WIDGET_NAME];
   const isReady = () => !Array.isArray(widget())
@@ -34,6 +36,29 @@ export function createAppointmentProvider({
       }]);
     }
   };
+
+  const enhanceModal = () => {
+    const modal = documentRef.querySelector('#modalContainer');
+    const closeButton = modal?.querySelector(':scope > button');
+    if (!modal || !closeButton) return;
+
+    modal.setAttribute('role', 'dialog');
+    modal.setAttribute('aria-modal', 'true');
+    modal.setAttribute('aria-label', 'Онлайн-запись');
+    modal.classList.add('mis-booking-modal');
+    closeButton.setAttribute('aria-label', 'Закрыть онлайн-запись');
+    closeButton.classList.add('mis-booking-modal__close');
+    if (enhancedModal === modal) return;
+
+    enhancedModal = modal;
+    closeButton.addEventListener('click', () => returnFocus?.focus());
+  };
+
+  const closeOnEscape = (event) => {
+    if (event.key !== 'Escape' || !enhancedModal || getComputedStyle(enhancedModal).display === 'none') return;
+    enhancedModal.querySelector(':scope > button')?.click();
+  };
+  documentRef.addEventListener('keydown', closeOnEscape, true);
 
   const load = () => {
     if (isReady()) {
@@ -80,10 +105,13 @@ export function createAppointmentProvider({
   return Object.freeze({
     mode: 'mis-32top',
     getState: () => state,
-    async open() {
+    async open({ returnFocus: focusTarget } = {}) {
       await load();
       if (!isReady()) throw new OnlineBookingError('api');
+      returnFocus = focusTarget || documentRef.activeElement;
       widget().openModal();
+      enhanceModal();
+      documentRef.querySelector('#modalContainer iframe')?.focus();
       return { mode: 'online', state: 'ready' };
     },
     destroy() {
@@ -91,6 +119,9 @@ export function createAppointmentProvider({
       documentRef.querySelector(`script[src="${ONLINE_BOOKING.scriptUrl}"]`)?.remove();
       state = 'idle';
       loading = null;
+      documentRef.removeEventListener('keydown', closeOnEscape, true);
+      enhancedModal = null;
+      returnFocus = null;
     },
   });
 }

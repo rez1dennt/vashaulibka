@@ -34,6 +34,10 @@ const contrastRatio = (foreground, background) => {
 };
 
 describe('design system contract', () => {
+  it('keeps the injected MIS close control at an accessible target size', () => {
+    const css = readStyle('components');
+    expect(css).toMatch(/\.mis-booking-modal__close\s*\{[^}]*min-inline-size:\s*var\(--target-min,\s*44px\)\s*!important[^}]*min-block-size:\s*var\(--target-min,\s*44px\)\s*!important/s);
+  });
   it('loads the style layers in dependency order', () => {
     const css = readStyle('main');
 
@@ -140,7 +144,8 @@ describe('design system contract', () => {
     expect(layout).toMatch(/\.menu-backdrop\s*{[^}]*z-index:\s*var\(--z-menu-backdrop\)/s);
     expect(layout).toMatch(/\.mobile-appointment\s*{[^}]*position:\s*fixed[^}]*env\(safe-area-inset-bottom\)/s);
     expect(layout).toMatch(/@media\s*\(min-width:\s*48\.0625rem\)[\s\S]*?a\.mobile-appointment\s*{[^}]*display:\s*none/s);
-    expect(components).toMatch(/\.cookie-banner\s*{[^}]*inset-block-end:\s*max\(var\(--container-gutter\),\s*calc\(var\(--mobile-appointment-reserve\)\s*\+\s*env\(safe-area-inset-bottom\)\)\)/s);
+    expect(components).toMatch(/\.cookie-banner\s*{[^}]*bottom:\s*var\(--container-gutter\)/s);
+    expect(components).toMatch(/@media\s*\(max-width:\s*48rem\)[\s\S]*?\.cookie-banner\s*{[^}]*bottom:\s*var\(--mobile-appointment-reserve\)/s);
   });
 
   it('delays drawer visibility only while the exit transform finishes', () => {

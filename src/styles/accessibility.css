@@ -455,6 +455,9 @@ html[data-accessibility-enabled="true"][data-accessibility-paragraph-spacing="la
   inset-block-start: var(--space-3);
   inset-inline-end: var(--space-3);
   inline-size: var(--accessibility-action-min-block-size);
+  block-size: var(--accessibility-action-min-block-size);
+  display: grid;
+  place-items: center;
   padding: var(--space-0);
   border-radius: var(--radius-pill);
   font-size: var(--dialog-close-font-size);

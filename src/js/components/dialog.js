@@ -43,6 +43,7 @@ export function initDialog({ provider, storage = safeStorage } = {}) {
 
   const openOnline = async () => {
     if (!readCookiePreferences(storage).onlineBooking) {
+      close({ restoreFocus: false });
       consentButton?.click();
       return;
     }
@@ -55,7 +56,7 @@ export function initDialog({ provider, storage = safeStorage } = {}) {
     if (error) error.hidden = true;
 
     try {
-      await provider.open();
+      await provider.open({ returnFocus });
       if (status) status.textContent = '';
       close({ restoreFocus: false });
       document.querySelector('#modalContainer iframe')?.focus();

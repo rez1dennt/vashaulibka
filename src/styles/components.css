@@ -224,6 +224,8 @@ button.card:active {
   inset-inline-end: var(--space-3);
   inline-size: var(--control-block-size);
   block-size: var(--control-block-size);
+  display: grid;
+  place-items: center;
   padding: var(--space-0);
   border: var(--border-width) solid var(--color-border);
   border-radius: var(--radius-pill);
@@ -245,6 +247,12 @@ button.card:active {
   transform: scale(var(--dialog-close-scale-active));
 }
 
+.mis-booking-modal__close {
+  min-inline-size: var(--target-min, 44px) !important;
+  min-block-size: var(--target-min, 44px) !important;
+  border-radius: 50% !important;
+}
+
 .dialog__panel h2 {
   padding-inline-end: var(--space-12);
 }
@@ -254,6 +262,58 @@ button.card:active {
   min-inline-size: var(--space-0);
   display: grid;
   gap: var(--space-3);
+}
+
+.dialog__phones .button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-block-size: var(--control-block-size);
+  padding-block: var(--space-3);
+  line-height: 1.25;
+}
+
+.dialog__hours {
+  margin-block-start: var(--space-6);
+  padding-block-start: var(--space-5);
+  border-block-start: var(--border-width) solid var(--color-border);
+}
+
+.dialog__hours h3 {
+  margin: var(--space-0) var(--space-0) var(--space-3);
+}
+
+.dialog__hours-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(var(--space-0), 1fr));
+  gap: var(--space-2);
+  margin: var(--space-0);
+}
+
+.dialog__hours-grid > div,
+.dialog__break {
+  min-inline-size: var(--space-0);
+  padding: var(--space-3);
+  border: var(--border-width) solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background: var(--color-surface-subtle);
+}
+
+.dialog__hours-grid dt {
+  margin-block-end: var(--space-1);
+  color: var(--color-text-muted);
+  font-size: var(--text-small-size);
+  font-weight: var(--text-label-weight);
+}
+
+.dialog__hours-grid dd {
+  margin: var(--space-0);
+  font-weight: var(--text-label-weight);
+}
+
+.dialog__break {
+  margin: var(--space-2) var(--space-0) var(--space-0);
+  color: var(--color-primary-strong);
 }
 
 .dialog__panel .button {
@@ -282,7 +342,7 @@ button.card:active {
   position: fixed;
   z-index: var(--z-cookie);
   inset-inline: var(--container-gutter);
-  inset-block-end: max(var(--container-gutter), calc(var(--mobile-appointment-reserve) + env(safe-area-inset-bottom)));
+  bottom: var(--container-gutter);
   inline-size: auto;
   max-inline-size: var(--cookie-max-inline-size);
   display: grid;
@@ -359,10 +419,6 @@ button.card:active {
 }
 
 @media (min-width: 24rem) {
-  .dialog__phones {
-    grid-template-columns: repeat(2, minmax(var(--space-0), 1fr));
-  }
-
   .cookie-banner {
     grid-template-columns: repeat(2, minmax(var(--space-0), 1fr));
   }
@@ -373,6 +429,18 @@ button.card:active {
 
   .cookie-banner__choice {
     grid-column: 1 / -1;
+  }
+}
+
+@media (min-width: 32rem) {
+  .dialog__phones {
+    grid-template-columns: repeat(2, minmax(var(--space-0), 1fr));
+  }
+}
+
+@media (max-width: 48rem) {
+  .cookie-banner {
+    bottom: var(--mobile-appointment-reserve);
   }
 }
 

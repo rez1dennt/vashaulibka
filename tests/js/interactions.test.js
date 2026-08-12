@@ -58,6 +58,7 @@ describe('progressive interactions', () => {
     document.querySelector('[data-appointment-open]').click();
     document.querySelector('[data-booking-online]').click();
     expect(provider.open).not.toHaveBeenCalled();
+    expect(document.querySelector('#appointment-dialog').hidden).toBe(true);
     expect(document.querySelector('[data-cookie-banner]').hidden).toBe(false);
 
     storage.get.mockReturnValue(JSON.stringify({ version: 2, onlineBooking: true }));
