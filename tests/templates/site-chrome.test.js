@@ -28,9 +28,11 @@ describe('premium light site chrome', () => {
     expect(document.querySelector('[data-menu-close]')).toBeNull();
     const brandRow = document.querySelector('.brand-row__inner');
     expect(brandRow.children[0].classList.contains('brand')).toBe(true);
-    expect(brandRow.children[1].matches('[data-search-open]')).toBe(true);
-    expect(brandRow.children[2].classList.contains('site-search-fallback')).toBe(true);
-    expect(brandRow.children[3].classList.contains('brand-row__actions')).toBe(true);
+    expect(brandRow.children[1].matches('[data-site-search]')).toBe(true);
+    expect(brandRow.children[2].classList.contains('brand-row__actions')).toBe(true);
+    expect(brandRow.children[3].classList.contains('menu-toggle')).toBe(true);
+    expect(brandRow.querySelectorAll('[data-search-input]')).toHaveLength(1);
+    expect(brandRow.querySelector('[role="dialog"], [data-search-backdrop]')).toBeNull();
 
     const navLinks = [...document.querySelectorAll('#main-menu > a:not([data-appointment-open])')];
     expect(navLinks.map((link) => link.textContent.trim())).toEqual(NAV_ITEMS.map((item) => item.label));
