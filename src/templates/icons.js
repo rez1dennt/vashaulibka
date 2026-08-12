@@ -12,6 +12,9 @@ const ICONS = Object.freeze({
   mail: '<rect x="3" y="5" width="18" height="14" rx="2"/><path d="m4 7 8 6 8-6"/>',
   arrow: '<path d="M5 12h14M14 7l5 5-5 5"/>',
   eye: '<path d="M2.5 12s3.5-5.5 9.5-5.5 9.5 5.5 9.5 5.5-3.5 5.5-9.5 5.5S2.5 12 2.5 12z"/><circle cx="12" cy="12" r="2.5"/>',
+  search: '<circle cx="11" cy="11" r="6.5"/><path d="m16 16 4.5 4.5"/>',
+  close: '<path d="M5 5l14 14M19 5 5 19"/>',
+  clear: '<circle cx="12" cy="12" r="9"/><path d="m9 9 6 6M15 9l-6 6"/>',
 });
 
 const SAFE_CLASS_NAMES = /^[a-z][a-z0-9_-]*(?:\s+[a-z][a-z0-9_-]*)*$/i;

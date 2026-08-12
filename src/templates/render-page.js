@@ -1,6 +1,7 @@
 import { CLINIC, CONTACTS, HOURS, LICENSE } from '../data/clinic.js';
 import { renderHero } from './render-hero.js';
 import { renderFooter, renderHeader } from './site-chrome.js';
+import { renderSiteSearch } from './site-search.js';
 
 const esc = (value) => String(value).replace(/[&<>"]/g, (char) => ({
   '&': '&amp;',
@@ -60,6 +61,7 @@ export function renderPage(page) {
     `<script type="application/ld+json">${schema}</script></head><body data-page="${esc(page.file)}">`,
     '<a class="skip-link" href="#main-content">К основному содержимому</a>',
     renderHeader(page.file),
+    renderSiteSearch(),
     `<main id="main-content"${mainClass}>${renderHero(page)}${page.body}</main>`,
     renderFooter(),
     `<a class="mobile-appointment button button-primary" href="${CONTACTS.phones[0].href}" data-appointment-open>Запись на приём</a>`,

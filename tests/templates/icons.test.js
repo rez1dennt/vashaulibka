@@ -15,6 +15,9 @@ const names = [
   'mail',
   'arrow',
   'eye',
+  'search',
+  'close',
+  'clear',
 ];
 
 describe('local UI icons', () => {
