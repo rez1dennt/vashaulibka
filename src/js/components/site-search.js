@@ -1,6 +1,4 @@
-import { createFocusTrap } from '../core/focus-trap.js';
 import { searchItems } from '../core/search-engine.js';
-import { lockScroll, unlockScroll } from '../core/scroll-lock.js';
 
 const INDEX_URL = 'search-index.json';
 const QUICK_LINKS = Object.freeze([
@@ -69,26 +67,21 @@ export function initSiteSearch({
   fetchImpl = globalThis.fetch,
   navigate = (href) => window.location.assign(href),
 } = {}) {
-  const dialog = document.querySelector('#site-search-dialog');
-  const openers = [...document.querySelectorAll('[data-search-open]')];
-  if (!dialog || !openers.length || typeof fetchImpl !== 'function') return;
-
-  const panel = dialog.querySelector('.site-search__panel') ?? dialog.querySelector('section') ?? dialog;
-  const input = dialog.querySelector('[data-search-input]');
-  const closeButton = dialog.querySelector('[data-search-close]');
-  const clearButton = dialog.querySelector('[data-search-clear]');
-  const backdrop = dialog.querySelector('[data-search-backdrop]');
-  const status = dialog.querySelector('[data-search-status]');
-  const content = dialog.querySelector('[data-search-content]');
-  const results = dialog.querySelector('#site-search-results');
-  if (!input || !closeButton || !clearButton || !status || !content || !results) return;
+  const root = document.querySelector('[data-site-search]');
+  const toggle = root?.querySelector('[data-search-toggle]');
+  const input = root?.querySelector('[data-search-input]');
+  const clearButton = root?.querySelector('[data-search-clear]');
+  const dropdown = root?.querySelector('[data-search-dropdown]');
+  const status = root?.querySelector('[data-search-status]');
+  const content = root?.querySelector('[data-search-content]');
+  const results = root?.querySelector('#site-search-results');
+  if (!root || !toggle || !input || !clearButton || !dropdown || !status || !content || !results
+    || typeof fetchImpl !== 'function') return;
 
   let indexPromise;
   let indexItems = [];
-  let returnFocus;
   let activeIndex = -1;
   let currentMatches = [];
-  const trapFocus = createFocusTrap(panel);
 
   const setStatus = (message) => {
     status.textContent = message;
@@ -114,7 +107,6 @@ export function initSiteSearch({
     currentMatches = matches;
     activeIndex = -1;
     input.removeAttribute('aria-activedescendant');
-    input.setAttribute('aria-expanded', matches.length ? 'true' : 'false');
 
     matches.forEach((match, index) => {
       const listItem = document.createElement('li');
@@ -178,35 +170,31 @@ export function initSiteSearch({
       });
   };
 
-  const close = () => {
-    if (dialog.hidden) return;
-    dialog.hidden = true;
-    input.setAttribute('aria-expanded', 'false');
-    input.removeAttribute('aria-activedescendant');
-    document.removeEventListener('keydown', onDocumentKeydown);
-    panel.removeEventListener('keydown', trapFocus);
-    unlockScroll();
-    if (returnFocus?.isConnected) returnFocus.focus();
+  const setOpenState = (open) => {
+    root.classList.toggle('is-open', open);
+    toggle.setAttribute('aria-expanded', String(open));
+    toggle.setAttribute('aria-label', open ? 'Закрыть поиск по сайту' : 'Открыть поиск по сайту');
+    input.setAttribute('aria-expanded', String(open));
+    dropdown.setAttribute('aria-hidden', String(!open));
+    if (!open) input.removeAttribute('aria-activedescendant');
   };
 
-  const open = (opener) => {
-    if (!dialog.hidden) return;
-    returnFocus = opener;
-    dialog.hidden = false;
+  const open = ({ focusInput = false } = {}) => {
+    const wasOpen = root.classList.contains('is-open');
+    setOpenState(true);
     createQuickLinks(content);
     update();
-    lockScroll();
-    document.addEventListener('keydown', onDocumentKeydown);
-    panel.addEventListener('keydown', trapFocus);
-    input.focus();
+    if (!indexItems.length) setStatus('Загружаем поиск…');
     ensureIndex();
+    if (focusInput && document.activeElement !== input) input.focus();
+    return !wasOpen;
   };
 
-  const onDocumentKeydown = (event) => {
-    if (event.key === 'Escape') {
-      event.preventDefault();
-      close();
-    }
+  const close = ({ restoreToggle = false } = {}) => {
+    if (!root.classList.contains('is-open')) return;
+    setOpenState(false);
+    activeIndex = -1;
+    if (restoreToggle && toggle.isConnected) toggle.focus();
   };
 
   input.addEventListener('input', update);
@@ -234,17 +222,31 @@ export function initSiteSearch({
     update();
     input.focus();
   });
-  closeButton.addEventListener('click', close);
-  backdrop?.addEventListener('click', close);
-  openers.forEach((opener) => opener.addEventListener('click', () => open(opener)));
+  input.addEventListener('focus', () => open());
+  toggle.addEventListener('click', () => {
+    if (root.classList.contains('is-open')) {
+      close({ restoreToggle: true });
+      return;
+    }
+    open({ focusInput: true });
+  });
+
+  document.addEventListener('pointerdown', (event) => {
+    if (!root.contains(event.target)) close();
+  });
 
   document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape' && root.classList.contains('is-open')) {
+      event.preventDefault();
+      close({ restoreToggle: document.activeElement !== input });
+      return;
+    }
     if (event.key.toLocaleLowerCase('ru-RU') !== 'k' || (!event.ctrlKey && !event.metaKey)) return;
     if (document.body.classList.contains('menu-open')) return;
     const otherDialog = [...document.querySelectorAll('[role="dialog"]')]
-      .some((candidate) => candidate !== dialog && isVisible(candidate));
+      .some((candidate) => isVisible(candidate));
     if (otherDialog) return;
     event.preventDefault();
-    open(openers[0]);
+    open({ focusInput: true });
   });
 }
