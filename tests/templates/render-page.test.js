@@ -60,6 +60,15 @@ describe('renderPage', () => {
     expect(document.querySelector('#main-menu a[data-appointment-open]')?.getAttribute('href')).toBe('tel:+74722215356');
   });
 
+  it('renders explicit functional consent controls for MIS online booking', () => {
+    const document = new JSDOM(renderPage(PAGES[0])).window.document;
+    const banner = document.querySelector('[data-cookie-banner]');
+
+    expect(banner?.querySelector('[data-cookie-online-booking][type="checkbox"]')).not.toBeNull();
+    expect(banner?.querySelector('[data-cookie-save]')?.textContent).toMatch(/Сохранить выбор/i);
+    expect(banner?.textContent).toMatch(/онлайн-запис.*32top/i);
+  });
+
   it('marks the raw document as no-js and switches the class before styles load', () => {
     const html = renderPage(page);
     const document = new JSDOM(html).window.document;

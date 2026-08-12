@@ -283,6 +283,37 @@ button.card:active {
   font-size: var(--text-small-size);
 }
 
+.cookie-banner__choice {
+  min-inline-size: var(--space-0);
+  display: grid;
+  grid-template-columns: auto minmax(var(--space-0), 1fr);
+  align-items: start;
+  gap: var(--space-3);
+  padding: var(--space-3);
+  border: var(--border-width) solid var(--color-border);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+}
+
+.cookie-banner__choice input {
+  inline-size: var(--space-5);
+  block-size: var(--space-5);
+  margin: var(--space-0-5) var(--space-0) var(--space-0);
+  accent-color: var(--color-primary);
+}
+
+.cookie-banner__choice span,
+.cookie-banner__choice small {
+  display: block;
+  min-inline-size: var(--space-0);
+}
+
+.cookie-banner__choice small {
+  margin-block-start: var(--space-1);
+  color: var(--color-text-muted);
+  font-size: var(--text-small-size);
+}
+
 .cookie-banner button {
   inline-size: 100%;
   min-block-size: var(--control-block-size);
@@ -320,6 +351,10 @@ button.card:active {
   }
 
   .cookie-banner p {
+    grid-column: 1 / -1;
+  }
+
+  .cookie-banner__choice {
     grid-column: 1 / -1;
   }
 }

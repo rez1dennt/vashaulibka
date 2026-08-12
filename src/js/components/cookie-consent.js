@@ -1,22 +1,35 @@
 import { safeStorage } from '../core/storage.js';
-
-const savedChoices = new Set(['rejected', 'accepted-essential-only']);
+import {
+  COOKIE_PREFERENCES_CHANGED_EVENT,
+  readCookiePreferences,
+  writeCookiePreferences,
+} from '../core/cookie-preferences.js';
 
 export function initCookieConsent({ storage = safeStorage } = {}) {
   const banner = document.querySelector('[data-cookie-banner]');
   if (!banner) return;
 
-  const choice = storage.get('cookie-consent');
-  banner.hidden = savedChoices.has(choice);
-  const choose = (value) => {
-    storage.set('cookie-consent', value);
+  const onlineBooking = banner.querySelector('[data-cookie-online-booking]');
+  const reflect = () => {
+    const preferences = readCookiePreferences(storage);
+    if (onlineBooking) onlineBooking.checked = preferences.onlineBooking;
+    banner.hidden = preferences.decided;
+  };
+  const choose = (enabled) => {
+    const preferences = writeCookiePreferences(storage, { onlineBooking: enabled });
     banner.hidden = true;
+    document.dispatchEvent(new CustomEvent(COOKIE_PREFERENCES_CHANGED_EVENT, {
+      detail: { onlineBooking: preferences.onlineBooking },
+    }));
   };
 
-  banner.querySelector('[data-cookie-reject]')?.addEventListener('click', () => choose('rejected'));
-  banner.querySelector('[data-cookie-accept]')?.addEventListener('click', () => choose('accepted-essential-only'));
+  reflect();
+  banner.querySelector('[data-cookie-reject]')?.addEventListener('click', () => choose(false));
+  banner.querySelector('[data-cookie-save]')?.addEventListener('click', () => choose(onlineBooking?.checked));
   document.querySelectorAll('[data-cookie-settings]').forEach((button) => {
     button.addEventListener('click', () => {
+      const preferences = readCookiePreferences(storage);
+      if (onlineBooking) onlineBooking.checked = preferences.onlineBooking;
       banner.hidden = false;
     });
   });

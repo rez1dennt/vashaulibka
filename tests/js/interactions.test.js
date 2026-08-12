@@ -95,18 +95,18 @@ describe('progressive interactions', () => {
   });
 
   it('stores an explicit rejection and hides the cookie banner', () => {
-    document.body.innerHTML = '<div data-cookie-banner><button data-cookie-reject>Нет</button><button data-cookie-accept>Да</button></div>';
+    document.body.innerHTML = '<div data-cookie-banner><input type="checkbox" data-cookie-online-booking><button data-cookie-reject>Нет</button><button data-cookie-save>Да</button></div>';
     const storage = { get: vi.fn(() => null), set: vi.fn() };
     initCookieConsent({ storage });
 
     document.querySelector('[data-cookie-reject]').click();
 
-    expect(storage.set).toHaveBeenCalledWith('cookie-consent', 'rejected');
+    expect(JSON.parse(storage.set.mock.calls[0][1])).toEqual({ version: 2, onlineBooking: false });
     expect(document.querySelector('[data-cookie-banner]').hidden).toBe(true);
   });
 
   it('shows the cookie banner for an unrecognized stored value', () => {
-    document.body.innerHTML = '<div data-cookie-banner hidden><button data-cookie-reject>Нет</button><button data-cookie-accept>Да</button></div>';
+    document.body.innerHTML = '<div data-cookie-banner hidden><input type="checkbox" data-cookie-online-booking><button data-cookie-reject>Нет</button><button data-cookie-save>Да</button></div>';
     initCookieConsent({ storage: { get: () => 'legacy-accepted', set: vi.fn() } });
 
     expect(document.querySelector('[data-cookie-banner]').hidden).toBe(false);
