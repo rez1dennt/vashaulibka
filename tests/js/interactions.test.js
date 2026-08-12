@@ -7,7 +7,6 @@ import { initDialog } from '../../src/js/components/dialog.js';
 import { initDisclosures } from '../../src/js/components/disclosures.js';
 import { initMobileMenu } from '../../src/js/components/mobile-menu.js';
 import { initTabs } from '../../src/js/components/tabs.js';
-import { initVisionMode } from '../../src/js/components/vision-mode.js';
 
 afterEach(() => {
   unlockScroll();
@@ -153,17 +152,6 @@ describe('progressive interactions', () => {
     expect(document.querySelector('#first').hidden).toBe(false);
     expect(document.querySelector('#second').hidden).toBe(true);
     expect(document.querySelectorAll('[data-disclosure-button]')[1].getAttribute('aria-expanded')).toBe('false');
-  });
-
-  it('persists the vision-mode setting and reflects it in ARIA', () => {
-    document.body.innerHTML = '<button data-vision-toggle>Версия для слабовидящих</button>';
-    initVisionMode();
-
-    document.querySelector('[data-vision-toggle]').click();
-
-    expect(document.documentElement.classList.contains('vision-mode')).toBe(true);
-    expect(document.querySelector('[data-vision-toggle]').getAttribute('aria-pressed')).toBe('true');
-    expect(localStorage.getItem('vision-mode')).toBe('on');
   });
 
   it('degrades safely when local storage throws', () => {

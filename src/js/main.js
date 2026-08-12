@@ -6,7 +6,7 @@ import { initMobileMenu } from './components/mobile-menu.js';
 import { initSiteSearch } from './components/site-search.js';
 import { initSpecialistsCoverflow } from './components/specialists-coverflow.js';
 import { initTabs } from './components/tabs.js';
-import { initVisionMode } from './components/vision-mode.js';
+import { initAccessibilityMode } from './components/accessibility-mode.js';
 
 initMobileMenu();
 initSiteSearch();
@@ -14,5 +14,5 @@ initDialog({ provider: createAppointmentProvider() });
 initDisclosures();
 initTabs();
 initSpecialistsCoverflow();
-initVisionMode();
+initAccessibilityMode();
 initCookieConsent();
