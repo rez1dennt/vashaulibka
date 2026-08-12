@@ -1,0 +1,72 @@
+const positionFor = (index, activeIndex, length) => {
+  const forward = (index - activeIndex + length) % length;
+  if (forward === 0) return 'active';
+  if (forward === 1) return 'next';
+  if (forward === length - 1) return 'previous';
+  return forward <= Math.floor(length / 2) ? 'far-next' : 'far-previous';
+};
+
+export function initSpecialistsCoverflow() {
+  document.querySelectorAll('[data-specialists-coverflow]').forEach((root) => {
+    const slides = [...root.querySelectorAll('[data-specialist-slide]')];
+    const viewport = root.querySelector('[data-specialist-viewport]');
+    const counter = root.querySelector('[data-specialist-counter]');
+    const detailName = root.querySelector('[data-specialist-detail-name]');
+    const detailRole = root.querySelector('[data-specialist-detail-role]');
+    if (!slides.length || !viewport || root.classList.contains('is-enhanced')) return;
+
+    let activeIndex = 0;
+    let pointerStart = null;
+
+    const activate = (index) => {
+      activeIndex = (index + slides.length) % slides.length;
+      slides.forEach((slide, slideIndex) => {
+        const position = positionFor(slideIndex, activeIndex, slides.length);
+        slide.dataset.position = position;
+
+        if (slideIndex === activeIndex) slide.setAttribute('aria-current', 'true');
+        else slide.removeAttribute('aria-current');
+
+        const select = slide.querySelector('[data-specialist-select]');
+        if (select) select.tabIndex = ['active', 'previous', 'next'].includes(position) ? 0 : -1;
+      });
+
+      const active = slides[activeIndex];
+      if (counter) counter.textContent = `${activeIndex + 1} / ${slides.length}`;
+      if (detailName) detailName.textContent = active.querySelector('.specialist-card__name')?.textContent.trim() || '';
+      if (detailRole) detailRole.textContent = active.querySelector('.specialist-card__role')?.textContent.trim() || '';
+    };
+
+    root.querySelector('[data-specialist-prev]')?.addEventListener('click', () => activate(activeIndex - 1));
+    root.querySelector('[data-specialist-next]')?.addEventListener('click', () => activate(activeIndex + 1));
+    slides.forEach((slide, index) => slide.querySelector('[data-specialist-select]')
+      ?.addEventListener('click', () => activate(index)));
+
+    viewport.addEventListener('keydown', (event) => {
+      if (!['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(event.key)) return;
+
+      event.preventDefault();
+      const target = event.key === 'Home' ? 0
+        : event.key === 'End' ? slides.length - 1
+          : activeIndex + (event.key === 'ArrowRight' ? 1 : -1);
+      activate(target);
+    });
+
+    viewport.addEventListener('pointerdown', (event) => {
+      pointerStart = event.clientX;
+    });
+    viewport.addEventListener('pointerup', (event) => {
+      if (pointerStart === null) return;
+
+      const distance = event.clientX - pointerStart;
+      pointerStart = null;
+      if (Math.abs(distance) >= 48) activate(activeIndex + (distance < 0 ? 1 : -1));
+    });
+    viewport.addEventListener('pointercancel', () => {
+      pointerStart = null;
+    });
+
+    root.classList.add('is-enhanced');
+    activate(0);
+  });
+}
