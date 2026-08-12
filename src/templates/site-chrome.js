@@ -1,4 +1,5 @@
 import { CLINIC, CONTACTS, HOURS, LICENSE } from '../data/clinic.js';
+import { renderAccessibilityPanel } from './accessibility-panel.js';
 import { renderIcon } from './icons.js';
 import { renderSiteSearch } from './site-search.js';
 
@@ -43,11 +44,12 @@ export function renderHeader(activeFile) {
   return [
     '<header class="site-header">',
     '<div class="utility-bar"><div class="header-shell utility-bar__inner">',
-    `<button type="button" data-vision-toggle>${renderIcon('eye', 'ui-icon vision-icon')}Версия для слабовидящих</button>`,
+    `<button type="button" data-vision-toggle aria-controls="accessibility-panel" aria-expanded="false">${renderIcon('eye', 'ui-icon vision-icon')}Версия для слабовидящих</button>`,
     `<span class="utility-bar__address">${renderIcon('pin', 'header-icon')}${escapeHtml(CLINIC.activityAddress)}</span>`,
     `<span class="utility-bar__hours">${renderIcon('clock', 'header-icon')}${escapeHtml(HOURS.weekdays.value)} · ${escapeHtml(HOURS.saturday.label)} ${escapeHtml(HOURS.saturday.value)}</span>`,
     `<a class="utility-bar__phone" href="${primaryPhone.href}">${renderIcon('phone', 'header-icon')}${escapeHtml(primaryPhone.label)}</a>`,
     '</div></div>',
+    renderAccessibilityPanel(),
     '<div class="brand-row"><div class="header-shell brand-row__inner">',
     `<a class="brand" href="index.html" aria-label="${escapeHtml(CLINIC.name)}, главная"><img src="assets/icons/logo.svg" alt="" width="56" height="56"><span class="brand__wordmark"><span class="brand__prefix">Ваша</span><span class="brand__accent">улыбка</span><svg class="brand__smile" viewBox="0 0 64 8" aria-hidden="true" focusable="false"><path d="M2 2c16 6 44 6 60 0"/></svg></span></a>`,
     renderSiteSearch(),

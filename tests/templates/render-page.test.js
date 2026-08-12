@@ -16,6 +16,18 @@ const page = {
 const HERO_VISUALIZATION_LABEL = 'Визуализация интерьера';
 
 describe('renderPage', () => {
+  it('renders one accessibility toolbar and toggle on every page', () => {
+    for (const publicPage of PAGES) {
+      const document = new JSDOM(renderPage(publicPage)).window.document;
+
+      expect(document.querySelectorAll('[data-vision-toggle][aria-controls="accessibility-panel"][aria-expanded="false"]')).toHaveLength(1);
+      expect(document.querySelectorAll('section#accessibility-panel[data-accessibility-panel][hidden]')).toHaveLength(1);
+      expect(document.querySelectorAll('[data-accessibility-reset]')).toHaveLength(1);
+      expect(document.querySelectorAll('[data-accessibility-close]')).toHaveLength(1);
+      expect(document.querySelectorAll('[data-accessibility-status][aria-live="polite"]')).toHaveLength(1);
+    }
+  });
+
   it('renders semantic content and accessibility anchors', () => {
     const html = renderPage(page);
 
@@ -50,9 +62,126 @@ describe('renderPage', () => {
 
   it('marks the raw document as no-js and switches the class before styles load', () => {
     const html = renderPage(page);
+    const document = new JSDOM(html).window.document;
+    const bootstrap = document.querySelector('script[data-accessibility-bootstrap]');
+    const stylesheet = document.querySelector('link[rel="stylesheet"][href="/src/styles/main.css"]');
 
     expect(html).toContain('<html class="no-js" lang="ru">');
-    expect(html).toMatch(/<script>document\.documentElement\.classList\.replace\('no-js','js'\)<\/script><link rel="stylesheet"/);
+    expect(bootstrap).not.toBeNull();
+    expect(stylesheet).not.toBeNull();
+    expect(bootstrap.compareDocumentPosition(stylesheet) & 4).toBeTruthy();
+    expect(document.querySelector('body > script[type="module"][src="/src/js/main.js"]:last-child')).not.toBeNull();
+    expect(bootstrap.textContent).not.toMatch(/eval|document\.write|innerHTML|createElement|fetch|XMLHttpRequest|WebSocket|\.src\s*=|\.href\s*=/);
+  });
+
+  it('applies only exact validated version-1 preferences before styles execute', () => {
+    const validPreferences = {
+      version: 1,
+      enabled: true,
+      scale: '150',
+      theme: 'blue-light',
+      font: 'sans',
+      letterSpacing: 'medium',
+      lineHeight: 'large',
+      paragraphSpacing: 'large',
+      images: 'hidden',
+    };
+    const reads = [];
+    const dom = new JSDOM(renderPage(page), {
+      runScripts: 'dangerously',
+      beforeParse(window) {
+        Object.defineProperty(window, 'localStorage', {
+          value: {
+            getItem(key) {
+              reads.push(key);
+              return JSON.stringify(validPreferences);
+            },
+          },
+        });
+      },
+    });
+    const root = dom.window.document.documentElement;
+
+    expect(reads).toEqual(['accessibility-preferences']);
+    expect(root.classList.contains('js')).toBe(true);
+    expect(root.classList.contains('no-js')).toBe(false);
+    expect([...root.attributes]
+      .filter((attribute) => attribute.name.startsWith('data-accessibility-'))
+      .map((attribute) => [attribute.name, attribute.value])).toEqual([
+      ['data-accessibility-enabled', 'true'],
+      ['data-accessibility-scale', '150'],
+      ['data-accessibility-theme', 'blue-light'],
+      ['data-accessibility-font', 'sans'],
+      ['data-accessibility-letter-spacing', 'medium'],
+      ['data-accessibility-line-height', 'large'],
+      ['data-accessibility-paragraph-spacing', 'large'],
+      ['data-accessibility-images', 'hidden'],
+    ]);
+  });
+
+  it('does not apply retained choices while the accessibility mode is disabled', () => {
+    const disabledPreferences = {
+      version: 1,
+      enabled: false,
+      scale: '200',
+      theme: 'white-black',
+      font: 'sans',
+      letterSpacing: 'large',
+      lineHeight: 'large',
+      paragraphSpacing: 'large',
+      images: 'hidden',
+    };
+    const dom = new JSDOM(renderPage(page), {
+      runScripts: 'dangerously',
+      beforeParse(window) {
+        Object.defineProperty(window, 'localStorage', {
+          value: { getItem: () => JSON.stringify(disabledPreferences) },
+        });
+      },
+    });
+
+    expect([...dom.window.document.documentElement.attributes]
+      .filter((attribute) => attribute.name.startsWith('data-accessibility-'))
+      .map((attribute) => [attribute.name, attribute.value])).toEqual([]);
+  });
+
+  it.each([
+    ['unknown version', { version: 2 }],
+    ['unknown choice', { theme: 'sepia' }],
+    ['extra key', { extra: 'value' }],
+    ['malformed JSON', null],
+    ['blocked storage', 'throw'],
+  ])('fails safely for %s in the early accessibility record', (_, mutation) => {
+    const base = {
+      version: 1,
+      enabled: true,
+      scale: '150',
+      theme: 'black-white',
+      font: 'sans',
+      letterSpacing: 'medium',
+      lineHeight: 'large',
+      paragraphSpacing: 'large',
+      images: 'hidden',
+    };
+    const dom = new JSDOM(renderPage(page), {
+      runScripts: 'dangerously',
+      beforeParse(window) {
+        Object.defineProperty(window, 'localStorage', {
+          value: {
+            getItem() {
+              if (mutation === 'throw') throw new Error('blocked');
+              if (mutation === null) return '{';
+              return JSON.stringify({ ...base, ...mutation });
+            },
+          },
+        });
+      },
+    });
+    const root = dom.window.document.documentElement;
+
+    expect(root.classList.contains('js')).toBe(true);
+    expect(root.classList.contains('no-js')).toBe(false);
+    expect([...root.attributes].filter((attribute) => attribute.name.startsWith('data-accessibility-'))).toEqual([]);
   });
 
   it('publishes the complete primary information architecture', () => {

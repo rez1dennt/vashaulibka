@@ -10,8 +10,16 @@ describe('premium light site chrome', () => {
     expect(document.querySelector('.utility-bar')).not.toBeNull();
     expect(document.querySelector('.brand-row')).not.toBeNull();
     expect(document.querySelector('.nav-row')).not.toBeNull();
-    expect(document.querySelector('[data-vision-toggle]')).not.toBeNull();
-    expect(document.querySelector('[data-vision-toggle] .vision-icon')).not.toBeNull();
+    const visionToggle = document.querySelector('[data-vision-toggle]');
+    expect(visionToggle).not.toBeNull();
+    expect(visionToggle?.getAttribute('aria-controls')).toBe('accessibility-panel');
+    expect(visionToggle?.getAttribute('aria-expanded')).toBe('false');
+    expect(visionToggle?.hasAttribute('aria-pressed')).toBe(false);
+    expect(visionToggle?.querySelector('.vision-icon')).not.toBeNull();
+    expect(visionToggle?.textContent).toContain('Версия для слабовидящих');
+    expect(document.querySelectorAll('[data-vision-toggle]')).toHaveLength(1);
+    expect(document.querySelectorAll('#accessibility-panel[data-accessibility-panel]')).toHaveLength(1);
+    expect(document.querySelector('.utility-bar')?.nextElementSibling?.id).toBe('accessibility-panel');
     expect(document.querySelector('.brand__wordmark')?.textContent).toContain('Ваша');
     expect(document.querySelector('.brand__wordmark')?.textContent).toContain('улыбка');
     expect(document.querySelector('.brand__prefix')?.textContent).toBe('Ваша');

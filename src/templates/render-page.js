@@ -1,4 +1,5 @@
 import { CLINIC, CONTACTS, HOURS, LICENSE } from '../data/clinic.js';
+import { renderAccessibilityBootstrap } from './accessibility-bootstrap.js';
 import { renderHero } from './render-hero.js';
 import { renderFooter, renderHeader } from './site-chrome.js';
 
@@ -56,7 +57,7 @@ export function renderPage(page) {
     robots,
     `<title>${esc(page.title)} — ${esc(CLINIC.name)}</title><meta name="description" content="${esc(page.description)}">`,
     `<meta property="og:type" content="website"><meta property="og:title" content="${esc(page.title)}"><meta property="og:description" content="${esc(page.description)}">`,
-    '<link rel="icon" href="assets/icons/favicon.svg" type="image/svg+xml"><script>document.documentElement.classList.replace(\'no-js\',\'js\')</script><link rel="stylesheet" href="/src/styles/main.css">',
+    `<link rel="icon" href="assets/icons/favicon.svg" type="image/svg+xml">${renderAccessibilityBootstrap()}<link rel="stylesheet" href="/src/styles/main.css">`,
     `<script type="application/ld+json">${schema}</script></head><body data-page="${esc(page.file)}">`,
     '<a class="skip-link" href="#main-content">К основному содержимому</a>',
     renderHeader(page.file),
