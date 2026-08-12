@@ -4,6 +4,7 @@ import {
   resetAccessibilityPreferences,
   saveAccessibilityPreferences,
 } from '../core/accessibility-preferences.js';
+import { createAccessibilityImageController } from './accessibility-images.js';
 import { safeStorage } from '../core/storage.js';
 
 const ACTIVE_ATTRIBUTES = Object.freeze({
@@ -56,9 +57,9 @@ export function initAccessibilityMode({
   const resetButton = panel.querySelector('[data-accessibility-reset]');
   const status = panel.querySelector('[data-accessibility-status]');
   const settingButtons = [...panel.querySelectorAll('[data-accessibility-setting][data-accessibility-value]')];
+  const resolvedImageController = imageController ?? createAccessibilityImageController();
   let preferences = loadAccessibilityPreferences(storage);
 
-  void imageController;
   void speechController;
 
   const apply = (nextPreferences) => {
@@ -76,6 +77,8 @@ export function initAccessibilityMode({
         root.removeAttribute(attribute);
       }
     }
+
+    resolvedImageController.setHidden(preferences.enabled && preferences.images === 'hidden');
 
     for (const button of settingButtons) {
       const { accessibilitySetting: setting, accessibilityValue: value } = button.dataset;

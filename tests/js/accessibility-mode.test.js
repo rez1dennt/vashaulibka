@@ -97,6 +97,18 @@ describe('accessibility mode controller', () => {
     });
   });
 
+  it('applies image visibility whenever enabled image preferences change or reset', () => {
+    const imageController = { setHidden: vi.fn() };
+    const { reset } = setup(createStorage(), { imageController });
+
+    settingButton('images', 'hidden').click();
+    reset.click();
+
+    expect(imageController.setHidden).toHaveBeenNthCalledWith(1, false);
+    expect(imageController.setHidden).toHaveBeenNthCalledWith(2, true);
+    expect(imageController.setHidden).toHaveBeenNthCalledWith(3, false);
+  });
+
   it('updates one setting, persists one validated record, synchronizes choices, and announces it', () => {
     const { storage, status } = setup();
     const selected = settingButton('scale', '150');
