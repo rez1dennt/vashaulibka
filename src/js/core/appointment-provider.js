@@ -1,4 +1,5 @@
 import { ONLINE_BOOKING } from '../../data/online-booking.js';
+import { lockScroll, unlockScroll } from './scroll-lock.js';
 
 const WIDGET_NAME = 'BookMis32Top';
 
@@ -19,6 +20,7 @@ export function createAppointmentProvider({
   let loading = null;
   let returnFocus = null;
   let enhancedModal = null;
+  let scrollLocked = false;
 
   const widget = () => windowRef[WIDGET_NAME];
   const isReady = () => !Array.isArray(widget())
@@ -51,7 +53,25 @@ export function createAppointmentProvider({
     if (enhancedModal === modal) return;
 
     enhancedModal = modal;
-    closeButton.addEventListener('click', () => returnFocus?.focus());
+    closeButton.addEventListener('click', () => {
+      if (scrollLocked) {
+        scrollLocked = false;
+        unlockScroll();
+      }
+      returnFocus?.focus();
+    });
+  };
+
+  const acquireScrollLock = () => {
+    if (scrollLocked || !enhancedModal) return;
+    scrollLocked = true;
+    lockScroll();
+  };
+
+  const releaseScrollLock = () => {
+    if (!scrollLocked) return;
+    scrollLocked = false;
+    unlockScroll();
   };
 
   const closeOnEscape = (event) => {
@@ -111,10 +131,12 @@ export function createAppointmentProvider({
       returnFocus = focusTarget || documentRef.activeElement;
       widget().openModal();
       enhanceModal();
+      acquireScrollLock();
       documentRef.querySelector('#modalContainer iframe')?.focus();
       return { mode: 'online', state: 'ready' };
     },
     destroy() {
+      releaseScrollLock();
       if (!Array.isArray(widget())) widget()?.destroy?.();
       documentRef.querySelector(`script[src="${ONLINE_BOOKING.scriptUrl}"]`)?.remove();
       state = 'idle';

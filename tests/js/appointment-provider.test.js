@@ -1,6 +1,7 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { ONLINE_BOOKING } from '../../src/data/online-booking.js';
 import { createAppointmentProvider } from '../../src/js/core/appointment-provider.js';
+import { unlockScroll } from '../../src/js/core/scroll-lock.js';
 
 const initializeWidget = (windowRef) => {
   const commands = windowRef.BookMis32Top;
@@ -14,6 +15,7 @@ const initializeWidget = (windowRef) => {
 };
 
 afterEach(() => {
+  unlockScroll();
   delete window.BookMis32Top;
   delete window.BookMis32TopInitCallbacks;
   vi.useRealTimers();
@@ -76,10 +78,32 @@ describe('MIS 32top appointment provider', () => {
     expect(modal.getAttribute('aria-label')).toBe('Онлайн-запись');
     expect(closeButton.getAttribute('aria-label')).toBe('Закрыть онлайн-запись');
     expect(closeButton.classList.contains('mis-booking-modal__close')).toBe(true);
+    expect(document.body.classList.contains('is-locked')).toBe(true);
 
     document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
     expect(modal.style.display).toBe('none');
+    expect(document.body.classList.contains('is-locked')).toBe(false);
     expect(document.activeElement).toBe(returnFocus);
+  });
+
+  it('releases the vendor modal scroll lock when the close button or destroy is used', async () => {
+    document.body.innerHTML = '<div id="modalContainer" style="display: block"><button type="button"></button><iframe title="Онлайн-запись"></iframe></div>';
+    const modal = document.querySelector('#modalContainer');
+    const closeButton = modal.querySelector(':scope > button');
+    closeButton.addEventListener('click', () => { modal.style.display = 'none'; });
+    window.BookMis32Top = { initialized: () => true, openModal: vi.fn(), destroy: vi.fn() };
+    const provider = createAppointmentProvider({ windowRef: window, documentRef: document });
+
+    await provider.open();
+    expect(document.body.classList.contains('is-locked')).toBe(true);
+    closeButton.click();
+    expect(document.body.classList.contains('is-locked')).toBe(false);
+
+    modal.style.display = 'block';
+    await provider.open();
+    expect(document.body.classList.contains('is-locked')).toBe(true);
+    provider.destroy();
+    expect(document.body.classList.contains('is-locked')).toBe(false);
   });
 
   it('rejects a failed load and can retry with a fresh script', async () => {
