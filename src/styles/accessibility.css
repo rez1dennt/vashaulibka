@@ -600,26 +600,10 @@ html[data-accessibility-enabled="true"][data-accessibility-scale="200"][data-acc
     padding-block: var(--accessibility-header-row-gap);
   }
 
-  html[data-accessibility-enabled="true"] .brand {
-    gap: var(--accessibility-header-brand-gap);
-  }
-
-  html[data-accessibility-enabled="true"] .brand img {
-    inline-size: var(--accessibility-header-mark-size);
-    block-size: var(--accessibility-header-mark-size);
-  }
-
-  html[data-accessibility-enabled="true"] .brand__wordmark {
-    inline-size: var(--accessibility-header-wordmark-inline-size);
-    flex: none;
-    gap: var(--accessibility-header-brand-gap);
-    padding-block-end: var(--accessibility-header-brand-gap);
-    font-size: var(--accessibility-header-wordmark-font-size);
-  }
-
-  html[data-accessibility-enabled="true"] .brand__smile {
-    inline-size: var(--accessibility-header-wordmark-inline-size);
-    block-size: var(--accessibility-header-smile-block-size);
+  html[data-accessibility-enabled="true"] .brand__legal-name {
+    min-inline-size: var(--space-0);
+    max-inline-size: 100%;
+    overflow-wrap: anywhere;
   }
 
   html[data-accessibility-enabled="true"] .site-search {

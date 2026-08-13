@@ -234,6 +234,9 @@ describe('patient and legal page manifest', () => {
     expect(privacy).toContain('book-app.32top.ru');
     expect(privacy).toMatch(/фамили.*имя.*отчеств.*телефон/i);
     expect(privacy).toMatch(/врач.*дат.*врем/i);
+    expect(privacy).toMatch(/сервисн.*SMS.*запис.*дат.*врем.*назван.*клиник/i);
+    expect(privacy).toMatch(/сайт.*не.*формир.*не.*отправ.*SMS/i);
+    expect(privacy).not.toContain('Здравствуйте, {Имя пациента}');
     expect(privacy).toMatch(/только.*разрешен|явн.*выбор/i);
     expect(privacy).toMatch(/запис.*телефон/i);
     expect(privacy).not.toMatch(/МИС не подключена|нет подключ[её]нной МИС/i);
@@ -313,7 +316,7 @@ describe('patient and legal page manifest', () => {
       expect(document.querySelector(`a[href="${phone.href}"]`)).not.toBeNull();
     }
 
-    expect(text).toContain('Редакция от 12 августа 2026 года');
+    expect(text).toContain('Редакция от 13 августа 2026 года');
     expect(text).toMatch(/МИС 32top.*явн.*разреш|явн.*разреш.*МИС 32top/i);
     expect(text).toMatch(/IP-адрес.*дат.*врем.*запрос.*адрес.*страниц.*браузер.*устройств/i);
     expect(text).toMatch(/биометрическ.*не.*собира/i);

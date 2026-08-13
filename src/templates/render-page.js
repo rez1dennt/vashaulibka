@@ -18,7 +18,7 @@ export function renderPage(page) {
   const schema = JSON.stringify({
     '@context': 'https://schema.org',
     '@type': 'Dentist',
-    name: CLINIC.name,
+    name: CLINIC.shortLegalName,
     legalName: CLINIC.legalName,
     address: {
       '@type': 'PostalAddress',
@@ -56,9 +56,9 @@ export function renderPage(page) {
   return [
     '<!doctype html><html class="no-js" lang="ru"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">',
     robots,
-    `<title>${esc(page.title)} — ${esc(CLINIC.name)}</title><meta name="description" content="${esc(page.description)}">`,
+    `<title>${esc(page.title)} — ${esc(CLINIC.shortLegalName)}</title><meta name="description" content="${esc(page.description)}">`,
     `<meta property="og:type" content="website"><meta property="og:title" content="${esc(page.title)}"><meta property="og:description" content="${esc(page.description)}">`,
-    `<link rel="icon" href="assets/icons/favicon.svg" type="image/svg+xml">${renderAccessibilityBootstrap()}<link rel="stylesheet" href="/src/styles/main.css">`,
+    `${renderAccessibilityBootstrap()}<link rel="stylesheet" href="/src/styles/main.css">`,
     `<script type="application/ld+json">${schema}</script></head><body data-page="${esc(page.file)}">`,
     '<a class="skip-link" href="#main-content">К основному содержимому</a>',
     renderHeader(page.file),

@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { JSDOM } from 'jsdom';
 import { PAGES } from '../../src/content/page-manifest.js';
+import { CLINIC } from '../../src/data/clinic.js';
 import { renderPage } from '../../src/templates/render-page.js';
 
 const page = {
@@ -16,6 +17,15 @@ const page = {
 const HERO_VISUALIZATION_LABEL = 'Визуализация интерьера';
 
 describe('renderPage', () => {
+  it('uses only the official legal identity and no unsupported favicon', () => {
+    const html = renderPage(PAGES.find((publicPage) => publicPage.file === 'index.html'));
+
+    expect(html).toContain(`<title>Стоматологическая клиника в Белгороде — ${CLINIC.shortLegalName}</title>`);
+    expect(html).toContain(`"name":"${CLINIC.shortLegalName}"`);
+    expect(html).not.toContain('assets/icons/favicon.svg');
+    expect(html).not.toContain('assets/icons/logo.svg');
+  });
+
   it('renders one accessibility toolbar and toggle on every page', () => {
     for (const publicPage of PAGES) {
       const document = new JSDOM(renderPage(publicPage)).window.document;

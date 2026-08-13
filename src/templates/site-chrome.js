@@ -52,7 +52,7 @@ export function renderHeader(activeFile) {
     renderAccessibilityPanel(),
     renderAccessibilitySettingsDialog(),
     '<div class="brand-row"><div class="header-shell brand-row__inner">',
-    `<a class="brand" href="index.html" aria-label="${escapeHtml(CLINIC.name)}, главная"><img src="assets/icons/logo.svg" alt="" width="56" height="56"><span class="brand__wordmark"><span class="brand__prefix">Ваша</span><span class="brand__accent">улыбка</span><svg class="brand__smile" viewBox="0 0 64 8" aria-hidden="true" focusable="false"><path d="M2 2c16 6 44 6 60 0"/></svg></span></a>`,
+    `<a class="brand" href="index.html" aria-label="${escapeHtml(CLINIC.shortLegalName)}, главная"><span class="brand__legal-name">${escapeHtml(CLINIC.shortLegalName)}</span></a>`,
     renderSiteSearch(),
     `<div class="brand-row__actions"><div class="brand-phone-group">${phoneLinks}</div><a class="button button-primary header-appointment" href="${primaryPhone.href}" data-appointment-open>${renderIcon('calendar', 'button-icon')}Запись на приём</a></div>`,
     '<button class="menu-toggle" type="button" aria-expanded="false" aria-controls="main-menu"><span class="menu-toggle__icon" aria-hidden="true"></span><span class="sr-only" data-menu-toggle-label>Открыть меню</span></button>',
@@ -80,12 +80,12 @@ export function renderFooter() {
   return [
     '<footer class="site-footer">',
     '<div class="container footer-grid">',
-    `<section class="footer-brand"><h2>${escapeHtml(CLINIC.name)}</h2><p>Стоматологическая помощь в пределах действующей лицензии.</p><p>Лицензия ${escapeHtml(LICENSE.number)}<br>ОГРН ${escapeHtml(CLINIC.ogrn)}</p></section>`,
+    `<section class="footer-brand"><h2>${escapeHtml(CLINIC.shortLegalName)}</h2><p>Стоматологическая помощь в пределах действующей лицензии.</p><p>Лицензия ${escapeHtml(LICENSE.number)}<br>ОГРН ${escapeHtml(CLINIC.ogrn)}</p></section>`,
     `<section><h2>Навигация</h2>${navigationLinks}</section>`,
     `<section><h2>Пациентам</h2>${patientLinks}</section>`,
     `<section class="footer-contacts"><h2>Контакты</h2><p>${renderIcon('pin', 'footer-icon')}${escapeHtml(CLINIC.activityAddress)}</p>${phoneLinks}<a href="${CONTACTS.emailHref}">${renderIcon('mail', 'footer-icon')}${escapeHtml(CONTACTS.email)}</a><p>${renderIcon('clock', 'footer-icon')}${escapeHtml(HOURS.weekdays.label)}: ${escapeHtml(HOURS.weekdays.value)}<br>${escapeHtml(HOURS.saturday.label)}: ${escapeHtml(HOURS.saturday.value)}<br>${escapeHtml(HOURS.sunday.label)}: ${escapeHtml(HOURS.sunday.value)}</p><button class="button button-secondary" type="button" data-appointment-open>Запись на приём</button></section>`,
     '</div>',
-    `<div class="container footer-bottom"><span>© 2026 ${escapeHtml(CLINIC.name)}</span><div class="footer-bottom__links"><a href="privacy.html">Политика конфиденциальности</a><a href="cookies.html">Cookies</a><a href="patients.html">Карта сайта</a><button type="button" data-cookie-settings>Настройки cookies</button></div></div>`,
+    `<div class="container footer-bottom"><span>© 2026 ${escapeHtml(CLINIC.shortLegalName)}</span><div class="footer-bottom__links"><a href="privacy.html">Политика конфиденциальности</a><a href="cookies.html">Cookies</a><a href="patients.html">Карта сайта</a><button type="button" data-cookie-settings>Настройки cookies</button></div></div>`,
     '</footer>',
   ].join('');
 }

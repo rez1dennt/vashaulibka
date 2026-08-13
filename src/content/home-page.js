@@ -126,7 +126,7 @@ export const HOME_PAGE = Object.freeze({
   file: 'index.html',
   title: 'Стоматологическая клиника в Белгороде',
   description: 'ООО «Стоматология Ваша улыбка»: лицензированная стоматологическая помощь в Белгороде.',
-  heading: 'Стоматология Ваша улыбка',
+  heading: CLINIC.shortLegalName,
   lead: 'Стоматологическая помощь в Белгороде в пределах действующей медицинской лицензии.',
   heroImage: 'home',
   heroVariant: 'home',

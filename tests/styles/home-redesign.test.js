@@ -43,14 +43,10 @@ describe('premium light visual contract', () => {
     expect(layout).toMatch(/\.menu-toggle__icon::after\s*{[^}]*translateY\(var\(--menu-toggle-line-offset\)\)/s);
   });
 
-  it('keeps the logo and short clinic name on every viewport', () => {
-    expect(layout).toMatch(/\.brand img\s*{[^}]*display:\s*block/s);
-    expect(layout).toMatch(/\.brand__wordmark\s*{[^}]*font-family:\s*var\(--font-heading\)/s);
-    expect(layout).toMatch(/\.brand__prefix\s*{[^}]*color:\s*var\(--color-text\)/s);
-    expect(layout).toMatch(/\.brand__accent\s*{[^}]*color:\s*var\(--color-primary-strong\)[^}]*font-style:\s*italic/s);
-    expect(layout).toMatch(/\.brand__smile\s*{[^}]*color:\s*var\(--color-primary-strong\)/s);
-    expect(layout).not.toContain('.brand__full-name');
-    expect(layout).not.toMatch(/@media\s*\(min-width:\s*75rem\)[\s\S]*?\.brand__wordmark\s*{[^}]*display:\s*none/s);
+  it('uses a restrained text-only legal identity on every viewport', () => {
+    expect(layout).toMatch(/\.brand__legal-name\s*{[^}]*font-family:\s*var\(--font-body\)[^}]*font-weight:\s*var\(--text-heading-weight\)[^}]*overflow-wrap:\s*anywhere/s);
+    expect(layout).not.toMatch(/\.brand\s+img|\.brand__wordmark|\.brand__prefix|\.brand__accent|\.brand__smile/s);
+    expect(layout).not.toMatch(/@media\s*\(min-width:\s*75rem\)[\s\S]*?\.brand__legal-name\s*{[^}]*display:\s*none/s);
   });
 
   it('uses one icon-and-text grid for homepage contacts', () => {

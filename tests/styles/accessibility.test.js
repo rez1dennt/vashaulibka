@@ -141,7 +141,7 @@ describe('responsive accessibility visual system', () => {
 
     expect(accessibilityCss).toMatch(/@media\s*\(max-width:\s*48rem\)[\s\S]*?html\[data-accessibility-enabled="true"\]\s+\.site-header\s+\.header-shell\s*\{[^}]*width:\s*min\(calc\(100%\s*-\s*\(var\(--accessibility-header-inline-gutter\)\s*\*\s*2\)\),\s*var\(--header-container-max\)\)/s);
     expect(accessibilityCss).toMatch(/@media\s*\(max-width:\s*48rem\)[\s\S]*?html\[data-accessibility-enabled="true"\]\s+\.brand-row__inner\s*\{[^}]*grid-template-columns:\s*minmax\(var\(--space-0\),\s*1fr\)\s+repeat\(2,\s*var\(--accessibility-header-control-size\)\)[^}]*gap:\s*var\(--accessibility-header-row-gap\)/s);
-    expect(accessibilityCss).toMatch(/html\[data-accessibility-enabled="true"\]\s+\.brand__wordmark\s*\{[^}]*inline-size:\s*var\(--accessibility-header-wordmark-inline-size\)[^}]*font-size:\s*var\(--accessibility-header-wordmark-font-size\)/s);
+    expect(accessibilityCss).toMatch(/html\[data-accessibility-enabled="true"\]\s+\.brand__legal-name\s*\{[^}]*min-inline-size:\s*var\(--space-0\)[^}]*max-inline-size:\s*100%[^}]*overflow-wrap:\s*anywhere/s);
     expect(accessibilityCss).toMatch(/html\[data-accessibility-enabled="true"\]\s+:where\(\.site-search__toggle, \.menu-toggle\)\s*\{[^}]*inline-size:\s*var\(--accessibility-header-control-size\)[^}]*block-size:\s*var\(--accessibility-header-control-size\)/s);
     expect(accessibilityCss).toMatch(/html\[data-accessibility-enabled="true"\]\s+\.site-search__field\s*\{[^}]*grid-template-columns:\s*var\(--accessibility-header-icon-size\)\s+minmax\(var\(--space-0\),\s*1fr\)\s+repeat\(2,\s*var\(--accessibility-header-control-size\)\)/s);
     expect(accessibilityCss).not.toMatch(/@media\s*\(max-width:\s*30rem\)/);

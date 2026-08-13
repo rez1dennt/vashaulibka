@@ -114,7 +114,6 @@ body {
   min-inline-size: 0;
   display: inline-flex;
   align-items: center;
-  gap: var(--space-3);
   color: var(--color-text);
   line-height: var(--brand-line-height);
   text-decoration: none;
@@ -124,52 +123,13 @@ body {
   color: var(--color-primary-strong);
 }
 
-.brand img {
-  display: block;
-  inline-size: var(--brand-mark-size);
-  block-size: var(--brand-mark-size);
-  flex: none;
-}
-
-.brand__wordmark {
-  position: relative;
+.brand__legal-name {
   min-inline-size: var(--space-0);
-  display: inline-flex;
-  align-items: baseline;
-  gap: var(--space-1);
-  padding-block-end: var(--space-1);
-  font-family: var(--font-heading);
-  font-size: var(--text-lead-size);
+  max-inline-size: 100%;
+  font-family: var(--font-body);
+  font-size: var(--text-small-size);
   font-weight: var(--text-heading-weight);
-  white-space: nowrap;
-}
-
-.brand__prefix {
-  color: var(--color-text);
-}
-
-.brand__accent {
-  color: var(--color-primary-strong);
-  font-style: italic;
-  font-weight: var(--brand-font-weight);
-}
-
-.brand__smile {
-  position: absolute;
-  inset-inline-end: var(--space-0);
-  inset-block-end: var(--space-0);
-  inline-size: calc(var(--icon-size) + var(--space-10));
-  block-size: var(--space-2);
-  overflow: visible;
-  color: var(--color-primary-strong);
-  pointer-events: none;
-}
-
-.brand__smile path {
-  fill: none;
-  stroke: currentColor;
-  stroke-width: var(--border-width);
-  stroke-linecap: round;
+  overflow-wrap: anywhere;
 }
 
 .brand-row__actions {

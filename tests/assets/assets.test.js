@@ -55,20 +55,8 @@ describe('original clinic visual assets', () => {
     expect(new Set(hashes).size).toBe(HERO_NAMES.length);
   });
 
-  it.each(['logo.svg', 'favicon.svg'])('provides safe square vector identity in %s', (name) => {
-    const file = `${ICON_ROOT}/${name}`;
-
-    expect(existsSync(file), `${file} should exist`).toBe(true);
-    const svg = readFileSync(file, 'utf8');
-    const viewBox = svg.match(/viewBox=["']([^"']+)["']/)?.[1].trim().split(/\s+/).map(Number);
-
-    expect(viewBox).toHaveLength(4);
-    expect(viewBox[2]).toBe(viewBox[3]);
-    expect(svg).toMatch(/<path\b/);
-    expect(svg).not.toMatch(/<(?:text|image|script)\b/i);
-    expect(svg).not.toMatch(/(?:href|src)\s*=\s*["'](?:https?:|data:|\/\/)/i);
-    expect(svg).not.toMatch(/url\(\s*["']?(?:https?:|data:|\/\/)/i);
-    expect(svg).not.toMatch(/\son[a-z]+\s*=/i);
+  it.each(['logo.svg', 'favicon.svg'])('does not publish an unsupported identity asset in %s', (name) => {
+    expect(existsSync(`${ICON_ROOT}/${name}`)).toBe(false);
   });
 
   it.each(HOME_DECORATIONS)('provides safe local editorial decoration in %s.svg', (name) => {

@@ -23,13 +23,9 @@ describe('premium light site chrome', () => {
     expect(document.querySelector('.utility-bar')?.nextElementSibling?.id).toBe('accessibility-panel');
     expect(document.querySelector('#accessibility-panel')?.nextElementSibling?.id).toBe('accessibility-settings-dialog');
     expect(document.querySelector('#accessibility-settings-dialog')?.nextElementSibling?.classList.contains('brand-row')).toBe(true);
-    expect(document.querySelector('.brand__wordmark')?.textContent).toContain('Ваша');
-    expect(document.querySelector('.brand__wordmark')?.textContent).toContain('улыбка');
-    expect(document.querySelector('.brand__prefix')?.textContent).toBe('Ваша');
-    expect(document.querySelector('.brand__accent')?.textContent).toBe('улыбка');
-    expect(document.querySelector('.brand__smile[aria-hidden="true"]')).not.toBeNull();
-    expect(document.querySelector('.brand img[src="assets/icons/logo.svg"]')).not.toBeNull();
-    expect(document.querySelector('.brand__full-name')).toBeNull();
+    expect(document.querySelector('.brand__legal-name')?.textContent).toBe(CLINIC.shortLegalName);
+    expect(document.querySelector('.brand')?.getAttribute('aria-label')).toBe(`${CLINIC.shortLegalName}, главная`);
+    expect(document.querySelector('.brand img, .brand svg, .brand__wordmark, .brand__smile')).toBeNull();
     expect(document.querySelector('.brand small')).toBeNull();
     expect(document.querySelector('[data-menu-backdrop]')).not.toBeNull();
     const toggle = document.querySelector('.menu-toggle[aria-controls="main-menu"]');
@@ -69,7 +65,7 @@ describe('premium light site chrome', () => {
 
     expect(columns).toHaveLength(4);
     expect(columns.map((column) => column.querySelector('h2')?.textContent)).toEqual([
-      CLINIC.name,
+      CLINIC.shortLegalName,
       'Навигация',
       'Пациентам',
       'Контакты',
