@@ -87,6 +87,38 @@ describe('generated local search index', () => {
     expect(matches[0].item.href).toBe('services.html#service-therapy');
   });
 
+  it.each([
+    ['как оплатить', 'payment.html'],
+    ['цена лечения', 'prices.html'],
+    ['врачи', 'specialists.html'],
+    ['лицензию', 'license.html'],
+    ['записаться на прием', 'contacts.html'],
+    ['записаться онлайн', 'contacts.html'],
+    ['онлайн запись', 'contacts.html'],
+    ['когда работаете', 'contacts.html'],
+    ['часы работы', 'contacts.html'],
+    ['номер телефона', 'contacts.html'],
+    ['как доехать', 'contacts.html'],
+    ['как пожаловаться', 'complaints.html'],
+    ['протезы', 'services.html#service-orthopedics'],
+  ])('resolves the patient phrasing %j to the intended published page', (query, expectedHref) => {
+    expect(searchItems(build().items, query)[0]?.item.href).toBe(expectedHref);
+  });
+
+  it.each([
+    ['лицензияя', 'license.html'],
+    ['кариез', 'services.html#service-therapy'],
+  ])('keeps a safe typo closest to its concrete title or reviewed keyword', (query, expectedHref) => {
+    expect(searchItems(build().items, query)[0]?.item.href).toBe(expectedHref);
+  });
+
+  it.each(['детский стоматолог', 'удалить зуб', 'имплантация']) (
+    'does not turn the unsupported request %j into a generic result',
+    (query) => {
+      expect(searchItems(build().items, query)).toEqual([]);
+    },
+  );
+
   it('rejects missing metadata and empty public fields', () => {
     expect(() => buildSearchIndex({
       pages: [{ file: 'unknown.html', heading: '', lead: '', body: '' }],

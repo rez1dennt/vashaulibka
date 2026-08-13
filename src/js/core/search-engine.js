@@ -1,29 +1,35 @@
+import {
+  analyzeSearchQuery,
+  normalizeSearchText,
+  tokenizeSearchText,
+} from './search-language.js';
+
+export { normalizeSearchText } from './search-language.js';
+
 const SCORE = Object.freeze({
-  exactTitle: 1000,
+  exactTitle: 4000,
+  exactReviewedPhrase: 1600,
   titlePhrase: 700,
   titleToken: 180,
-  keywordPhrase: 500,
+  keywordPhrase: 900,
   keywordToken: 140,
   summaryPhrase: 320,
   summaryToken: 90,
   contentPhrase: 160,
   contentToken: 40,
   fuzzyTitleOrKeyword: 24,
+  overview: 60,
+  partialContextPenalty: 260,
+  singleIntentOverview: 500,
+  contactIntent: 900,
 });
 
-export const normalizeSearchText = (value) => String(value ?? '')
-  .normalize('NFKC')
-  .toLocaleLowerCase('ru-RU')
-  .replaceAll('ё', 'е')
-  .replace(/[^a-zа-я0-9]+/giu, ' ')
-  .trim()
-  .replace(/\s+/g, ' ');
+const OPTIONAL_CONTEXT_TOKENS = new Set(['клиника', 'лечение', 'помощь', 'услуга']);
 
-export const tokenizeSearchQuery = (query) => [
-  ...new Set(normalizeSearchText(query).split(' ').filter(Boolean)),
-];
+export const tokenizeSearchQuery = (query) => analyzeSearchQuery(query).tokens;
 
-const tokenSet = (value) => new Set(normalizeSearchText(value).split(' ').filter(Boolean));
+const canonicalText = (value) => tokenizeSearchText(value).join(' ');
+const tokenSet = (value) => new Set(tokenizeSearchText(value));
 
 const hasTokenOrPrefix = (tokens, queryToken) => [...tokens]
   .some((candidate) => candidate === queryToken || candidate.startsWith(queryToken));
@@ -68,8 +74,10 @@ const isWithinOneEdit = (left, right) => {
   return true;
 };
 
-const fieldScore = (field, tokens, phrase, phraseScore, tokenScore) => {
-  let score = phrase && field.includes(phrase) ? phraseScore : 0;
+const fieldScore = (field, tokens, phrase, phraseScore, tokenScore, rawField = '', rawPhrase = '') => {
+  let score = (phrase && field.includes(phrase)) || (rawPhrase && rawField.includes(rawPhrase))
+    ? phraseScore
+    : 0;
   for (const token of tokens) {
     if (field.split(' ').includes(token)) score += tokenScore;
   }
@@ -91,15 +99,19 @@ const makeSnippet = (item, queryTokens) => {
 };
 
 export function searchItems(items, query, { limit = 8 } = {}) {
-  const phrase = normalizeSearchText(query);
-  if (phrase.length < 2) return [];
-  const queryTokens = tokenizeSearchQuery(phrase);
+  const analyzed = analyzeSearchQuery(query);
+  if (analyzed.normalized.replace(/\s+/g, '').length < 2 || !analyzed.tokens.length) return [];
+  const { phrase, tokens: queryTokens } = analyzed;
 
   const matches = items.flatMap((item, order) => {
-    const title = normalizeSearchText(item.title);
-    const keywords = normalizeSearchText((item.keywords ?? []).join(' '));
-    const summary = normalizeSearchText(item.summary);
-    const content = normalizeSearchText(item.content);
+    const rawTitle = normalizeSearchText(item.title);
+    const rawKeywords = normalizeSearchText((item.keywords ?? []).join(' '));
+    const rawSummary = normalizeSearchText(item.summary);
+    const rawContent = normalizeSearchText(item.content);
+    const title = canonicalText(item.title);
+    const keywords = canonicalText((item.keywords ?? []).join(' '));
+    const summary = canonicalText(item.summary);
+    const content = canonicalText(item.content);
     const titleTokens = tokenSet(title);
     const keywordTokens = tokenSet(keywords);
     const summaryTokens = tokenSet(summary);
@@ -110,25 +122,36 @@ export function searchItems(items, query, { limit = 8 } = {}) {
         || hasTokenOrPrefix(keywordTokens, token)
         || hasTokenOrPrefix(summaryTokens, token)
         || hasTokenOrPrefix(contentTokens, token);
-      const fuzzy = token.length >= 4 && [...titleTokens, ...keywordTokens]
+      const fuzzyTitle = token.length >= 4 && [...titleTokens]
         .some((candidate) => isWithinOneEdit(token, candidate));
-      return { token, literal, fuzzy };
+      const fuzzyKeyword = token.length >= 4 && [...keywordTokens]
+        .some((candidate) => isWithinOneEdit(token, candidate));
+      return { token, literal, fuzzy: fuzzyTitle || fuzzyKeyword, fuzzyTitle };
     });
 
-    if (tokenMatches.some(({ literal, fuzzy }) => !literal && !fuzzy)) return [];
+    const unmatched = tokenMatches.filter(({ literal, fuzzy }) => !literal && !fuzzy);
+    const allowsContextOnlyGap = unmatched.length > 0
+      && unmatched.every(({ token }) => OPTIONAL_CONTEXT_TOKENS.has(token));
+    if (unmatched.length && !allowsContextOnlyGap) return [];
 
     let score = title === phrase ? SCORE.exactTitle : 0;
-    score += fieldScore(title, queryTokens, phrase, SCORE.titlePhrase, SCORE.titleToken);
-    score += fieldScore(keywords, queryTokens, phrase, SCORE.keywordPhrase, SCORE.keywordToken);
-    score += fieldScore(summary, queryTokens, phrase, SCORE.summaryPhrase, SCORE.summaryToken);
-    score += fieldScore(content, queryTokens, phrase, SCORE.contentPhrase, SCORE.contentToken);
+    if (analyzed.normalized && rawKeywords.includes(analyzed.normalized)) score += SCORE.exactReviewedPhrase;
+    score += fieldScore(title, queryTokens, phrase, SCORE.titlePhrase, SCORE.titleToken, rawTitle, analyzed.normalized);
+    score += fieldScore(keywords, queryTokens, phrase, SCORE.keywordPhrase, SCORE.keywordToken, rawKeywords, analyzed.normalized);
+    score += fieldScore(summary, queryTokens, phrase, SCORE.summaryPhrase, SCORE.summaryToken, rawSummary, analyzed.normalized);
+    score += fieldScore(content, queryTokens, phrase, SCORE.contentPhrase, SCORE.contentToken, rawContent, analyzed.normalized);
     score += tokenMatches.filter(({ literal, fuzzy }) => !literal && fuzzy).length * SCORE.fuzzyTitleOrKeyword;
+    score += tokenMatches.filter(({ literal, fuzzyTitle }) => !literal && fuzzyTitle).length * SCORE.titleToken;
+    score += item.href.includes('#') ? 0 : SCORE.overview;
+    if (item.href === 'contacts.html' && queryTokens.includes('запись')) score += SCORE.contactIntent;
+    if (queryTokens.length === 1 && item.id.startsWith('page-')) score += SCORE.singleIntentOverview;
+    score -= unmatched.length * SCORE.partialContextPenalty;
 
     return [{
       item,
       score,
       snippet: makeSnippet(item, queryTokens),
-      matchedTerms: queryTokens,
+      matchedTerms: analyzed.variants,
       matchedTokenCount: tokenMatches.length,
       order,
     }];

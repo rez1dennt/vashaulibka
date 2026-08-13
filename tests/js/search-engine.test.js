@@ -88,4 +88,15 @@ describe('Russian local search engine', () => {
     expect(match.snippet).toBe('Выписка из реестра лицензий');
     expect(match.snippet).not.toContain('<mark>');
   });
+
+  it('understands reviewed Russian word forms and conversational filler', () => {
+    expect(searchItems(items, 'как можно посмотреть цены')[0].item.id).toBe('prices');
+    expect(searchItems(items, 'лечить зуб')[0].item.id).toBe('therapy');
+  });
+
+  it('allows safe partial coverage for price intent but not unsupported medical requests', () => {
+    expect(searchItems(items, 'цена лечения')[0].item.id).toBe('prices');
+    expect(searchItems(items, 'детский стоматолог')).toEqual([]);
+    expect(searchItems(items, 'удалить зуб')).toEqual([]);
+  });
 });

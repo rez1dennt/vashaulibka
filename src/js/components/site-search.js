@@ -10,6 +10,12 @@ const QUICK_LINKS = Object.freeze([
   ['Карта сайта', 'patients.html'],
 ]);
 
+const EMPTY_LINKS = Object.freeze([
+  ['Услуги', 'services.html'],
+  ['Цены', 'prices.html'],
+  ['Контакты', 'contacts.html'],
+]);
+
 const isVisible = (element) => element && !element.hidden;
 const isCompactSearch = () => globalThis.matchMedia?.('(max-width: 74.999rem)').matches ?? false;
 
@@ -27,6 +33,31 @@ const createQuickLinks = (container) => {
     list.append(link);
   }
   container.append(heading, list);
+};
+
+const createEmptyLinks = (container) => {
+  container.replaceChildren();
+  const heading = document.createElement('p');
+  heading.className = 'site-search__quick-heading';
+  heading.textContent = 'Попробуйте разделы';
+  const list = document.createElement('div');
+  list.className = 'site-search__quick-links';
+  for (const [label, href] of EMPTY_LINKS) {
+    const link = document.createElement('a');
+    link.href = href;
+    link.textContent = label;
+    list.append(link);
+  }
+  container.append(heading, list);
+};
+
+const resultCountLabel = (count) => {
+  const lastTwo = count % 100;
+  const last = count % 10;
+  if (lastTwo >= 11 && lastTwo <= 14) return `Найдено ${count} результатов`;
+  if (last === 1) return `Найден ${count} результат`;
+  if (last >= 2 && last <= 4) return `Найдено ${count} результата`;
+  return `Найдено ${count} результатов`;
 };
 
 const appendHighlighted = (container, value, terms) => {
@@ -155,7 +186,14 @@ export function initSiteSearch({
     }
     const matches = searchItems(indexItems, query, { limit: 8 });
     renderMatches(matches);
-    setStatus(matches.length ? `Найдено: ${matches.length}` : 'Ничего не найдено. Попробуйте изменить запрос.');
+    if (matches.length) {
+      content.hidden = true;
+      setStatus(resultCountLabel(matches.length));
+      return;
+    }
+    createEmptyLinks(content);
+    content.hidden = false;
+    setStatus('Ничего не найдено. Проверьте запрос или откройте нужный раздел.');
   };
 
   const ensureIndex = () => {

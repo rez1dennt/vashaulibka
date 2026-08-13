@@ -215,4 +215,42 @@ describe('inline site search dropdown', () => {
 
     expect(document.querySelector('[data-search-status]').textContent).toContain(expected);
   });
+
+  it.each([
+    [1, 'Найден 1 результат'],
+    [2, 'Найдено 2 результата'],
+    [5, 'Найдено 5 результатов'],
+  ])('announces Russian result count grammar for %i matches', async (count, expected) => {
+    document.body.innerHTML = markup;
+    const matches = Array.from({ length: count }, (_, index) => ({
+      ...item,
+      id: `license-${index}`,
+      href: `license-${index}.html`,
+    }));
+    initSiteSearch({ fetchImpl: successfulFetch(matches) });
+    document.querySelector('[data-search-toggle]').click();
+    await settle();
+    const input = document.querySelector('[data-search-input]');
+    input.value = 'лицензия';
+    input.dispatchEvent(new Event('input', { bubbles: true }));
+
+    expect(document.querySelector('[data-search-status]').textContent).toBe(expected);
+  });
+
+  it('offers safe recovery links after a completed query has no matches', async () => {
+    document.body.innerHTML = markup;
+    initSiteSearch({ fetchImpl: successfulFetch([]) });
+    document.querySelector('[data-search-toggle]').click();
+    await settle();
+    const input = document.querySelector('[data-search-input]');
+    input.value = 'детский стоматолог';
+    input.dispatchEvent(new Event('input', { bubbles: true }));
+
+    const content = document.querySelector('[data-search-content]');
+    expect(content.hidden).toBe(false);
+    expect(content.textContent).toContain('Попробуйте разделы');
+    expect(content.querySelector('a[href="services.html"]')).not.toBeNull();
+    expect(content.querySelector('a[href="prices.html"]')).not.toBeNull();
+    expect(content.querySelector('a[href="contacts.html"]')).not.toBeNull();
+  });
 });
