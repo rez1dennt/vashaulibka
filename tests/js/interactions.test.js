@@ -70,6 +70,29 @@ describe('progressive interactions', () => {
     document.querySelector('[data-dialog-close]').click();
   });
 
+  it('opens visible online-booking settings from the appointment dialog', () => {
+    document.body.innerHTML = `
+      <button data-appointment-open>Запись</button>
+      <div id="appointment-dialog" role="dialog" hidden>
+        <button data-dialog-close>Закрыть</button>
+        <button data-booking-consent-open data-cookie-settings>Настроить онлайн-запись</button>
+      </div>
+      <div data-cookie-banner hidden>
+        <input type="checkbox" data-cookie-online-booking>
+        <button data-cookie-reject>Нет</button><button data-cookie-save>Сохранить</button>
+      </div>`;
+    const storage = { get: vi.fn(() => JSON.stringify({ version: 2, onlineBooking: false })), set: vi.fn() };
+    initDialog({ provider: createAppointmentProvider(), storage });
+    initCookieConsent({ storage });
+
+    document.querySelector('[data-appointment-open]').click();
+    document.querySelector('[data-booking-consent-open]').click();
+
+    expect(document.querySelector('#appointment-dialog').hidden).toBe(true);
+    expect(document.querySelector('[data-cookie-banner]').hidden).toBe(false);
+    expect(document.body.classList.contains('is-locked')).toBe(false);
+  });
+
   it('closes the clinic dialog after the MIS modal opens successfully', async () => {
     document.body.innerHTML = '<button data-appointment-open>Запись</button><div id="appointment-dialog" role="dialog" hidden><button data-dialog-close>Закрыть</button><button data-booking-online>Записаться онлайн</button><p data-booking-status></p><div data-booking-error hidden></div></div>';
     const provider = { open: vi.fn(() => Promise.resolve({ mode: 'online', state: 'ready' })) };

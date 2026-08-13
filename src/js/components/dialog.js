@@ -75,6 +75,7 @@ export function initDialog({ provider, storage = safeStorage } = {}) {
   closer?.addEventListener('click', close);
   backdrop?.addEventListener('click', close);
   onlineButton?.addEventListener('click', openOnline);
+  consentButton?.addEventListener('click', () => close({ restoreFocus: false }));
   dialog.addEventListener('keydown', trap);
   document.addEventListener('keydown', (event) => {
     if (event.key !== 'Escape' || !isOpen || !isTopModal(dialog)) return;
