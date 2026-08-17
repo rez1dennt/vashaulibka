@@ -3,6 +3,7 @@ import { describe, expect, it } from 'vitest';
 import { CLINIC, CONTACTS, HOURS, LICENSE } from '../../src/data/clinic.js';
 import { SERVICES } from '../../src/data/services.js';
 import { STAFF } from '../../src/data/staff.js';
+import { PRICE_LIST } from '../../src/data/documents.js';
 import { HOME_PAGE } from '../../src/content/home-page.js';
 import { renderPage } from '../../src/templates/render-page.js';
 
@@ -49,11 +50,14 @@ describe('premium light homepage', () => {
     ]);
   });
 
-  it('keeps price and appointment publishing controlled', () => {
+  it('publishes the approved price source without transcribing individual amounts', () => {
     const document = render();
+    const pricePanel = document.querySelector('.home-price-panel');
 
-    expect(document.querySelector('.home-price-panel')?.textContent).toContain('Стоимость уточняется у администратора');
-    expect(document.querySelector('.home-price-panel')?.textContent).not.toMatch(/\d[\d\s]*\s(?:₽|руб)/i);
+    expect(pricePanel?.textContent).toContain(PRICE_LIST.approvedLabel);
+    expect(pricePanel?.textContent).toContain(`${PRICE_LIST.pageCount} страниц`);
+    expect(pricePanel?.textContent).not.toContain('Прейскурант готовится к публикации');
+    expect(pricePanel?.textContent).not.toMatch(/\d[\d\s]*\s(?:₽|руб)/i);
     expect(document.querySelector('.home-contact form, .home-contact input')).toBeNull();
     expect(document.querySelector('.home-contact [data-appointment-open]')?.getAttribute('href')).toBe(CONTACTS.phones[0].href);
   });
