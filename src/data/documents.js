@@ -1,3 +1,5 @@
+import { REGULATORY_DOCUMENTS } from './regulatory-documents.js';
+
 const freezeItem = (item) => Object.freeze(item);
 const freezeGroup = ({ items, ...group }) => Object.freeze({
   ...group,
@@ -25,15 +27,27 @@ export const PRICE_LIST = Object.freeze({
   ]),
 });
 
+const regulationsById = new Map(REGULATORY_DOCUMENTS.map((document) => [document.id, document]));
+const localRegulation = (id) => {
+  const document = regulationsById.get(id);
+  if (!document) throw new Error(`Unknown regulatory document: ${id}`);
+  return {
+    href: document.href,
+    officialHref: document.officialHref,
+    localPdf: true,
+    download: true,
+  };
+};
+
 export const OFFICIAL_DOCUMENT_URLS = Object.freeze({
-  order118n: 'https://publication.pravo.gov.ru/document/0001202504110006',
-  paidServices736: 'https://government.ru/docs/all/147526/',
-  paidServices659: 'https://publication.pravo.gov.ru/document/0001202606010083',
-  stateGuarantees2188: 'https://government.ru/docs/all/163114/',
-  stateGuarantees1940: 'https://government.ru/docs/all/157366/',
-  healthLaw323: 'https://government.ru/docs/all/100186/',
-  nomenclature804n: 'https://publication.pravo.gov.ru/Document/View/0001201711080036',
-  medicines890: 'https://minzdrav.gov.ru/documents/8713-postanovlenie-pravitelstva-rossiyskoy-federatsii-ot-30-iyulya-1994-g-890-o-gosudarstvennoy-podderzhke-razvitiya-meditsinskoy-promyshlennosti-i-uluchshenii-obespecheniya-naseleniya-i-uchrezhdeniy-zdravoohraneniya-lekarstvennymi-sredstvami-i-izdeliyami-meditsinskogo-naznacheniya',
+  order118n: regulationsById.get('order-118n').officialHref,
+  paidServices736: regulationsById.get('paid-services-736').officialHref,
+  paidServices659: regulationsById.get('paid-services-659').officialHref,
+  stateGuarantees2188: regulationsById.get('state-guarantees-2188').officialHref,
+  stateGuarantees1940: regulationsById.get('state-guarantees-1940').officialHref,
+  healthLaw323: regulationsById.get('health-law-323').officialHref,
+  nomenclature804n: regulationsById.get('nomenclature-804n').officialHref,
+  medicines890: regulationsById.get('medicines-890').officialHref,
   legalInformation: 'https://pravo.gov.ru/',
   clinicalRecommendations: 'https://cr.minzdrav.gov.ru/',
 });
@@ -122,41 +136,37 @@ export const DOCUMENT_GROUPS = Object.freeze([
         id: 'paid-services-736',
         title: 'Постановление Правительства РФ от 11.05.2023 № 736',
         kind: 'Официальная публикация',
-        href: OFFICIAL_DOCUMENT_URLS.paidServices736,
+        ...localRegulation('paid-services-736'),
         meta: 'Правила предоставления платных медицинских услуг',
         status: 'Действует до 31.08.2026',
         statusTone: 'warning',
-        download: false,
       },
       {
         id: 'paid-services-659',
         title: 'Постановление Правительства РФ от 30.05.2026 № 659',
         kind: 'Официальная публикация',
-        href: OFFICIAL_DOCUMENT_URLS.paidServices659,
+        ...localRegulation('paid-services-659'),
         meta: 'Новые правила предоставления платных медицинских услуг',
         status: 'С 01.09.2026',
         statusTone: 'accent',
-        download: false,
       },
       {
         id: 'order-118n',
         title: 'Приказ Минздрава России от 13.03.2025 № 118н',
         kind: 'Официальная публикация',
-        href: OFFICIAL_DOCUMENT_URLS.order118n,
+        ...localRegulation('order-118n'),
         meta: 'Требования к информации на сайтах медицинских организаций',
         status: 'Действует',
         statusTone: 'success',
-        download: false,
       },
       {
         id: 'health-law-323',
         title: 'Федеральный закон от 21.11.2011 № 323-ФЗ',
         kind: 'Официальная публикация',
-        href: OFFICIAL_DOCUMENT_URLS.healthLaw323,
+        ...localRegulation('health-law-323'),
         meta: 'Основы охраны здоровья граждан',
         status: 'Официальная публикация',
         statusTone: 'neutral',
-        download: false,
       },
     ],
   }),
@@ -168,31 +178,28 @@ export const DOCUMENT_GROUPS = Object.freeze([
         id: 'state-guarantees-2188',
         title: 'Постановление Правительства РФ от 29.12.2025 № 2188',
         kind: 'Официальная публикация',
-        href: OFFICIAL_DOCUMENT_URLS.stateGuarantees2188,
+        ...localRegulation('state-guarantees-2188'),
         meta: 'Программа государственных гарантий на 2026 год и плановый период 2027–2028 годов',
         status: 'Действует',
         statusTone: 'success',
-        download: false,
       },
       {
         id: 'state-guarantees-1940',
         title: 'Постановление Правительства РФ от 27.12.2024 № 1940',
         kind: 'Официальная публикация',
-        href: OFFICIAL_DOCUMENT_URLS.stateGuarantees1940,
+        ...localRegulation('state-guarantees-1940'),
         meta: 'Программа государственных гарантий на 2025 год и плановый период 2026–2027 годов',
         status: 'Архив',
         statusTone: 'muted',
-        download: false,
       },
       {
         id: 'medicines-890',
         title: 'Постановление Правительства РФ от 30.07.1994 № 890',
         kind: 'Официальная публикация',
-        href: OFFICIAL_DOCUMENT_URLS.medicines890,
+        ...localRegulation('medicines-890'),
         meta: 'Лекарственное обеспечение отдельных категорий граждан',
         status: 'Официальный источник',
         statusTone: 'neutral',
-        download: false,
       },
     ],
   }),
@@ -204,11 +211,10 @@ export const DOCUMENT_GROUPS = Object.freeze([
         id: 'nomenclature-804n',
         title: 'Приказ Минздрава России от 13.10.2017 № 804н',
         kind: 'Официальная публикация',
-        href: OFFICIAL_DOCUMENT_URLS.nomenclature804n,
+        ...localRegulation('nomenclature-804n'),
         meta: 'Номенклатура медицинских услуг',
         status: 'Официальная публикация',
         statusTone: 'neutral',
-        download: false,
       },
       {
         id: 'clinical-recommendations',

@@ -4,6 +4,7 @@ import { DOCUMENTS_PAGE } from '../../src/content/documents-page.js';
 import { HOME_PAGE } from '../../src/content/home-page.js';
 import { PAGES } from '../../src/content/page-manifest.js';
 import { DOCUMENT_GROUPS } from '../../src/data/documents.js';
+import { REGULATORY_DOCUMENTS } from '../../src/data/regulatory-documents.js';
 import { renderFooter } from '../../src/templates/site-chrome.js';
 import { renderPage } from '../../src/templates/render-page.js';
 
@@ -35,7 +36,7 @@ describe('documents centre', () => {
     const document = new JSDOM(renderPage(DOCUMENTS_PAGE)).window.document;
     const localPdf = document.querySelector('#document-price-list-2026');
     const internalPage = document.querySelector('#document-payment');
-    const officialResource = document.querySelector('#document-paid-services-736');
+    const officialResource = document.querySelector('#document-clinical-recommendations');
 
     expect(localPdf?.querySelector('.button')?.textContent).toContain('Открыть PDF');
     expect(localPdf?.querySelector('a[download]')?.textContent).toContain('Скачать PDF');
@@ -43,6 +44,19 @@ describe('documents centre', () => {
     expect(internalPage?.querySelector('.button')?.textContent).toBe('Открыть');
     expect(officialResource?.querySelectorAll('a')).toHaveLength(1);
     expect(officialResource?.querySelector('.button')?.textContent).toBe('Перейти к официальному ресурсу');
+  });
+
+  it('opens, downloads, and preserves the official source for every local regulation', () => {
+    const document = new JSDOM(renderPage(DOCUMENTS_PAGE)).window.document;
+    for (const regulation of REGULATORY_DOCUMENTS) {
+      const row = document.querySelector(`#document-${regulation.id}`);
+      expect(row?.querySelector(`a[href="${regulation.href}"]:not([download])`)?.textContent).toContain('Открыть PDF');
+      expect(row?.querySelector(`a[href="${regulation.href}"][download]`)?.textContent).toContain('Скачать PDF');
+      const official = row?.querySelector(`a[href="${regulation.officialHref}"]`);
+      expect(official?.textContent).toContain('Официальный источник');
+      expect(official?.getAttribute('target')).toBe('_blank');
+      expect(official?.getAttribute('rel')).toBe('noopener');
+    }
   });
 
   it('exposes the centre from the manifest, homepage and footer without crowding primary navigation', () => {

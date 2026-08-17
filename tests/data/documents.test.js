@@ -2,6 +2,7 @@ import { createHash } from 'node:crypto';
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { DOCUMENT_GROUPS, OFFICIAL_DOCUMENT_URLS, PRICE_LIST, PUBLIC_DOCUMENTS } from '../../src/data/documents.js';
+import { REGULATORY_DOCUMENTS } from '../../src/data/regulatory-documents.js';
 
 const sha256 = (path) => createHash('sha256').update(readFileSync(path)).digest('hex').toUpperCase();
 
@@ -37,6 +38,17 @@ describe('published clinic documents', () => {
     expect(OFFICIAL_DOCUMENT_URLS.stateGuarantees2188).toBe('https://government.ru/docs/all/163114/');
     expect(OFFICIAL_DOCUMENT_URLS.stateGuarantees1940).toBe('https://government.ru/docs/all/157366/');
     expect(OFFICIAL_DOCUMENT_URLS.healthLaw323).toBe('https://government.ru/docs/all/100186/');
+  });
+
+  it('connects every supplied regulation to its local PDF and official fallback', () => {
+    const documents = DOCUMENT_GROUPS.flatMap((group) => group.items);
+    for (const regulation of REGULATORY_DOCUMENTS) {
+      expect(documents.find(({ id }) => id === regulation.id)).toMatchObject({
+        href: regulation.href,
+        officialHref: regulation.officialHref,
+        localPdf: true,
+      });
+    }
   });
 
   it('keeps document groups and nested records immutable', () => {

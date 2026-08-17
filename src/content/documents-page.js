@@ -10,8 +10,12 @@ const escapeHtml = (value) => String(value).replace(/[&<>"']/g, (character) => (
 
 const renderDocumentActions = (item) => {
   if (item.localPdf) {
+    const officialAction = item.officialHref
+      ? `<a class="text-link" href="${escapeHtml(item.officialHref)}" target="_blank" rel="noopener">Официальный источник</a>`
+      : '';
     return `<a class="button button-secondary" href="${escapeHtml(item.href)}">Открыть PDF</a>
-      <a class="text-link" href="${escapeHtml(item.href)}" download>Скачать PDF</a>`;
+      <a class="text-link" href="${escapeHtml(item.href)}" download>Скачать PDF</a>
+      ${officialAction}`;
   }
   if (item.kind === 'Страница сайта') {
     return `<a class="button button-secondary" href="${escapeHtml(item.href)}">Открыть</a>`;
