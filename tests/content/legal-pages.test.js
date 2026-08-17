@@ -4,7 +4,7 @@ import { describe, expect, it } from 'vitest';
 import { LEGAL_PAGES } from '../../src/content/legal-pages.js';
 import { PAGES } from '../../src/content/page-manifest.js';
 import { CLINIC, CONTACTS, LICENSE } from '../../src/data/clinic.js';
-import { BENEFITS, GUARANTEES } from '../../src/data/legal.js';
+import { BENEFITS, GUARANTEES, OFFICIAL_SOURCES } from '../../src/data/legal.js';
 import { ONLINE_BOOKING } from '../../src/data/online-booking.js';
 import { renderPage } from '../../src/templates/render-page.js';
 
@@ -181,11 +181,11 @@ describe('patient and legal page manifest', () => {
 
     expect(text).toContain('До 31 августа 2026 года применяются Правила предоставления платных медицинских услуг, утверждённые постановлением Правительства РФ от 11 мая 2023 года № 736. С 1 сентября 2026 года применяются Правила, утверждённые постановлением Правительства РФ от 30 мая 2026 года № 659.');
     for (const href of [
-      'https://publication.pravo.gov.ru/document/0001202504110006',
-      'https://publication.pravo.gov.ru/document/0001202305120025',
-      'https://publication.pravo.gov.ru/document/0001202606010083',
-      'https://pravo.gov.ru/',
-      'https://cr.minzdrav.gov.ru/',
+      OFFICIAL_SOURCES.order118n,
+      OFFICIAL_SOURCES.paidServices736,
+      OFFICIAL_SOURCES.paidServices659,
+      OFFICIAL_SOURCES.legalInformation,
+      OFFICIAL_SOURCES.clinicalRecommendations,
     ]) {
       expect(document.querySelector(`a[href="${href}"]`), href).not.toBeNull();
     }

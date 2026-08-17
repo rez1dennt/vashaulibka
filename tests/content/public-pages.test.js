@@ -94,6 +94,8 @@ describe('public page manifest', () => {
     const specialistDocument = new JSDOM(renderPage(specialists)).window.document;
     const serviceDocument = new JSDOM(renderPage(services)).window.document;
 
+    expect(serviceDocument.querySelector('h1')?.textContent).toBe('Наши услуги');
+
     expect([...specialistDocument.querySelectorAll('[data-specialist-slide] .specialist-card__name')]
       .map((node) => node.textContent.trim())).toEqual(STAFF.map((person) => person.name));
     expect([...specialistDocument.querySelectorAll('[data-specialist-slide] .specialist-card__role')]

@@ -537,20 +537,20 @@ html[data-accessibility-enabled="true"][data-accessibility-scale="200"] .home-de
   max-inline-size: 100%;
 }
 
-html[data-accessibility-enabled="true"][data-accessibility-scale="200"] :where(.documents-directory, .documents-group, .document-item, .price-source, .price-source__card, .price-source__notice, .specialist-profiles, .specialist-profile) {
+html[data-accessibility-enabled="true"][data-accessibility-scale="200"] :where(.licensed-directions, .documents-directory, .documents-group, .document-item, .price-source, .price-source__card, .price-source__notice, .specialist-profiles, .specialist-profile) {
   min-inline-size: var(--space-0);
   inline-size: 100%;
   max-inline-size: 100%;
   overflow-wrap: anywhere;
 }
 
-html[data-accessibility-enabled="true"][data-accessibility-scale="200"] :where(.documents-categories, .documents-categories ul, .documents-categories li, .documents-categories a) {
+html[data-accessibility-enabled="true"][data-accessibility-scale="200"] :where(.licensed-directions, .licensed-directions ul, .licensed-directions li, .licensed-directions a, .documents-categories, .documents-categories ul, .documents-categories li, .documents-categories a) {
   min-inline-size: var(--space-0);
   max-inline-size: 100%;
   overflow-wrap: anywhere;
 }
 
-html[data-accessibility-enabled="true"][data-accessibility-scale="200"] :where(.documents-directory, .price-source, .specialist-profiles, .specialist-profile__facts) {
+html[data-accessibility-enabled="true"][data-accessibility-scale="200"] :where(.licensed-directions ul, .documents-directory, .documents-group__items, .price-source, .specialist-profiles, .specialist-profile__facts) {
   grid-template-columns: minmax(var(--space-0), 1fr);
 }
 

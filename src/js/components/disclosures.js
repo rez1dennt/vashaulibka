@@ -1,20 +1,32 @@
 export function initDisclosures() {
-  const requestedService = window.location.hash.match(/^#service-([a-z0-9-]+)$/)?.[1];
-  const serviceSlug = requestedService
-    && document.getElementById(`services-disclosure-${requestedService}`)
-    ? requestedService
-    : null;
-  document.querySelectorAll('[data-disclosure-button]').forEach((button, index) => {
+  const buttons = [...document.querySelectorAll('[data-disclosure-button]')];
+  const serviceFromFragment = () => {
+    const requestedService = window.location.hash.match(/^#service-([a-z0-9-]+)$/)?.[1];
+    return requestedService && document.getElementById(`services-disclosure-${requestedService}`)
+      ? requestedService
+      : null;
+  };
+  const setOpen = (button, open) => {
     const panel = document.getElementById(button.getAttribute('aria-controls'));
+    button.setAttribute('aria-expanded', String(open));
+    if (panel) panel.hidden = !open;
+  };
+  const activateService = (serviceSlug) => {
+    if (!serviceSlug) return;
+    buttons.forEach((button) => setOpen(button, button.id === `services-disclosure-${serviceSlug}`));
+  };
+  const serviceSlug = serviceFromFragment();
+
+  buttons.forEach((button, index) => {
     const matchesService = serviceSlug && button.id === `services-disclosure-${serviceSlug}`;
     const initiallyOpen = matchesService || (!serviceSlug && index === 0);
-    button.setAttribute('aria-expanded', String(initiallyOpen));
-    if (panel) panel.hidden = !initiallyOpen;
+    setOpen(button, initiallyOpen);
 
     button.addEventListener('click', () => {
       const open = button.getAttribute('aria-expanded') !== 'true';
-      button.setAttribute('aria-expanded', String(open));
-      if (panel) panel.hidden = !open;
+      setOpen(button, open);
     });
   });
+
+  window.addEventListener('hashchange', () => activateService(serviceFromFragment()));
 }

@@ -8,6 +8,17 @@ const escapeHtml = (value) => String(value).replace(/[&<>"']/g, (character) => (
   "'": '&#39;',
 }[character]));
 
+const renderDocumentActions = (item) => {
+  if (item.localPdf) {
+    return `<a class="button button-secondary" href="${escapeHtml(item.href)}">Открыть PDF</a>
+      <a class="text-link" href="${escapeHtml(item.href)}" download>Скачать PDF</a>`;
+  }
+  if (item.kind === 'Страница сайта') {
+    return `<a class="button button-secondary" href="${escapeHtml(item.href)}">Открыть</a>`;
+  }
+  return `<a class="button button-secondary" href="${escapeHtml(item.href)}" target="_blank" rel="noopener">Перейти к официальному ресурсу</a>`;
+};
+
 const renderDocumentItem = (item) => `
   <article class="document-item" id="document-${escapeHtml(item.id)}" data-document-item>
     <div class="document-item__copy">
@@ -16,8 +27,7 @@ const renderDocumentItem = (item) => `
       <p>${escapeHtml(item.meta)}</p>
     </div>
     <div class="document-item__actions">
-      <a class="button button-secondary" href="${escapeHtml(item.href)}">Открыть</a>
-${item.download ? `      <a class="text-link" href="${escapeHtml(item.href)}" download>Скачать PDF</a>` : ''}
+      ${renderDocumentActions(item)}
     </div>
   </article>`;
 

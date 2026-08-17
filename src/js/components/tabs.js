@@ -25,11 +25,18 @@ export function initTabs() {
       });
     });
 
+    const tabFromFragment = () => {
+      const serviceSlug = window.location.hash.match(/^#service-([a-z0-9-]+)$/)?.[1];
+      return serviceSlug
+        ? tabs.find((tab) => tab.id === `services-tab-${serviceSlug}`)
+        : null;
+    };
     const initialTab = tabs.find((tab) => tab.getAttribute('aria-selected') === 'true') || tabs[0];
-    const serviceSlug = window.location.hash.match(/^#service-([a-z0-9-]+)$/)?.[1];
-    const fragmentTab = serviceSlug
-      ? tabs.find((tab) => tab.id === `services-tab-${serviceSlug}`)
-      : null;
+    const fragmentTab = tabFromFragment();
     if (fragmentTab || initialTab) activate(fragmentTab || initialTab);
+    window.addEventListener('hashchange', () => {
+      const requestedTab = tabFromFragment();
+      if (requestedTab) activate(requestedTab);
+    });
   });
 }

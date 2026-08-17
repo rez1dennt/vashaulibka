@@ -31,6 +31,20 @@ describe('documents centre', () => {
     expect(document.body.textContent).not.toMatch(/образец договора/i);
   });
 
+  it('names local, internal, and external actions by their real destination', () => {
+    const document = new JSDOM(renderPage(DOCUMENTS_PAGE)).window.document;
+    const localPdf = document.querySelector('#document-price-list-2026');
+    const internalPage = document.querySelector('#document-payment');
+    const officialResource = document.querySelector('#document-paid-services-736');
+
+    expect(localPdf?.querySelector('.button')?.textContent).toContain('Открыть PDF');
+    expect(localPdf?.querySelector('a[download]')?.textContent).toContain('Скачать PDF');
+    expect(internalPage?.querySelectorAll('a')).toHaveLength(1);
+    expect(internalPage?.querySelector('.button')?.textContent).toBe('Открыть');
+    expect(officialResource?.querySelectorAll('a')).toHaveLength(1);
+    expect(officialResource?.querySelector('.button')?.textContent).toBe('Перейти к официальному ресурсу');
+  });
+
   it('exposes the centre from the manifest, homepage and footer without crowding primary navigation', () => {
     expect(PAGES.filter((page) => page === DOCUMENTS_PAGE)).toHaveLength(1);
     expect(HOME_PAGE.body).toContain('href="documents.html"');

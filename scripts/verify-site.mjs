@@ -211,6 +211,14 @@ export function verifyDirectory(directory, { pages = PAGES, origin } = {}) {
       return;
     }
 
+    if (kind === 'link' && resolvedReference.pathname.toLowerCase().endsWith('.pdf')) {
+      const signature = readFileSync(target).subarray(0, 4).toString('ascii');
+      if (signature !== '%PDF') {
+        add('link.pdf.invalid', `local PDF target has an invalid signature: ${reference}`, { file: fromFile, reference });
+        return;
+      }
+    }
+
     if (validateFragment && resolvedReference.fragment) {
       const targetDocument = documents.get(resolvedReference.pathname);
       if (!targetDocument?.getElementById(resolvedReference.fragment)) {

@@ -1,7 +1,7 @@
 import { createHash } from 'node:crypto';
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
-import { DOCUMENT_GROUPS, PRICE_LIST, PUBLIC_DOCUMENTS } from '../../src/data/documents.js';
+import { DOCUMENT_GROUPS, OFFICIAL_DOCUMENT_URLS, PRICE_LIST, PUBLIC_DOCUMENTS } from '../../src/data/documents.js';
 
 const sha256 = (path) => createHash('sha256').update(readFileSync(path)).digest('hex').toUpperCase();
 
@@ -30,6 +30,13 @@ describe('published clinic documents', () => {
     expect(documents.find(({ id }) => id === 'paid-services-659')?.status).toBe('С 01.09.2026');
     expect(documents.find(({ id }) => id === 'state-guarantees-2188')?.status).toBe('Действует');
     expect(documents.find(({ id }) => id === 'state-guarantees-1940')?.status).toBe('Архив');
+  });
+
+  it('uses resilient official pages for acts with government copies', () => {
+    expect(OFFICIAL_DOCUMENT_URLS.paidServices736).toBe('https://government.ru/docs/all/147526/');
+    expect(OFFICIAL_DOCUMENT_URLS.stateGuarantees2188).toBe('https://government.ru/docs/all/163114/');
+    expect(OFFICIAL_DOCUMENT_URLS.stateGuarantees1940).toBe('https://government.ru/docs/all/157366/');
+    expect(OFFICIAL_DOCUMENT_URLS.healthLaw323).toBe('https://government.ru/docs/all/100186/');
   });
 
   it('keeps document groups and nested records immutable', () => {

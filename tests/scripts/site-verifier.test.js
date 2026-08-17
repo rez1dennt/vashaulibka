@@ -367,10 +367,23 @@ describe('production site verifier', () => {
       'assets/photo.avif',
       'assets/photo@2x.avif',
       'assets/photo.webp',
-      'documents/license.pdf',
     ]) write(directory, file);
+    write(directory, 'documents/license.pdf', '%PDF-1.7\nverified fixture');
 
     expect(verifyDirectory(directory, { pages: [INDEXABLE_PAGE] }).errors).toEqual([]);
+  });
+
+  it('rejects a local PDF link whose file is not actually a PDF', () => {
+    const directory = writeValidFixture({
+      htmlByFile: {
+        'index.html': pageHtml({ body: '<a href="documents/act.pdf">Открыть PDF</a>' }),
+      },
+    });
+    write(directory, 'documents/act.pdf', '<!doctype html><title>Ошибка</title>');
+
+    expect(verifyDirectory(directory, { pages: [INDEXABLE_PAGE] }).errors).toEqual(expect.arrayContaining([
+      expect.objectContaining({ code: 'link.pdf.invalid', file: 'index.html', reference: 'documents/act.pdf' }),
+    ]));
   });
 
   it('parses a mixed data and remote srcset candidate-by-candidate', () => {

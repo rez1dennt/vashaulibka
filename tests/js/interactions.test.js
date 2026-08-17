@@ -26,6 +26,30 @@ describe('progressive interactions', () => {
     expect(document.querySelector('#services-disclosure-panel-therapy').hidden).toBe(false);
   });
 
+  it('updates the visible service when an on-page direction changes the fragment', () => {
+    window.history.replaceState({}, '', '#service-therapy');
+    document.body.innerHTML = `
+      <div role="tablist">
+        <button role="tab" id="services-tab-therapy" aria-selected="true" aria-controls="services-panel-therapy">Терапия</button>
+        <button role="tab" id="services-tab-orthopedics" aria-selected="false" aria-controls="services-panel-orthopedics">Ортопедия</button>
+      </div>
+      <section id="services-panel-therapy"></section><section id="services-panel-orthopedics"></section>
+      <button data-disclosure-button id="services-disclosure-therapy" aria-controls="services-disclosure-panel-therapy">Терапия</button>
+      <div id="services-disclosure-panel-therapy"></div>
+      <button data-disclosure-button id="services-disclosure-orthopedics" aria-controls="services-disclosure-panel-orthopedics">Ортопедия</button>
+      <div id="services-disclosure-panel-orthopedics"></div>`;
+
+    initTabs();
+    initDisclosures();
+    window.history.replaceState({}, '', '#service-orthopedics');
+    window.dispatchEvent(new HashChangeEvent('hashchange'));
+
+    expect(document.querySelector('#services-tab-orthopedics').getAttribute('aria-selected')).toBe('true');
+    expect(document.querySelector('#services-panel-orthopedics').hidden).toBe(false);
+    expect(document.querySelector('#services-disclosure-orthopedics').getAttribute('aria-expanded')).toBe('true');
+    expect(document.querySelector('#services-disclosure-panel-orthopedics').hidden).toBe(false);
+  });
+
   it('opens and closes the appointment dialog without submitting data', () => {
     document.body.innerHTML = '<button data-appointment-open>Запись</button><div id="appointment-dialog" role="dialog" hidden><div data-dialog-backdrop></div><button data-dialog-close>Закрыть</button></div>';
     const provider = createAppointmentProvider();

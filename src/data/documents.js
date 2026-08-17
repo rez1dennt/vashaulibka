@@ -27,11 +27,11 @@ export const PRICE_LIST = Object.freeze({
 
 export const OFFICIAL_DOCUMENT_URLS = Object.freeze({
   order118n: 'https://publication.pravo.gov.ru/document/0001202504110006',
-  paidServices736: 'https://publication.pravo.gov.ru/document/0001202305120025',
+  paidServices736: 'https://government.ru/docs/all/147526/',
   paidServices659: 'https://publication.pravo.gov.ru/document/0001202606010083',
-  stateGuarantees2188: 'https://publication.pravo.gov.ru/document/0001202512300036',
-  stateGuarantees1940: 'https://publication.pravo.gov.ru/document/0001202412290002',
-  healthLaw323: 'https://publication.pravo.gov.ru/Document/View/0001201111220007',
+  stateGuarantees2188: 'https://government.ru/docs/all/163114/',
+  stateGuarantees1940: 'https://government.ru/docs/all/157366/',
+  healthLaw323: 'https://government.ru/docs/all/100186/',
   nomenclature804n: 'https://publication.pravo.gov.ru/Document/View/0001201711080036',
   medicines890: 'https://minzdrav.gov.ru/documents/8713-postanovlenie-pravitelstva-rossiyskoy-federatsii-ot-30-iyulya-1994-g-890-o-gosudarstvennoy-podderzhke-razvitiya-meditsinskoy-promyshlennosti-i-uluchshenii-obespecheniya-naseleniya-i-uchrezhdeniy-zdravoohraneniya-lekarstvennymi-sredstvami-i-izdeliyami-meditsinskogo-naznacheniya',
   legalInformation: 'https://pravo.gov.ru/',
@@ -51,6 +51,7 @@ export const DOCUMENT_GROUPS = Object.freeze([
         meta: 'Оригинал документа клиники',
         status: 'Документ клиники',
         statusTone: 'neutral',
+        localPdf: true,
         download: true,
       },
       {
@@ -61,6 +62,7 @@ export const DOCUMENT_GROUPS = Object.freeze([
         meta: 'Оригинал регистрационного документа',
         status: 'Документ клиники',
         statusTone: 'neutral',
+        localPdf: true,
         download: true,
       },
     ],
@@ -77,6 +79,7 @@ export const DOCUMENT_GROUPS = Object.freeze([
         meta: `Утверждён ${PRICE_LIST.approvedLabel} · ${PRICE_LIST.pageCount} страниц`,
         status: 'Утверждён',
         statusTone: 'success',
+        localPdf: true,
         download: true,
       },
       {
@@ -231,6 +234,7 @@ export const DOCUMENT_GROUPS = Object.freeze([
         meta: 'Документ клиники · 3 страницы',
         status: 'Документ клиники',
         statusTone: 'neutral',
+        localPdf: true,
         download: true,
       },
       {

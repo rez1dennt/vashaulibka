@@ -34,9 +34,9 @@ const officialContactActions = `<div class="contact-actions">${CONTACTS.phones.m
 export const SERVICE_PAGES = Object.freeze([
   {
     file: 'services.html',
-    title: 'Лицензированные услуги',
+    title: 'Стоматологические услуги',
     description: 'Три лицензированных направления стоматологической помощи ООО «Стоматология Ваша улыбка».',
-    heading: 'Лицензированные услуги',
+    heading: 'Наши услуги',
     lead: 'Терапевтическая и ортопедическая стоматология, а также стоматология в рамках работы зубного врача.',
     heroImage: 'services',
     noindex: false,

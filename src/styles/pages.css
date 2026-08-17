@@ -60,6 +60,73 @@
   gap: var(--space-5);
 }
 
+.licensed-directions {
+  min-inline-size: var(--space-0);
+  display: grid;
+  gap: var(--space-5);
+  margin-block-end: var(--space-8);
+  padding: var(--space-6);
+  border: var(--border-width) solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface-brand-soft);
+  box-shadow: var(--shadow-card);
+}
+
+.licensed-directions h2 {
+  max-inline-size: none;
+  margin-block-end: var(--space-0);
+  font-size: var(--text-h3-size);
+}
+
+.licensed-directions ul {
+  min-inline-size: var(--space-0);
+  display: grid;
+  grid-template-columns: minmax(var(--space-0), 1fr);
+  gap: var(--space-3);
+  margin: var(--space-0);
+  padding: var(--space-0);
+  list-style: none;
+}
+
+.licensed-directions li {
+  min-inline-size: var(--space-0);
+}
+
+.licensed-directions a {
+  min-inline-size: var(--space-0);
+  min-block-size: var(--control-block-size);
+  display: grid;
+  grid-template-columns: minmax(var(--space-0), 1fr) auto;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  overflow-wrap: anywhere;
+  border: var(--border-width) solid var(--color-border);
+  border-radius: var(--radius-sm);
+  color: var(--color-text);
+  background: var(--color-surface-raised);
+  font-weight: var(--text-label-weight);
+  text-decoration: none;
+  transition: var(--transition-interactive);
+}
+
+.licensed-directions a::after {
+  content: "→";
+  color: var(--color-primary-strong);
+}
+
+.licensed-directions a:hover,
+.licensed-directions a:focus-visible {
+  border-color: var(--color-primary-strong);
+  color: var(--color-primary-active);
+  box-shadow: var(--shadow-card-hover);
+  transform: translateY(calc(var(--space-0-5) * -1));
+}
+
+.licensed-directions a:active {
+  transform: translateY(var(--space-0));
+}
+
 .service-tabs {
   min-inline-size: var(--space-0);
   display: grid;
@@ -923,12 +990,14 @@
 .documents-group__items {
   min-inline-size: var(--space-0);
   display: grid;
+  grid-template-columns: minmax(var(--space-0), 1fr);
   gap: var(--space-3);
 }
 
 .document-item {
   min-inline-size: var(--space-0);
   display: grid;
+  grid-template-rows: minmax(var(--space-0), 1fr) auto;
   gap: var(--space-5);
   padding: var(--space-6);
   border: var(--border-width) solid var(--color-border);
@@ -2523,8 +2592,12 @@
 }
 
 @media (min-width: 48rem) {
-  .documents-directory {
+  .documents-group__items {
     grid-template-columns: repeat(2, minmax(var(--space-0), 1fr));
+  }
+
+  .licensed-directions ul {
+    grid-template-columns: repeat(3, minmax(var(--space-0), 1fr));
   }
 
   .price-source {
@@ -2674,6 +2747,10 @@
 }
 
 @media (min-width: 75rem) {
+  .documents-group__items {
+    grid-template-columns: repeat(3, minmax(var(--space-0), 1fr));
+  }
+
   .home-decor--hero-tooth,
   .home-decor--quick-tooth,
   .home-decor--services-dental,
@@ -2767,6 +2844,11 @@
 
 @media (prefers-reduced-motion: reduce) {
   .document-item {
+    transition: none;
+    transform: none;
+  }
+
+  .licensed-directions a {
     transition: none;
     transform: none;
   }
