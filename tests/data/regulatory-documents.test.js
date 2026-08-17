@@ -1,3 +1,5 @@
+import { createHash } from 'node:crypto';
+import { existsSync, readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { REGULATORY_DOCUMENTS } from '../../src/data/regulatory-documents.js';
 
@@ -45,5 +47,23 @@ describe('local regulatory document contract', () => {
         'state-guarantees-2188': 872,
         'paid-services-659': 18,
       });
+  });
+
+  it('matches every committed PDF to the generated integrity manifest', () => {
+    const manifest = JSON.parse(readFileSync('public/documents/regulations/integrity.json', 'utf8'));
+    expect(manifest.version).toBe(1);
+    expect(manifest.items).toHaveLength(8);
+    expect(new Set(manifest.items.map(({ href }) => href)).size).toBe(8);
+
+    for (const item of manifest.items) {
+      expect(REGULATORY_DOCUMENTS.some(({ id, href }) => id === item.id && href === item.href)).toBe(true);
+      const path = `public/${item.href}`;
+      expect(existsSync(path), item.id).toBe(true);
+      const bytes = readFileSync(path);
+      expect(bytes.subarray(0, 4).toString('ascii'), item.id).toBe('%PDF');
+      expect(bytes.length, item.id).toBe(item.size);
+      expect(createHash('sha256').update(bytes).digest('hex').toUpperCase(), item.id).toBe(item.sha256);
+      expect(item.pages, item.id).toBeGreaterThan(0);
+    }
   });
 });

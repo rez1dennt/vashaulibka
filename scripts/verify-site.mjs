@@ -4,6 +4,7 @@ import {
   readdirSync,
   statSync,
 } from 'node:fs';
+import { createHash } from 'node:crypto';
 import {
   isAbsolute,
   relative,
@@ -22,6 +23,7 @@ const UNSAFE_SCHEMES = /^(?:javascript|vbscript):/i;
 const ABSOLUTE_SCHEME = /^[a-z][a-z\d+.-]*:/i;
 const ACTIVE_LINK_RELS = new Set(['stylesheet', 'icon', 'preload', 'modulepreload', 'manifest']);
 const SEARCH_ITEM_FIELDS = Object.freeze(['id', 'href', 'category', 'title', 'summary', 'content', 'keywords']);
+const REGULATION_INTEGRITY_FIELDS = Object.freeze(['id', 'href', 'size', 'sha256', 'pages']);
 const SEARCH_INDEX_MAX_BYTES = 250 * 1024;
 const BANNED_RUNTIME_HOST = /(?:^|\.)lidrekon\.ru$|(?:^|\.)responsivevoice\.(?:org|com)$|(?:^|\.)(?:tts|speechkit)(?:\.[a-z\d-]+)*\.yandex\.(?:net|ru|com)$/i;
 const READER_CONTROL_COPY = /(?:читать|озвучить) страницу|приостановить чтение|остановить чтение/i;
@@ -415,6 +417,85 @@ export function verifyDirectory(directory, { pages = PAGES, origin } = {}) {
     const file = relativeName(root, stylesheet);
     for (const reference of cssReferences(readFileSync(stylesheet, 'utf8'))) {
       checkLocalReference(reference, file, 'resource');
+    }
+  }
+
+  const regulationIntegrityName = 'documents/regulations/integrity.json';
+  const regulationIntegrityFile = resolve(root, regulationIntegrityName);
+  if (existsSync(regulationIntegrityFile)) {
+    let manifest;
+    try {
+      manifest = JSON.parse(readFileSync(regulationIntegrityFile, 'utf8'));
+    } catch {
+      add('documents.integrity.parse', 'regulation integrity manifest is not valid JSON', {
+        file: regulationIntegrityName,
+      });
+    }
+
+    if (manifest) {
+      if (manifest.version !== 1 || !Array.isArray(manifest.items)) {
+        add('documents.integrity.schema', 'regulation integrity manifest must contain version 1 and an items array', {
+          file: regulationIntegrityName,
+        });
+      } else {
+        const seenHrefs = new Set();
+        for (const item of manifest.items) {
+          const exactFields = item && typeof item === 'object'
+            && REGULATION_INTEGRITY_FIELDS.every((field) => Object.hasOwn(item, field))
+            && Object.keys(item).every((field) => REGULATION_INTEGRITY_FIELDS.includes(field));
+          const validValues = exactFields
+            && typeof item.id === 'string' && item.id.trim()
+            && typeof item.href === 'string' && item.href.match(/^documents\/regulations\/[a-z0-9-]+\.pdf$/)
+            && Number.isSafeInteger(item.size) && item.size > 4
+            && typeof item.sha256 === 'string' && item.sha256.match(/^[A-F0-9]{64}$/)
+            && Number.isSafeInteger(item.pages) && item.pages > 0;
+
+          if (!validValues || seenHrefs.has(item?.href)) {
+            add('documents.integrity.schema', 'regulation integrity item has an invalid shape, value, or duplicate href', {
+              file: regulationIntegrityName,
+              reference: item?.href,
+            });
+            continue;
+          }
+          seenHrefs.add(item.href);
+
+          const resolvedReference = resolveReference(item.href, 'index.html');
+          if (resolvedReference.kind !== 'local' || resolvedReference.pathname !== item.href) {
+            add('documents.integrity.schema', `regulation integrity href is not a safe local PDF: ${item.href}`, {
+              file: regulationIntegrityName,
+              reference: item.href,
+            });
+            continue;
+          }
+
+          const target = resolve(root, resolvedReference.pathname);
+          const relativeTarget = relative(root, target);
+          if (relativeTarget === '..' || relativeTarget.startsWith(`..${sep}`) || isAbsolute(relativeTarget)) {
+            add('documents.integrity.schema', `regulation integrity href escapes the verified directory: ${item.href}`, {
+              file: regulationIntegrityName,
+              reference: item.href,
+            });
+            continue;
+          }
+          if (!existsSync(target) || !statSync(target).isFile()) {
+            add('documents.integrity.missing', `regulation PDF is missing: ${item.href}`, {
+              file: regulationIntegrityName,
+              reference: item.href,
+            });
+            continue;
+          }
+
+          const bytes = readFileSync(target);
+          const signature = bytes.subarray(0, 4).toString('ascii');
+          const sha256 = createHash('sha256').update(bytes).digest('hex').toUpperCase();
+          if (signature !== '%PDF' || bytes.length !== item.size || sha256 !== item.sha256) {
+            add('documents.integrity.mismatch', `regulation PDF does not match its integrity record: ${item.href}`, {
+              file: regulationIntegrityName,
+              reference: item.href,
+            });
+          }
+        }
+      }
     }
   }
 

@@ -386,6 +386,56 @@ describe('production site verifier', () => {
     ]));
   });
 
+  it('rejects a missing PDF declared by the regulation integrity manifest', () => {
+    const directory = writeValidFixture();
+    write(directory, 'documents/regulations/integrity.json', JSON.stringify({
+      version: 1,
+      items: [{
+        id: 'missing-act',
+        href: 'documents/regulations/missing-act.pdf',
+        size: 123,
+        sha256: 'A'.repeat(64),
+        pages: 1,
+      }],
+    }));
+
+    expect(verifyDirectory(directory, { pages: [INDEXABLE_PAGE] }).errors).toEqual(expect.arrayContaining([
+      expect.objectContaining({
+        code: 'documents.integrity.missing',
+        file: 'documents/regulations/integrity.json',
+        reference: 'documents/regulations/missing-act.pdf',
+      }),
+    ]));
+  });
+
+  it('rejects malformed and invalid regulation integrity manifests', () => {
+    const malformed = writeValidFixture();
+    write(malformed, 'documents/regulations/integrity.json', '{broken');
+    expect(verifyDirectory(malformed, { pages: [INDEXABLE_PAGE] }).errors).toEqual(expect.arrayContaining([
+      expect.objectContaining({ code: 'documents.integrity.parse' }),
+    ]));
+
+    const invalid = writeValidFixture();
+    write(invalid, 'documents/regulations/integrity.json', JSON.stringify({ version: 2, items: 'invalid' }));
+    expect(verifyDirectory(invalid, { pages: [INDEXABLE_PAGE] }).errors).toEqual(expect.arrayContaining([
+      expect.objectContaining({ code: 'documents.integrity.schema' }),
+    ]));
+  });
+
+  it('rejects a regulation PDF whose bytes do not match its integrity record', () => {
+    const directory = writeValidFixture();
+    const href = 'documents/regulations/act.pdf';
+    write(directory, href, '%PDF-1.7\nfixture');
+    write(directory, 'documents/regulations/integrity.json', JSON.stringify({
+      version: 1,
+      items: [{ id: 'act', href, size: 999, sha256: 'B'.repeat(64), pages: 1 }],
+    }));
+
+    expect(verifyDirectory(directory, { pages: [INDEXABLE_PAGE] }).errors).toEqual(expect.arrayContaining([
+      expect.objectContaining({ code: 'documents.integrity.mismatch', reference: href }),
+    ]));
+  });
+
   it('parses a mixed data and remote srcset candidate-by-candidate', () => {
     const directory = writeValidFixture({
       htmlByFile: {
