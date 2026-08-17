@@ -42,7 +42,7 @@ export const SEARCH_PAGE_META = Object.freeze({
 export const SEARCH_SERVICE_KEYWORDS = Object.freeze({
   therapy: ['лечение зубов', 'лечение зуба', 'лечить зуб', 'болит зуб', 'кариес', 'терапевт', 'стоматолог-терапевт'],
   orthopedics: ['протезирование', 'протез', 'протезы', 'ортопед', 'стоматолог-ортопед'],
-  premedical: ['доврачебная помощь', 'фельдшер', 'сестринское дело', 'медицинская сестра', 'профилактика'],
+  dentistry: ['стоматология', 'зубной врач', 'стоматологическая помощь'],
 });
 
 export const SEARCH_STAFF_KEYWORDS = Object.freeze([

@@ -107,6 +107,8 @@ describe('public page manifest', () => {
       .map((node) => node.textContent.trim());
     expect(tabLabels).toEqual(SERVICES.map((service) => service.title));
     expect(disclosureLabels).toEqual(SERVICES.map((service) => service.title));
+    expect(serviceDocument.body.textContent).not.toMatch(/Доврачебная помощь|Сестринское дело|Сестринское сопровождение|фельдшер/i);
+    expect(serviceDocument.body.textContent).toContain('оказываемая зубным врачом');
   });
 
   it('shows the controlled price status for every service in both responsive interfaces', () => {

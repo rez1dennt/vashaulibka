@@ -23,7 +23,7 @@ export const SERVICE_PAGES = Object.freeze([
     title: 'Лицензированные услуги',
     description: 'Три лицензированных направления стоматологической помощи ООО «Стоматология Ваша улыбка».',
     heading: 'Лицензированные услуги',
-    lead: 'Терапевтическая, ортопедическая стоматология и доврачебная помощь.',
+    lead: 'Терапевтическая и ортопедическая стоматология, а также стоматология в рамках работы зубного врача.',
     heroImage: 'services',
     noindex: false,
     body: `<section class="section"><div class="container">${serviceAnchors}${serviceTabs}${serviceDisclosures}</div></section>`,

@@ -68,6 +68,17 @@ describe('generated local search index', () => {
     }
   });
 
+  it('indexes the dental practitioner direction without nursing service terms', () => {
+    const item = build().items.find(({ id }) => id === 'service-dentistry');
+    const corpus = [item?.title, item?.summary, item?.content, ...(item?.keywords ?? [])]
+      .join(' ')
+      .toLocaleLowerCase('ru-RU');
+
+    expect(item?.href).toBe('services.html#service-dentistry');
+    expect(corpus).toContain('зубной врач');
+    expect(corpus).not.toMatch(/сестрин|медицинская сестра|фельдшер/);
+  });
+
   it('indexes every reviewed compact-accessibility synonym on the settings page', () => {
     const item = build().items.find((candidate) => candidate.href === 'cookies.html');
 
@@ -101,6 +112,7 @@ describe('generated local search index', () => {
     ['как доехать', 'contacts.html'],
     ['как пожаловаться', 'complaints.html'],
     ['протезы', 'services.html#service-orthopedics'],
+    ['зубной врач', 'services.html#service-dentistry'],
   ])('resolves the patient phrasing %j to the intended published page', (query, expectedHref) => {
     expect(searchItems(build().items, query)[0]?.item.href).toBe(expectedHref);
   });
