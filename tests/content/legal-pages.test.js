@@ -4,6 +4,7 @@ import { describe, expect, it } from 'vitest';
 import { LEGAL_PAGES } from '../../src/content/legal-pages.js';
 import { PAGES } from '../../src/content/page-manifest.js';
 import { CLINIC, CONTACTS, LICENSE } from '../../src/data/clinic.js';
+import { PRICE_LIST } from '../../src/data/documents.js';
 import { BENEFITS, GUARANTEES, OFFICIAL_SOURCES } from '../../src/data/legal.js';
 import { ONLINE_BOOKING } from '../../src/data/online-booking.js';
 import { renderPage } from '../../src/templates/render-page.js';
@@ -128,7 +129,8 @@ describe('patient and legal page manifest', () => {
   });
 
   it('states the exact payment, waiting-period, OMS, benefit, and informed-consent boundaries', () => {
-    const payment = normalizedText(pageDocument('payment.html'));
+    const paymentDocument = pageDocument('payment.html');
+    const payment = normalizedText(paymentDocument);
     const waiting = normalizedText(pageDocument('waiting-periods.html'));
     const oms = normalizedText(pageDocument('oms.html'));
     const benefitsDocument = pageDocument('benefits.html');
@@ -136,7 +138,14 @@ describe('patient and legal page manifest', () => {
     const consent = normalizedText(pageDocument('informed-consent.html'));
 
     expect(payment).toContain('Оплата платных медицинских услуг осуществляется наличным и безналичным расчётом по выбору потребителя.');
-    expect(payment).toMatch(/прейскурант.*пока не опубликован.*стоимость.*телефон/i);
+    expect(payment).toContain(PRICE_LIST.title);
+    expect(payment).toContain(`Утверждён ${PRICE_LIST.approvedLabel}`);
+    expect(payment).toContain(`${PRICE_LIST.pageCount} страниц`);
+    expect(paymentDocument.querySelector(`a[href="${PRICE_LIST.href}"]`)).not.toBeNull();
+    expect(paymentDocument.querySelector(`a[href="${PRICE_LIST.href}"][download]`)).not.toBeNull();
+    expect(paymentDocument.querySelector('a[href="prices.html"]')).not.toBeNull();
+    for (const notice of PRICE_LIST.notices) expect(payment).toContain(notice);
+    expect(payment).not.toMatch(/прейскурант.*пока не опубликован/i);
     expect(payment).not.toContain('CONTENT_CHECKLIST.md');
     expect(waiting).toContain('30 дней');
     expect(waiting).toMatch(/фактическ.*зависит.*услуг.*клиническ.*ситуац/i);

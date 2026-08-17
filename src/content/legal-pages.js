@@ -1,5 +1,5 @@
 import { CLINIC, CONTACTS, LICENSE } from '../data/clinic.js';
-import { PUBLIC_DOCUMENTS } from '../data/documents.js';
+import { PRICE_LIST, PUBLIC_DOCUMENTS } from '../data/documents.js';
 import {
   BENEFITS,
   GUARANTEES,
@@ -182,7 +182,7 @@ export const LEGAL_PAGES = Object.freeze([
     description: 'Доступные способы оплаты платных медицинских услуг в клинике.',
     heading: 'Оплата услуг',
     lead: 'Способ расчёта выбирает потребитель.',
-    body: `<section class="section"><div class="container">${patientNotice('Способы оплаты', '<p>Оплата платных медицинских услуг осуществляется наличным и безналичным расчётом по выбору потребителя.</p>', 'ruble')}<p>Утверждённый прейскурант пока не опубликован. До его публикации стоимость услуг уточняйте по официальным телефонам клиники.</p></div></section>`,
+    body: `<section class="section"><div class="container">${patientNotice('Способы оплаты', '<p>Оплата платных медицинских услуг осуществляется наличным и безналичным расчётом по выбору потребителя.</p>', 'ruble')}<article class="price-source price-source__card card"><div class="price-source__copy"><p class="eyebrow">Утверждённый документ</p><h2>${escapeHtml(PRICE_LIST.title)}</h2><p class="price-source__meta">Утверждён ${escapeHtml(PRICE_LIST.approvedLabel)} · ${escapeHtml(PRICE_LIST.pageCount)} страниц</p><div class="price-source__actions"><a class="button button-primary" href="${escapeHtml(PRICE_LIST.href)}">Открыть PDF</a><a class="button button-secondary" href="${escapeHtml(PRICE_LIST.href)}" download>Скачать PDF</a><a class="button button-secondary" href="prices.html">Посмотреть цены</a></div></div><div class="price-source__notices">${PRICE_LIST.notices.map((notice) => `<p class="price-source__notice">${escapeHtml(notice)}</p>`).join('')}</div></article></div></section>`,
   }),
   makePage({
     file: 'benefits.html',

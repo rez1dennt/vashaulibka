@@ -14,7 +14,7 @@
 - Use `documents/price-list-2026-05-05.pdf`; do not add a second PDF copy.
 - Publish the approval date as 5 May 2026 and the document length as 19 pages.
 - Include local open/download actions and a link to `prices.html`.
-- Reuse both clinic-supplied notices from `PRICE_LIST.notices`.
+- Reuse all three clinic-supplied notices from `PRICE_LIST.notices`.
 - Do not embed a PDF viewer or duplicate the full price table in HTML.
 
 ---
