@@ -1,7 +1,15 @@
 import { CONTACTS } from '../data/clinic.js';
 import { PRICE_LIST } from '../data/documents.js';
-import { SERVICES } from '../data/services.js';
+import { LICENSED_DIRECTIONS, SERVICES } from '../data/services.js';
 import { SPECIALISTS_PAGE } from './specialists-page.js';
+
+const escapeHtml = (value) => String(value).replace(/[&<>"']/g, (character) => ({
+  '&': '&amp;',
+  '<': '&lt;',
+  '>': '&gt;',
+  '"': '&quot;',
+  "'": '&#39;',
+}[character]));
 
 const serviceDetails = (service) => `<p>${service.summary}</p><ul>${service.items.map((item) => `<li>${item}</li>`).join('')}</ul><p class="service-price-status"><strong>${service.priceStatus}</strong></p>`;
 
@@ -12,6 +20,12 @@ const serviceDisclosures = `<div class="services-disclosures-view">${SERVICES.ma
 const serviceAnchors = SERVICES
   .map((service) => `<span class="search-anchor" id="service-${service.slug}" aria-hidden="true"></span>`)
   .join('');
+
+const directionLinks = LICENSED_DIRECTIONS
+  .map(({ slug, label }) => `<li><a href="#service-${escapeHtml(slug)}">${escapeHtml(label)}</a></li>`)
+  .join('');
+
+const licensedDirections = `<nav class="licensed-directions" aria-labelledby="licensed-directions-title"><h2 id="licensed-directions-title">Направления медицинской деятельности</h2><ul>${directionLinks}</ul></nav>`;
 
 const priceDisclosures = SERVICES.map((service) => `<article class="card price-disclosure"><h2><button type="button" data-disclosure-button id="price-disclosure-${service.slug}" aria-expanded="true" aria-controls="price-panel-${service.slug}">${service.title}</button></h2><div class="disclosure-panel" id="price-panel-${service.slug}" role="region" aria-labelledby="price-disclosure-${service.slug}">${serviceDetails(service)}</div></article>`).join('');
 
@@ -26,7 +40,7 @@ export const SERVICE_PAGES = Object.freeze([
     lead: 'Терапевтическая и ортопедическая стоматология, а также стоматология в рамках работы зубного врача.',
     heroImage: 'services',
     noindex: false,
-    body: `<section class="section"><div class="container">${serviceAnchors}${serviceTabs}${serviceDisclosures}</div></section>`,
+    body: `<section class="section"><div class="container">${licensedDirections}${serviceAnchors}${serviceTabs}${serviceDisclosures}</div></section>`,
   },
   SPECIALISTS_PAGE,
   {

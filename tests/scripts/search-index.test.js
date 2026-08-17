@@ -77,7 +77,7 @@ describe('generated local search index', () => {
   it('does not advertise unconfirmed services', () => {
     const corpus = serializeSearchIndex(build()).toLocaleLowerCase('ru-RU');
 
-    for (const unsupported of ['имплантация', 'ортодонтия', 'хирургия', 'детская стоматология']) {
+    for (const unsupported of ['имплантация', 'ортодонтия', 'хирургия', 'рентгенология', 'стоматология общей практики', 'стоматология профилактическая', 'стоматология хирургическая', 'детская стоматология']) {
       expect(corpus).not.toContain(unsupported);
     }
   });

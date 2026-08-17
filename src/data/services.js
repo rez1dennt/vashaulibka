@@ -23,3 +23,9 @@ export const SERVICES = Object.freeze([
     priceStatus: controlledPrice,
   },
 ]);
+
+export const LICENSED_DIRECTIONS = Object.freeze([
+  Object.freeze({ slug: 'dentistry', label: 'Стоматология' }),
+  Object.freeze({ slug: 'orthopedics', label: 'Стоматология ортопедическая' }),
+  Object.freeze({ slug: 'therapy', label: 'Стоматология терапевтическая' }),
+]);

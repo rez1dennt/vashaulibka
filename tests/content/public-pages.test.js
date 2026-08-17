@@ -5,7 +5,7 @@ import { LEGAL_PAGES } from '../../src/content/legal-pages.js';
 import { DOCUMENTS_PAGE } from '../../src/content/documents-page.js';
 import { PAGES } from '../../src/content/page-manifest.js';
 import { CLINIC, CONTACTS, HOURS } from '../../src/data/clinic.js';
-import { SERVICES } from '../../src/data/services.js';
+import { LICENSED_DIRECTIONS, SERVICES } from '../../src/data/services.js';
 import { STAFF } from '../../src/data/staff.js';
 import { renderPage } from '../../src/templates/render-page.js';
 
@@ -107,6 +107,10 @@ describe('public page manifest', () => {
       .map((node) => node.textContent.trim());
     expect(tabLabels).toEqual(SERVICES.map((service) => service.title));
     expect(disclosureLabels).toEqual(SERVICES.map((service) => service.title));
+    const directionLinks = [...serviceDocument.querySelectorAll('.licensed-directions a')];
+    expect(directionLinks.map((link) => link.textContent.trim())).toEqual(LICENSED_DIRECTIONS.map(({ label }) => label));
+    expect(directionLinks.map((link) => link.getAttribute('href'))).toEqual(LICENSED_DIRECTIONS.map(({ slug }) => `#service-${slug}`));
+    expect(serviceDocument.querySelectorAll('.licensed-directions')).toHaveLength(1);
     expect(serviceDocument.body.textContent).not.toMatch(/Доврачебная помощь|Сестринское дело|Сестринское сопровождение|фельдшер/i);
     expect(serviceDocument.body.textContent).toContain('оказываемая зубным врачом');
   });
@@ -144,7 +148,7 @@ describe('public page manifest', () => {
     const reviews = new JSDOM(renderPage(PAGES.find((page) => page.file === 'reviews.html'))).window.document;
     const vacancies = new JSDOM(renderPage(PAGES.find((page) => page.file === 'vacancies.html'))).window.document;
 
-    expect(allCopy).not.toMatch(/имплант|хирург|ортодонт|детск|оборудован|гарантируем|гарантия результата|лет опыта|пациент[а-я]* отзыв/i);
+    expect(allCopy).not.toMatch(/имплант|хирург|рентген|общей практики|профилактическ|ортодонт|детск|оборудован|гарантируем|гарантия результата|лет опыта|пациент[а-я]* отзыв/i);
     expect(allCopy).not.toMatch(/Иванова Мария|Мария Иванова|4\s?500\s?₽|\d[\d\s]*\s(?:₽|руб(?:\.|л|лей))/i);
     expect(allCopy).not.toMatch(/undefined|\[object Object\]/);
     expect(reviews.querySelector('blockquote, cite, [itemprop="review"]')).toBeNull();
