@@ -1,0 +1,61 @@
+{
+  "version": 1,
+  "items": [
+    {
+      "id": "nomenclature-804n",
+      "href": "documents/regulations/nomenclature-804n.pdf",
+      "size": 4397550,
+      "sha256": "EA227A0343D094510B074E05C2C8AA3852F01C130ADC0909BD4EEADAFA5725D9",
+      "pages": 513
+    },
+    {
+      "id": "medicines-890",
+      "href": "documents/regulations/medicines-890.pdf",
+      "size": 259731,
+      "sha256": "82DBE7C9495C767A51F8A52D9544013907C06645FB23D11B0F746B147C429042",
+      "pages": 15
+    },
+    {
+      "id": "state-guarantees-1940",
+      "href": "documents/regulations/state-guarantees-1940.pdf",
+      "size": 25956936,
+      "sha256": "AB010F118D42F1654C2CC8C60B8ECED6F31AF51D8D6A989B8A09CAE94AC63F12",
+      "pages": 698
+    },
+    {
+      "id": "state-guarantees-2188",
+      "href": "documents/regulations/state-guarantees-2188.pdf",
+      "size": 30589223,
+      "sha256": "C7544B54BDAF1408907C56BD3B4B23F991FB1E9BBBDC8FCFA0AE835AFB83665C",
+      "pages": 872
+    },
+    {
+      "id": "health-law-323",
+      "href": "documents/regulations/health-law-323.pdf",
+      "size": 1417540,
+      "sha256": "D531FE462E2DFD0757713D9DE16F5765376E7B5B0D10AE6101B578F359E66ABF",
+      "pages": 150
+    },
+    {
+      "id": "order-118n",
+      "href": "documents/regulations/order-118n.pdf",
+      "size": 160215,
+      "sha256": "A50A95FF4D2A484D828A66F5FFF84CDE4491534E2A21B460E251F891DC23B8E6",
+      "pages": 6
+    },
+    {
+      "id": "paid-services-659",
+      "href": "documents/regulations/paid-services-659.pdf",
+      "size": 4162290,
+      "sha256": "7AF320A12723F96F934DFCD231E3971D80560ADEEB385DB058255FB1712497C2",
+      "pages": 18
+    },
+    {
+      "id": "paid-services-736",
+      "href": "documents/regulations/paid-services-736.pdf",
+      "size": 219320,
+      "sha256": "56A7902D311ECF58AEF21C2202C0596CCD72E8D4C1627F764EBC82F0CBAC2A07",
+      "pages": 14
+    }
+  ]
+}

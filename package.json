@@ -8,6 +8,7 @@
   },
   "packageManager": "pnpm@11.16.0",
   "scripts": {
+    "prepare:regulations": "pwsh -NoProfile -File scripts/prepare-regulatory-documents.ps1",
     "generate": "node scripts/generate-pages.mjs",
     "dev": "pnpm generate && vite",
     "build": "pnpm generate && vite build",
