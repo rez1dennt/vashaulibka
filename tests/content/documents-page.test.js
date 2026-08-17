@@ -9,6 +9,10 @@ import { renderFooter } from '../../src/templates/site-chrome.js';
 import { renderPage } from '../../src/templates/render-page.js';
 
 describe('documents centre', () => {
+  it('does not emit whitespace-only lines for optional document actions', () => {
+    expect(renderPage(DOCUMENTS_PAGE)).not.toMatch(/^[\t ]+$/m);
+  });
+
   it('renders every approved document once with exact status and action semantics', () => {
     const document = new JSDOM(renderPage(DOCUMENTS_PAGE)).window.document;
     expect(DOCUMENTS_PAGE).toMatchObject({ file: 'documents.html', noindex: false, layout: 'patient' });
