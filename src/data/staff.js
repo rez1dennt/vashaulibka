@@ -101,8 +101,3 @@ export const STAFF = Object.freeze([
     photo: null,
   }),
 ]);
-
-export const INCOMPLETE_CONTENT = Object.freeze({
-  specialists: { noindex: true },
-  prices: { noindex: true, reason: 'Утверждённый прейскурант будет опубликован после получения от клиники.' },
-});

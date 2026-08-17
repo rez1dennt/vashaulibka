@@ -5,7 +5,7 @@ import { LEGAL_PAGES } from '../../src/content/legal-pages.js';
 import { PAGES } from '../../src/content/page-manifest.js';
 import { CLINIC, CONTACTS, HOURS } from '../../src/data/clinic.js';
 import { SERVICES } from '../../src/data/services.js';
-import { INCOMPLETE_CONTENT, STAFF } from '../../src/data/staff.js';
+import { STAFF } from '../../src/data/staff.js';
 import { renderPage } from '../../src/templates/render-page.js';
 
 const approvedFiles = [
@@ -73,13 +73,10 @@ describe('public page manifest', () => {
     }
   });
 
-  it('keeps only specialists and prices out of search indexes', () => {
-    expect(PAGES.filter((page) => page.noindex).map((page) => page.file)).toEqual([
-      'specialists.html',
-      'prices.html',
-    ]);
-    expect(PAGES.find((page) => page.file === 'specialists.html')?.noindex).toBe(INCOMPLETE_CONTENT.specialists.noindex);
-    expect(PAGES.find((page) => page.file === 'prices.html')?.noindex).toBe(INCOMPLETE_CONTENT.prices.noindex);
+  it('keeps every source-complete page indexable', () => {
+    expect(PAGES.filter((page) => page.noindex).map((page) => page.file)).toEqual([]);
+    expect(PAGES.find((page) => page.file === 'specialists.html')?.noindex).toBe(false);
+    expect(PAGES.find((page) => page.file === 'prices.html')?.noindex).toBe(false);
 
     for (const { page, document } of renderedPages()) {
       expect(document.querySelector('meta[name="robots"]')?.content).toBe(
@@ -120,6 +117,20 @@ describe('public page manifest', () => {
         .map((node) => node.textContent);
       expect(statuses).toEqual(SERVICES.map((service) => service.priceStatus));
     }
+  });
+
+  it('publishes the approved price-list source and exact patient notice', () => {
+    const pricePage = PAGES.find((page) => page.file === 'prices.html');
+    const document = new JSDOM(renderPage(pricePage)).window.document;
+
+    expect(document.body.textContent).toContain('5 мая 2026 года');
+    expect(document.body.textContent).toContain('19 страниц');
+    expect(document.body.textContent).toContain('не является публичной офертой');
+    expect(document.body.textContent).toContain('после консультации и составления плана лечения');
+    expect(document.querySelector('a[href="documents/price-list-2026-05-05.pdf"]:not([download])')).not.toBeNull();
+    expect(document.querySelector('a[href="documents/price-list-2026-05-05.pdf"][download]')).not.toBeNull();
+    expect(document.body.textContent).not.toContain('Прейскурант готовится к публикации');
+    expect(document.body.textContent).not.toMatch(/328\s+(?:позиц|услуг)/i);
   });
 
   it('contains no fabricated clinical claims, people, prices, reviews, or vacancies', () => {

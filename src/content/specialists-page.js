@@ -1,5 +1,5 @@
 import { CONTACTS } from '../data/clinic.js';
-import { INCOMPLETE_CONTENT, STAFF } from '../data/staff.js';
+import { STAFF } from '../data/staff.js';
 import { renderIcon } from '../templates/icons.js';
 
 const escapeHtml = (value) => String(value).replace(/[&<>"]/g, (character) => ({
@@ -65,7 +65,7 @@ export const SPECIALISTS_PAGE = Object.freeze({
   heading: 'Сотрудники клиники',
   lead: 'Пять сотрудников: подтверждённые должности, образование, стаж и сведения документов.',
   heroImage: 'specialists',
-  noindex: INCOMPLETE_CONTENT.specialists.noindex,
+  noindex: false,
   body: `<section class="section specialists-section"><div class="container">
     <div class="specialists-section__heading"><p class="eyebrow">Наша команда</p><h2>Познакомьтесь с сотрудниками клиники</h2></div>
     <div class="specialists-coverflow" data-specialists-coverflow aria-label="Специалисты клиники" aria-describedby="specialists-coverflow-instructions">

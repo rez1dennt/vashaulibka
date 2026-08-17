@@ -1,6 +1,6 @@
 import { CONTACTS } from '../data/clinic.js';
+import { PRICE_LIST } from '../data/documents.js';
 import { SERVICES } from '../data/services.js';
-import { INCOMPLETE_CONTENT } from '../data/staff.js';
 import { SPECIALISTS_PAGE } from './specialists-page.js';
 
 const serviceDetails = (service) => `<p>${service.summary}</p><ul>${service.items.map((item) => `<li>${item}</li>`).join('')}</ul><p class="service-price-status"><strong>${service.priceStatus}</strong></p>`;
@@ -31,13 +31,13 @@ export const SERVICE_PAGES = Object.freeze([
   SPECIALISTS_PAGE,
   {
     file: 'prices.html',
-    title: 'Стоимость стоматологических услуг',
-    description: 'Статус публикации стоимости по лицензированным направлениям стоматологической помощи.',
-    heading: 'Стоимость услуг',
-    lead: 'Стоимость по каждому направлению уточняется у администратора.',
+    title: 'Цены на стоматологические услуги',
+    description: `Утверждённый ${PRICE_LIST.title.toLocaleLowerCase('ru-RU')} ООО «Стоматология Ваша улыбка» от ${PRICE_LIST.approvedLabel}.`,
+    heading: 'Цены на услуги',
+    lead: `Утверждённый прейскурант от ${PRICE_LIST.approvedLabel} доступен для просмотра и скачивания.`,
     heroImage: 'prices',
-    noindex: INCOMPLETE_CONTENT.prices.noindex,
-    body: `<section class="section"><div class="container"><div class="notice"><h2>Прейскурант готовится к публикации</h2><p>${INCOMPLETE_CONTENT.prices.reason}</p></div><div class="price-disclosures">${priceDisclosures}</div></div></section>`,
+    noindex: false,
+    body: `<section class="section price-source-section"><div class="container"><article class="price-source card"><div class="price-source__copy"><p class="eyebrow">Утверждённый документ</p><h2>${PRICE_LIST.title}</h2><p class="price-source__meta">Утверждён ${PRICE_LIST.approvedLabel} · ${PRICE_LIST.pageCount} страниц</p><div class="price-source__actions"><a class="button button-primary" href="${PRICE_LIST.href}">Открыть прайс-лист</a><a class="button button-secondary" href="${PRICE_LIST.href}" download>Скачать PDF</a></div></div><div class="price-source__notices">${PRICE_LIST.notices.map((notice) => `<p>${notice}</p>`).join('')}</div></article><div class="price-disclosures">${priceDisclosures}</div></div></section>`,
   },
   {
     file: 'reviews.html',

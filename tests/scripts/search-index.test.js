@@ -54,6 +54,8 @@ describe('generated local search index', () => {
   it.each([
     ['врач', 'specialists.html'],
     ['сколько стоит', 'prices.html'],
+    ['коронка', 'prices.html'],
+    ['пломба', 'prices.html'],
     ['болит зуб', 'services.html#service-therapy'],
     ['лицензия', 'license.html'],
     ['ОГРН', 'license.html'],
