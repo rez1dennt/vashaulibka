@@ -81,8 +81,24 @@ export function buildSearchIndex({ pages, services, staff }) {
     category: 'Специалисты',
     title: person.name,
     summary: person.role,
-    content: person.role,
-    keywords: [...SEARCH_STAFF_KEYWORDS, person.name, person.role],
+    content: [
+      person.role,
+      person.experience,
+      ...person.education,
+      ...person.professionalTraining,
+      ...person.records.flatMap(({ identifier, specialty, educationLevel, issueYear }) => [
+        identifier,
+        specialty,
+        educationLevel,
+        issueYear,
+      ]),
+    ].join(' '),
+    keywords: [
+      ...SEARCH_STAFF_KEYWORDS,
+      person.name,
+      person.role,
+      ...person.records.map(({ specialty }) => specialty),
+    ],
   }));
 
   const items = [...pageItems, ...serviceItems, ...staffItems];

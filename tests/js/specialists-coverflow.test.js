@@ -4,9 +4,9 @@ import { initSpecialistsCoverflow } from '../../src/js/components/specialists-co
 
 const names = ['Первый', 'Второй', 'Третий', 'Четвёртый', 'Пятый'];
 const fixture = () => `<section data-specialists-coverflow><div data-specialist-viewport tabindex="0"><ol>${names.map((name, index) => `
-  <li id="specialist-${index + 1}" data-specialist-slide data-specialist-index="${index}"><article><h3 class="specialist-card__name">${name}</h3><p class="specialist-card__role">Должность ${index + 1}</p><button type="button" data-specialist-select>Выбрать</button></article></li>`).join('')}</ol></div>
+  <li id="specialist-${index + 1}" data-specialist-slide data-specialist-index="${index}"><article><h3 class="specialist-card__name">${name}</h3><p class="specialist-card__role">Должность ${index + 1}</p><button type="button" data-specialist-select aria-controls="specialist-profile-${index + 1}">Выбрать</button></article></li>`).join('')}</ol></div>
   <button type="button" data-specialist-prev>Назад</button><button type="button" data-specialist-next>Вперёд</button>
-  <h3 data-specialist-detail-name></h3><p data-specialist-detail-role></p></section>`;
+  <div class="specialist-profiles">${names.map((name, index) => `<article id="specialist-profile-${index + 1}" data-specialist-profile><h3>${name}</h3><p>Профиль ${index + 1}</p></article>`).join('')}</div></section>`;
 
 beforeEach(() => {
   document.body.innerHTML = fixture();
@@ -22,7 +22,8 @@ describe('specialists coverflow', () => {
     expect(root().classList.contains('is-enhanced')).toBe(true);
     expect([...root().querySelectorAll('[data-specialist-slide]')].map((slide) => slide.dataset.position))
       .toEqual(['active', 'next', 'far-next', 'far-previous', 'previous']);
-    expect(root().querySelector('[data-specialist-detail-name]').textContent).toBe('Первый');
+    expect([...root().querySelectorAll('[data-specialist-profile]')].map((profile) => profile.hidden))
+      .toEqual([false, true, true, true, true]);
   });
 
   it('keeps only the active front card exposed and tabbable while arrows remain controls', () => {
@@ -34,6 +35,8 @@ describe('specialists coverflow', () => {
 
     expect(selects.map((button) => button.tabIndex)).toEqual([0, -1, -1, -1, -1]);
     expect(slides.map((slide) => slide.getAttribute('aria-hidden'))).toEqual([null, 'true', 'true', 'true', 'true']);
+    expect([...root().querySelectorAll('[data-specialist-profile]')].map((profile) => profile.getAttribute('aria-hidden')))
+      .toEqual([null, 'true', 'true', 'true', 'true']);
     expect(previous.tabIndex).toBe(0);
     expect(next.tabIndex).toBe(0);
 
@@ -41,6 +44,8 @@ describe('specialists coverflow', () => {
 
     expect(selects.map((button) => button.tabIndex)).toEqual([-1, 0, -1, -1, -1]);
     expect(slides.map((slide) => slide.getAttribute('aria-hidden'))).toEqual(['true', null, 'true', 'true', 'true']);
+    expect([...root().querySelectorAll('[data-specialist-profile]')].map((profile) => profile.hidden))
+      .toEqual([true, false, true, true, true]);
   });
 
   it('does not carry a visual counter contract in the interaction module', () => {

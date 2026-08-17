@@ -27,18 +27,43 @@ const staffSlides = STAFF.map((person, index) => `
         <h3 class="specialist-card__name">${escapeHtml(person.name)}</h3>
         <p class="specialist-card__role">${escapeHtml(person.role)}</p>
       </div>
-      <button class="specialist-card__select" type="button" data-specialist-select aria-label="Показать сведения: ${escapeHtml(person.name)}">
+      <button class="specialist-card__select" type="button" data-specialist-select aria-controls="specialist-profile-${index + 1}" aria-label="Показать сведения: ${escapeHtml(person.name)}">
         <span class="sr-only">Показать сведения о сотруднике</span>
       </button>
     </article>
   </li>`).join('');
 
+const renderParagraphList = (items) => `<ul>${items.map((item) => `<li>${escapeHtml(item)}</li>`).join('')}</ul>`;
+
+const renderRecords = (records) => records.map((record) => `
+  <div class="specialist-profile__record">
+    <dt>Документ / реестровая запись</dt><dd>${escapeHtml(record.identifier)}</dd>
+    <dt>Год выдачи</dt><dd>${escapeHtml(record.issueYear)}</dd>
+    <dt>Уровень образования</dt><dd>${escapeHtml(record.educationLevel)}</dd>
+    <dt>Специальность</dt><dd>${escapeHtml(record.specialty)}</dd>
+  </div>`).join('');
+
+const staffProfiles = STAFF.map((person, index) => `
+  <article class="specialist-profile" id="specialist-profile-${index + 1}" data-specialist-profile>
+    <header class="specialist-profile__header">
+      <p class="eyebrow">Сведения о сотруднике</p>
+      <h3>${escapeHtml(person.name)}</h3>
+      <p class="specialist-profile__role">${escapeHtml(person.role)}</p>
+      <p>${escapeHtml(person.experience)}</p>
+    </header>
+    <div class="specialist-profile__facts">
+      <section><h4>Образование</h4>${renderParagraphList(person.education)}</section>
+      ${person.professionalTraining.length ? `<section><h4>Профессиональная переподготовка</h4>${renderParagraphList(person.professionalTraining)}</section>` : ''}
+      <section><h4>Сведения документов</h4><dl class="specialist-profile__records">${renderRecords(person.records)}</dl></section>
+    </div>
+  </article>`).join('');
+
 export const SPECIALISTS_PAGE = Object.freeze({
   file: 'specialists.html',
   title: 'Сотрудники стоматологии',
-  description: 'Подтверждённый список сотрудников ООО «Стоматология Ваша улыбка» без неподтверждённых сведений.',
+  description: 'Сотрудники ООО «Стоматология Ваша улыбка»: должности, образование, стаж и сведения документов из предоставленных материалов.',
   heading: 'Сотрудники клиники',
-  lead: 'Пять сотрудников и их должности из предоставленных данных.',
+  lead: 'Пять сотрудников: подтверждённые должности, образование, стаж и сведения документов.',
   heroImage: 'specialists',
   noindex: INCOMPLETE_CONTENT.specialists.noindex,
   body: `<section class="section specialists-section"><div class="container">
@@ -54,11 +79,8 @@ export const SPECIALISTS_PAGE = Object.freeze({
           </div>
         </div>
       </div>
-      <article class="specialist-detail" aria-live="polite" aria-atomic="true">
-        <div><p class="eyebrow">Выбранный сотрудник</p><h3 data-specialist-detail-name>${escapeHtml(STAFF[0].name)}</h3><p class="specialist-detail__role" data-specialist-detail-role>${escapeHtml(STAFF[0].role)}</p></div>
-        <div class="specialist-detail__status"><strong>Опубликованы подтверждённые имя и должность</strong><p>${escapeHtml(INCOMPLETE_CONTENT.specialists.reason)}</p></div>
-        <a class="button button-primary" href="${CONTACTS.phones[0].href}" data-appointment-open>Записаться на приём</a>
-      </article>
+      <div class="specialist-profiles">${staffProfiles}</div>
+      <div class="specialist-profile-cta"><a class="button button-primary" href="${CONTACTS.phones[0].href}" data-appointment-open>Записаться на приём</a></div>
     </div>
   </div></section>`,
 });

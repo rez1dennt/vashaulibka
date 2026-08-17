@@ -29,6 +29,16 @@ describe('generated local search index', () => {
     )))).toBe(true);
   });
 
+  it('indexes staff biographies, specialties, and source record identifiers', () => {
+    const roshchina = build().items.find(({ title }) => title === 'Рощина Любовь Ивановна');
+    const demidov = build().items.find(({ title }) => title === 'Демидов Андрей Федорович');
+
+    expect([roshchina.content, ...roshchina.keywords].join(' ')).toContain('7725033711135');
+    expect([roshchina.content, ...roshchina.keywords].join(' ')).toContain('Зубной врач');
+    expect(demidov.content).toContain('Тверскую государственную медицинскую академию');
+    expect(demidov.content).toContain('Стоматология ортопедическая');
+  });
+
   it('is deterministic, unique and restricted to local HTML targets', () => {
     const first = build();
     const second = build();
@@ -112,7 +122,7 @@ describe('generated local search index', () => {
     ['как доехать', 'contacts.html'],
     ['как пожаловаться', 'complaints.html'],
     ['протезы', 'services.html#service-orthopedics'],
-    ['зубной врач', 'services.html#service-dentistry'],
+    ['зубной врач', 'specialists.html#specialist-3'],
   ])('resolves the patient phrasing %j to the intended published page', (query, expectedHref) => {
     expect(searchItems(build().items, query)[0]?.item.href).toBe(expectedHref);
   });

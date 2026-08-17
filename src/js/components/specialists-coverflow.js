@@ -9,10 +9,9 @@ const positionFor = (index, activeIndex, length) => {
 export function initSpecialistsCoverflow() {
   document.querySelectorAll('[data-specialists-coverflow]').forEach((root) => {
     const slides = [...root.querySelectorAll('[data-specialist-slide]')];
+    const profiles = [...root.querySelectorAll('[data-specialist-profile]')];
     const viewport = root.querySelector('[data-specialist-viewport]');
-    const detailName = root.querySelector('[data-specialist-detail-name]');
-    const detailRole = root.querySelector('[data-specialist-detail-role]');
-    if (!slides.length || !viewport || root.classList.contains('is-enhanced')) return;
+    if (!slides.length || profiles.length !== slides.length || !viewport || root.classList.contains('is-enhanced')) return;
 
     let activeIndex = 0;
     let pointerStart = null;
@@ -35,11 +34,12 @@ export function initSpecialistsCoverflow() {
 
         const select = slide.querySelector('[data-specialist-select]');
         if (select) select.tabIndex = isActive ? 0 : -1;
-      });
 
-      const active = slides[activeIndex];
-      if (detailName) detailName.textContent = active.querySelector('.specialist-card__name')?.textContent.trim() || '';
-      if (detailRole) detailRole.textContent = active.querySelector('.specialist-card__role')?.textContent.trim() || '';
+        const profile = profiles[slideIndex];
+        profile.hidden = !isActive;
+        if (isActive) profile.removeAttribute('aria-hidden');
+        else profile.setAttribute('aria-hidden', 'true');
+      });
     };
 
     root.querySelector('[data-specialist-prev]')?.addEventListener('click', () => activate(activeIndex - 1));

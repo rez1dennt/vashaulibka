@@ -1,7 +1,7 @@
 import { JSDOM } from 'jsdom';
 import { describe, expect, it } from 'vitest';
 import { PAGES } from '../../src/content/page-manifest.js';
-import { INCOMPLETE_CONTENT, STAFF } from '../../src/data/staff.js';
+import { STAFF } from '../../src/data/staff.js';
 import { renderPage } from '../../src/templates/render-page.js';
 
 const renderSpecialists = () => new JSDOM(renderPage(
@@ -9,7 +9,7 @@ const renderSpecialists = () => new JSDOM(renderPage(
 )).window.document;
 
 describe('specialists coverflow content', () => {
-  it('renders every confirmed person once and no fabricated profile fields', () => {
+  it('renders every confirmed person and source-backed profile once', () => {
     const document = renderSpecialists();
     const slides = [...document.querySelectorAll('[data-specialist-slide]')];
 
@@ -19,7 +19,12 @@ describe('specialists coverflow content', () => {
     expect(slides.map((slide) => slide.querySelector('.specialist-card__role').textContent.trim()))
       .toEqual(STAFF.map((person) => person.role));
     expect(document.querySelector('.specialists-coverflow img')).toBeNull();
-    expect(document.body.textContent).not.toMatch(/лет опыта|образовани.+университет|сертификат действителен/i);
+    const profiles = [...document.querySelectorAll('[data-specialist-profile]')];
+    expect(profiles).toHaveLength(STAFF.length);
+    expect(profiles.every((profile) => !profile.hidden && !profile.hasAttribute('aria-hidden'))).toBe(true);
+    expect(document.body.textContent).toContain('7725033711135');
+    expect(document.body.textContent).toContain('Белгородский медицинский колледж');
+    expect(document.body.textContent).not.toMatch(/сертификат действителен|аккредитация действительна/i);
   });
 
   it('ships a complete progressive-enhancement and accessibility contract', () => {
@@ -41,9 +46,10 @@ describe('specialists coverflow content', () => {
     expect(document.body.textContent).not.toContain('Выберите карточку');
     expect(document.body.textContent).not.toContain('Листайте карточки');
     expect(document.querySelector('#specialists-coverflow-instructions')?.classList.contains('sr-only')).toBe(true);
-    expect(root.querySelector('[data-specialist-detail-name]').textContent.trim()).toBe(STAFF[0].name);
-    expect(root.querySelector('[data-specialist-detail-role]').textContent.trim()).toBe(STAFF[0].role);
-    expect(document.body.textContent).toContain(INCOMPLETE_CONTENT.specialists.reason);
+    const profiles = [...root.querySelectorAll('[data-specialist-profile]')];
+    expect(profiles).toHaveLength(STAFF.length);
+    expect(slides.every((slide, index) => slide.querySelector('[data-specialist-select]')
+      ?.getAttribute('aria-controls') === profiles[index].id)).toBe(true);
     expect(root.querySelector('[data-appointment-open]')).not.toBeNull();
   });
 });
