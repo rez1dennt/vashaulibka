@@ -2,6 +2,7 @@ import { existsSync, readFileSync } from 'node:fs';
 import { JSDOM } from 'jsdom';
 import { describe, expect, it } from 'vitest';
 import { LEGAL_PAGES } from '../../src/content/legal-pages.js';
+import { DOCUMENTS_PAGE } from '../../src/content/documents-page.js';
 import { PAGES } from '../../src/content/page-manifest.js';
 import { CLINIC, CONTACTS, HOURS } from '../../src/data/clinic.js';
 import { SERVICES } from '../../src/data/services.js';
@@ -18,6 +19,7 @@ const approvedFiles = [
   'vacancies.html',
   'contacts.html',
   'patients.html',
+  'documents.html',
   'license.html',
   'payment.html',
   'benefits.html',
@@ -50,6 +52,7 @@ describe('public page manifest', () => {
     expect(existsSync(legalModulePath)).toBe(true);
     expect(LEGAL_PAGES).toHaveLength(13);
     expect(Object.isFrozen(LEGAL_PAGES)).toBe(true);
+    expect(PAGES.filter((page) => page === DOCUMENTS_PAGE)).toHaveLength(1);
   });
 
   it('publishes a compact visualization label in every generated page', () => {

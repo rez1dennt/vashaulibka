@@ -59,6 +59,8 @@ describe('generated local search index', () => {
     ['болит зуб', 'services.html#service-therapy'],
     ['лицензия', 'license.html'],
     ['ОГРН', 'license.html'],
+    ['постановление 659', 'documents.html'],
+    ['СОУТ', 'documents.html'],
     ['график', 'contacts.html'],
     ['жалоба', 'complaints.html'],
     ['ОМС', 'oms.html'],

@@ -53,7 +53,7 @@ const staffProfiles = STAFF.map((person, index) => `
     </header>
     <div class="specialist-profile__facts">
       <section><h4>Образование</h4>${renderParagraphList(person.education)}</section>
-      ${person.professionalTraining.length ? `<section><h4>Профессиональная переподготовка</h4>${renderParagraphList(person.professionalTraining)}</section>` : ''}
+${person.professionalTraining.length ? `      <section><h4>Профессиональная переподготовка</h4>${renderParagraphList(person.professionalTraining)}</section>` : ''}
       <section><h4>Сведения документов</h4><dl class="specialist-profile__records">${renderRecords(person.records)}</dl></section>
     </div>
   </article>`).join('');

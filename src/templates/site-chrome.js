@@ -16,7 +16,7 @@ export const NAV_ITEMS = Object.freeze([
 ]);
 
 const PATIENT_LINKS = Object.freeze([
-  { href: 'license.html', label: 'Лицензия и документы' },
+  { href: 'documents.html', label: 'Документы' },
   { href: 'payment.html', label: 'Оплата услуг' },
   { href: 'benefits.html', label: 'Льготы' },
   { href: 'guarantees.html', label: 'Гарантии' },

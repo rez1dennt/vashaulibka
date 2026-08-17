@@ -62,13 +62,14 @@ describe('patient and legal page manifest', () => {
   it('contains all 13 patient routes exactly once and exposes them from the patient hub', () => {
     expect(LEGAL_PAGES.map((page) => page.file)).toEqual(legalFiles);
     expect(new Set(LEGAL_PAGES.map((page) => page.file))).toHaveLength(legalFiles.length);
-    expect(PAGES).toHaveLength(21);
+    expect(PAGES).toHaveLength(22);
 
     const hub = pageDocument('patients.html');
     for (const target of legalFiles.filter((file) => file !== 'patients.html')) {
       expect(hub.querySelector(`a[href="${target}"]`), `${target} is linked from patients.html`).not.toBeNull();
     }
     expect(hub.querySelector('.patient-links a[href="services.html"]')?.textContent).toContain('Медицинская деятельность и услуги');
+    expect(hub.querySelector('a[href="documents.html"]')?.textContent).toContain('Документы');
   });
 
   it('groups the patient hub into scannable icon cards without losing destinations', () => {
@@ -82,9 +83,9 @@ describe('patient and legal page manifest', () => {
       'Документы и гарантии',
       'Права и персональные данные',
     ]);
-    expect(cards).toHaveLength(13);
+    expect(cards).toHaveLength(14);
     expect(cards.every((card) => card.querySelector('.ui-icon') && card.querySelector('.patient-link-card__arrow'))).toBe(true);
-    expect(new Set(cards.map((card) => card.getAttribute('href'))).size).toBe(13);
+    expect(new Set(cards.map((card) => card.getAttribute('href'))).size).toBe(14);
   });
 
   it('uses one editorial layout and related navigation across every patient route', () => {

@@ -72,7 +72,8 @@ describe('premium light site chrome', () => {
     ]);
     expect(columns[0].textContent).toContain(LICENSE.number);
     expect(columns[0].textContent).toContain(CLINIC.ogrn);
-    expect(document.querySelector('a[href="license.html"]')).not.toBeNull();
+    expect(document.querySelector('a[href="documents.html"]')?.textContent).toContain('Документы');
+    expect(document.querySelector('a[href="license.html"]')).toBeNull();
     expect(document.querySelector('a[href="privacy.html"]')).not.toBeNull();
     expect(document.querySelector('[data-cookie-settings]')).not.toBeNull();
     expect(document.querySelectorAll('.footer-icon').length).toBeGreaterThanOrEqual(4);

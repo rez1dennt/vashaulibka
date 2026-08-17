@@ -1,5 +1,5 @@
 import { CLINIC, CONTACTS, HOURS, LICENSE } from '../data/clinic.js';
-import { PUBLIC_DOCUMENTS } from '../data/documents.js';
+import { PRICE_LIST, PUBLIC_DOCUMENTS } from '../data/documents.js';
 import { SERVICES } from '../data/services.js';
 import { STAFF } from '../data/staff.js';
 import { renderHomeDecoration } from '../templates/home-decoration.js';
@@ -20,7 +20,7 @@ const renderInteriorFigure = (name, className) => [
 ].join('');
 
 const quickLinks = [
-  { title: 'Лицензии и документы', text: 'Лицензия, ОГРН и оригиналы документов клиники.', href: 'license.html', icon: 'document' },
+  { title: 'Лицензии и документы', text: 'Лицензия, ОГРН, прайс-лист и оригиналы документов клиники.', href: 'documents.html', icon: 'document' },
   { title: 'Специалисты', text: 'Подтверждённый список сотрудников и должностей.', href: 'specialists.html', icon: 'team' },
   { title: 'Услуги', text: 'Три направления помощи из действующей лицензии.', href: 'services.html', icon: 'tooth' },
   { title: 'Цены', text: 'Статус публикации утверждённого прейскуранта.', href: 'prices.html', icon: 'ruble' },
@@ -67,7 +67,7 @@ const staffAndPricesSection = [
   renderHomeDecoration('staff-jaw'),
   '<div class="container home-staff-prices__grid">',
   `<div class="home-staff"><div class="section-heading"><div><p class="eyebrow">Команда</p><h2>Сотрудники клиники</h2></div><a class="text-link" href="specialists.html">Весь список${renderIcon('arrow', 'button-icon')}</a></div><div class="home-staff__grid">${staffCards}</div></div>`,
-  `<aside class="home-price-panel"><div class="home-price-panel__icon">${renderIcon('ruble')}</div><p class="eyebrow">Стоимость услуг</p><h2>Прейскурант готовится к публикации</h2><p><strong>${escapeHtml(SERVICES[0].priceStatus)}</strong></p><p>Утверждённые цены будут размещены после получения прейскуранта от клиники.</p><div class="home-price-panel__actions"><a class="button button-secondary" href="prices.html">Статус цен</a><a class="button button-primary" href="${CONTACTS.phones[0].href}" data-appointment-open>Записаться</a></div></aside>`,
+  `<aside class="home-price-panel"><div class="home-price-panel__icon">${renderIcon('ruble')}</div><p class="eyebrow">Стоимость услуг</p><h2>Утверждённый прайс-лист</h2><p><strong>Утверждён ${escapeHtml(PRICE_LIST.approvedLabel)}</strong></p><p>Документ содержит ${escapeHtml(PRICE_LIST.pageCount)} страниц и доступен для просмотра и скачивания.</p><div class="home-price-panel__actions"><a class="button button-secondary" href="prices.html">Смотреть цены</a><a class="button button-primary" href="${CONTACTS.phones[0].href}" data-appointment-open>Записаться</a></div></aside>`,
   '</div></section>',
 ].join('');
 
@@ -97,7 +97,7 @@ const documentCards = [
   },
 ];
 
-const documentsSection = `<section class="home-section home-documents"><div class="container home-documents__grid"><div class="home-documents__intro"><p class="eyebrow">Документы</p><h2>Оригиналы клиники</h2><p>На сайте размещены предоставленные клиникой регистрационные и лицензионные документы.</p><a class="button button-secondary" href="license.html">Все сведения${renderIcon('arrow', 'button-icon')}</a></div><div class="home-documents__cards">${documentCards.map((document) => `<a class="document-card" href="${document.href}" target="_blank" rel="noopener"><span class="document-card__preview"><img src="${document.image}" alt="${document.alt}" width="720" height="960" loading="lazy"></span><span class="document-card__body">${renderIcon('document')}<span><strong>${document.title}</strong><small>Открыть PDF</small></span>${renderIcon('arrow', 'button-icon')}</span></a>`).join('')}</div></div></section>`;
+const documentsSection = `<section class="home-section home-documents"><div class="container home-documents__grid"><div class="home-documents__intro"><p class="eyebrow">Документы</p><h2>Документы клиники и нормативные источники</h2><p>Лицензия, ОГРН, утверждённый прайс-лист, сведения об охране труда и официальные публикации собраны в одном разделе.</p><a class="button button-secondary" href="documents.html">Смотреть все документы${renderIcon('arrow', 'button-icon')}</a></div><div class="home-documents__cards">${documentCards.map((document) => `<a class="document-card" href="${document.href}" target="_blank" rel="noopener"><span class="document-card__preview"><img src="${document.image}" alt="${document.alt}" width="720" height="960" loading="lazy"></span><span class="document-card__body">${renderIcon('document')}<span><strong>${document.title}</strong><small>Открыть PDF</small></span>${renderIcon('arrow', 'button-icon')}</span></a>`).join('')}</div></div></section>`;
 
 const hours = [
   HOURS.weekdays,

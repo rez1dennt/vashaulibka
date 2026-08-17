@@ -39,6 +39,7 @@ const PATIENT_LINK_GROUPS = Object.freeze([
   Object.freeze({
     title: 'Документы и гарантии',
     links: Object.freeze([
+      Object.freeze({ href: 'documents.html', label: 'Документы клиники', description: 'Прайс-лист, лицензия, нормативные акты и охрана труда.', icon: 'document' }),
       Object.freeze({ href: 'license.html', label: 'Лицензия и регистрационные документы', description: 'Лицензия, ОГРН и предоставленные оригиналы.', icon: 'document' }),
       Object.freeze({ href: 'informed-consent.html', label: 'Информированное добровольное согласие', description: 'Порядок оформления согласия до вмешательства.', icon: 'document' }),
       Object.freeze({ href: 'guarantees.html', label: 'Гарантийные сроки', description: 'Условия, гарантийные сроки и сроки службы.', icon: 'shield' }),
