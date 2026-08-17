@@ -537,6 +537,17 @@ html[data-accessibility-enabled="true"][data-accessibility-scale="200"] .home-de
   max-inline-size: 100%;
 }
 
+html[data-accessibility-enabled="true"][data-accessibility-scale="200"] :where(.documents-directory, .documents-group, .document-item, .price-source, .price-source__card, .price-source__notice, .specialist-profiles, .specialist-profile) {
+  min-inline-size: var(--space-0);
+  inline-size: 100%;
+  max-inline-size: 100%;
+  overflow-wrap: anywhere;
+}
+
+html[data-accessibility-enabled="true"][data-accessibility-scale="200"] :where(.documents-directory, .price-source, .specialist-profiles, .specialist-profile__facts) {
+  grid-template-columns: minmax(var(--space-0), 1fr);
+}
+
 html[data-accessibility-enabled="true"][data-accessibility-scale="200"] :where(.home-decor--hero-tooth, .home-decor--quick-tooth, .home-decor--services-dental, .home-decor--patients-docs) {
   inset-inline-end: var(--space-0);
 }

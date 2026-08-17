@@ -37,7 +37,7 @@ export const SERVICE_PAGES = Object.freeze([
     lead: `Утверждённый прейскурант от ${PRICE_LIST.approvedLabel} доступен для просмотра и скачивания.`,
     heroImage: 'prices',
     noindex: false,
-    body: `<section class="section price-source-section"><div class="container"><article class="price-source card"><div class="price-source__copy"><p class="eyebrow">Утверждённый документ</p><h2>${PRICE_LIST.title}</h2><p class="price-source__meta">Утверждён ${PRICE_LIST.approvedLabel} · ${PRICE_LIST.pageCount} страниц</p><div class="price-source__actions"><a class="button button-primary" href="${PRICE_LIST.href}">Открыть прайс-лист</a><a class="button button-secondary" href="${PRICE_LIST.href}" download>Скачать PDF</a></div></div><div class="price-source__notices">${PRICE_LIST.notices.map((notice) => `<p>${notice}</p>`).join('')}</div></article><div class="price-disclosures">${priceDisclosures}</div></div></section>`,
+    body: `<section class="section price-source-section"><div class="container"><article class="price-source price-source__card card"><div class="price-source__copy"><p class="eyebrow">Утверждённый документ</p><h2>${PRICE_LIST.title}</h2><p class="price-source__meta">Утверждён ${PRICE_LIST.approvedLabel} · ${PRICE_LIST.pageCount} страниц</p><div class="price-source__actions"><a class="button button-primary" href="${PRICE_LIST.href}">Открыть прайс-лист</a><a class="button button-secondary" href="${PRICE_LIST.href}" download>Скачать PDF</a></div></div><div class="price-source__notices">${PRICE_LIST.notices.map((notice) => `<p class="price-source__notice">${notice}</p>`).join('')}</div></article><div class="price-disclosures">${priceDisclosures}</div></div></section>`,
   },
   {
     file: 'reviews.html',
