@@ -852,6 +852,7 @@
 
 .documents-centre .patient-content {
   display: grid;
+  grid-template-columns: minmax(var(--space-0), 1fr);
   gap: var(--space-8);
 }
 
@@ -911,7 +912,7 @@
   min-inline-size: var(--space-0);
   display: grid;
   gap: var(--space-4);
-  scroll-margin-block-start: var(--space-6);
+  scroll-margin-block-start: calc(var(--space-30) + var(--space-16));
 }
 
 .documents-group > header {

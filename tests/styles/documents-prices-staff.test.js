@@ -6,6 +6,7 @@ const accessibilityCss = readFileSync('src/styles/accessibility.css', 'utf8');
 
 describe('documents, prices and staff visual contract', () => {
   it('uses contained mobile-first grids and wrapping actions', () => {
+    expect(pagesCss).toMatch(/\.documents-centre \.patient-content\s*{[^}]*grid-template-columns:\s*minmax\(var\(--space-0\),\s*1fr\)/s);
     expect(pagesCss).toMatch(/\.documents-directory\s*{[^}]*display:\s*grid/s);
     expect(pagesCss).toMatch(/\.document-item\s*{[^}]*min-inline-size:\s*var\(--space-0\)/s);
     expect(pagesCss).toMatch(/\.document-item__actions\s*{[^}]*flex-wrap:\s*wrap/s);
@@ -19,9 +20,14 @@ describe('documents, prices and staff visual contract', () => {
   });
 
   it('contains all new surfaces in the 200 percent accessibility mode', () => {
-    for (const selector of ['.documents-directory', '.documents-group', '.document-item', '.price-source', '.price-source__card', '.price-source__notice', '.specialist-profile']) {
+    for (const selector of ['.documents-categories', '.documents-directory', '.documents-group', '.document-item', '.price-source', '.price-source__card', '.price-source__notice', '.specialist-profile']) {
       expect(accessibilityCss, selector).toContain(selector);
     }
+    expect(accessibilityCss).toMatch(/\.documents-categories a[^}]*overflow-wrap:\s*anywhere/s);
+  });
+
+  it('keeps category anchors clear of the persistent desktop header', () => {
+    expect(pagesCss).toMatch(/\.documents-group\s*{[^}]*scroll-margin-block-start:\s*calc\(var\(--space-30\) \+ var\(--space-16\)\)/s);
   });
 
   it('removes decorative movement when reduced motion is requested', () => {

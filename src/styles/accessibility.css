@@ -544,6 +544,12 @@ html[data-accessibility-enabled="true"][data-accessibility-scale="200"] :where(.
   overflow-wrap: anywhere;
 }
 
+html[data-accessibility-enabled="true"][data-accessibility-scale="200"] :where(.documents-categories, .documents-categories ul, .documents-categories li, .documents-categories a) {
+  min-inline-size: var(--space-0);
+  max-inline-size: 100%;
+  overflow-wrap: anywhere;
+}
+
 html[data-accessibility-enabled="true"][data-accessibility-scale="200"] :where(.documents-directory, .price-source, .specialist-profiles, .specialist-profile__facts) {
   grid-template-columns: minmax(var(--space-0), 1fr);
 }
