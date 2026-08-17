@@ -12,7 +12,7 @@ Replace the remaining placeholder content with a source-based, publication-ready
 
 | Source | Confirmed contents | Public use |
 | --- | --- | --- |
-| `Прайс.pdf` | 19-page price list, 328 numbered positions, approved 5 May 2026 | Publish the original unchanged; expose clear view and download actions |
+| `Прайс.pdf` | 19-page price list approved 5 May 2026; the supplied original skips numbering from 158 through 171 and resumes at 172 | Publish the original unchanged; expose clear view and download actions; do not claim a total item count |
 | `Комментарий  прайса.docx` | Order No. 804n basis; informational/non-public-offer notice; final cost after consultation and treatment plan; prices may change with material costs | Edit grammar without changing meaning and render as accessible HTML |
 | `Охрана труда.pdf` | Three-page summary of the special assessment of working conditions | Publish unchanged under the full document title |
 | `Список сотрудников.pdf` | Five employees, positions, document/registry identifiers, education levels, issue years, and specialties | Use as the structured source for staff data; retain the original only if explicitly required later |
@@ -65,7 +65,7 @@ Replace the placeholder and remove controlled `noindex` status. The indexable pa
 - no manually invented or selectively copied prices;
 - search metadata for common price queries and the two source categories: orthopaedic and therapeutic treatment.
 
-The signed/scanned PDF is the authoritative complete price list. The site does not manually retype all 328 rows because that would create a material transcription-risk boundary. A future structured price dataset can be added only from a machine-readable or independently verified source.
+The signed/scanned PDF is the authoritative supplied price list. The site does not manually retype its rows because that would create a material transcription-risk boundary. A future structured price dataset can be added only from a machine-readable or independently verified source.
 
 ### Services page
 
@@ -82,7 +82,7 @@ Remove the public service title “Доврачебная помощь”, all p
 Keep all five people on the “Команда” page:
 
 - Демидова Инна Владимировна — director and chief physician;
-- Демидов Андрей Фёдорович — dentist-therapist and dentist-orthopaedist;
+- Демидов Андрей Федорович — dentist-therapist and dentist-orthopaedist;
 - Рощина Любовь Ивановна — dental practitioner (`Зубной врач`), never “фельдшер стоматологический”;
 - Ненько Софья Максимовна — medical nurse;
 - Мясоедова Анастасия Андреевна — medical nurse.
