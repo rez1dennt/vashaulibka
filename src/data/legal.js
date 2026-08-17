@@ -1,15 +1,11 @@
-export const PUBLIC_DOCUMENTS = Object.freeze({
-  licenseRegistryExtract: 'documents/license-registry-extract.pdf',
-  ogrnCertificate: 'documents/ogrn-certificate.pdf',
-  legalResourcesQr: 'assets/qr/legal-resources.png',
-});
+import { OFFICIAL_DOCUMENT_URLS } from './documents.js';
 
 export const OFFICIAL_SOURCES = Object.freeze({
-  order118n: 'https://publication.pravo.gov.ru/document/0001202504110006',
-  paidServices736: 'https://publication.pravo.gov.ru/document/0001202305120025',
-  paidServices659: 'https://publication.pravo.gov.ru/document/0001202606010083',
-  legalInformation: 'https://pravo.gov.ru/',
-  clinicalRecommendations: 'https://cr.minzdrav.gov.ru/',
+  order118n: OFFICIAL_DOCUMENT_URLS.order118n,
+  paidServices736: OFFICIAL_DOCUMENT_URLS.paidServices736,
+  paidServices659: OFFICIAL_DOCUMENT_URLS.paidServices659,
+  legalInformation: OFFICIAL_DOCUMENT_URLS.legalInformation,
+  clinicalRecommendations: OFFICIAL_DOCUMENT_URLS.clinicalRecommendations,
 });
 
 export const PAID_SERVICES_DATE_NOTICE = 'До 31 августа 2026 года применяются Правила предоставления платных медицинских услуг, утверждённые постановлением Правительства РФ от 11 мая 2023 года № 736. С 1 сентября 2026 года применяются Правила, утверждённые постановлением Правительства РФ от 30 мая 2026 года № 659.';

@@ -1,11 +1,11 @@
 import { CLINIC, CONTACTS, LICENSE } from '../data/clinic.js';
+import { PUBLIC_DOCUMENTS } from '../data/documents.js';
 import {
   BENEFITS,
   GUARANTEES,
   OFFICIAL_SOURCES,
   PAID_SERVICES_DATE_NOTICE,
   PERSONAL_DATA_SAMPLE,
-  PUBLIC_DOCUMENTS,
   REGULATORS,
 } from '../data/legal.js';
 import { renderIcon } from '../templates/icons.js';

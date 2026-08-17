@@ -1,5 +1,5 @@
 import { CLINIC, CONTACTS, HOURS, LICENSE } from '../data/clinic.js';
-import { PUBLIC_DOCUMENTS } from '../data/legal.js';
+import { PUBLIC_DOCUMENTS } from '../data/documents.js';
 import { SERVICES } from '../data/services.js';
 import { STAFF } from '../data/staff.js';
 import { renderHomeDecoration } from '../templates/home-decoration.js';
