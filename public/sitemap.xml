@@ -1,4 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <!-- SITE_ORIGIN не задан: абсолютные адреса будут добавлены после настройки домена. -->
+  <url><loc>https://stomdemidov.ru/</loc></url>
+  <url><loc>https://stomdemidov.ru/about.html</loc></url>
+  <url><loc>https://stomdemidov.ru/contacts.html</loc></url>
+  <url><loc>https://stomdemidov.ru/services.html</loc></url>
+  <url><loc>https://stomdemidov.ru/specialists.html</loc></url>
+  <url><loc>https://stomdemidov.ru/prices.html</loc></url>
+  <url><loc>https://stomdemidov.ru/reviews.html</loc></url>
+  <url><loc>https://stomdemidov.ru/vacancies.html</loc></url>
+  <url><loc>https://stomdemidov.ru/documents.html</loc></url>
+  <url><loc>https://stomdemidov.ru/patients.html</loc></url>
+  <url><loc>https://stomdemidov.ru/license.html</loc></url>
+  <url><loc>https://stomdemidov.ru/payment.html</loc></url>
+  <url><loc>https://stomdemidov.ru/benefits.html</loc></url>
+  <url><loc>https://stomdemidov.ru/oms.html</loc></url>
+  <url><loc>https://stomdemidov.ru/informed-consent.html</loc></url>
+  <url><loc>https://stomdemidov.ru/guarantees.html</loc></url>
+  <url><loc>https://stomdemidov.ru/complaints.html</loc></url>
+  <url><loc>https://stomdemidov.ru/standards.html</loc></url>
+  <url><loc>https://stomdemidov.ru/privacy.html</loc></url>
+  <url><loc>https://stomdemidov.ru/cookies.html</loc></url>
 </urlset>

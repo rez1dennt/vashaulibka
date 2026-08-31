@@ -15,6 +15,7 @@ import { fileURLToPath } from 'node:url';
 import { JSDOM } from 'jsdom';
 import { PAGES } from '../src/content/page-manifest.js';
 import { generateSeo } from './generate-seo.mjs';
+import { SITE_ORIGIN } from '../src/data/site.js';
 import { ONLINE_BOOKING } from '../src/data/online-booking.js';
 
 const LOCAL_ORIGIN = 'https://local.test';
@@ -591,7 +592,7 @@ export function verifyDirectory(directory, { pages = PAGES, origin } = {}) {
 
 const modulePath = fileURLToPath(import.meta.url);
 if (process.argv[1] && resolve(process.argv[1]) === modulePath) {
-  const result = verifyDirectory(process.argv[2] || 'dist', { origin: process.env.SITE_ORIGIN });
+  const result = verifyDirectory(process.argv[2] || 'dist', { origin: SITE_ORIGIN });
   if (result.errors.length) {
     for (const item of result.errors) {
       console.error(`${item.code}${item.file ? ` [${item.file}]` : ''}: ${item.message}`);

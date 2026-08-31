@@ -1,5 +1,6 @@
 import { CLINIC, CONTACTS, HOURS, LICENSE } from '../data/clinic.js';
 import { ONLINE_BOOKING } from '../data/online-booking.js';
+import { SITE_ORIGIN } from '../data/site.js';
 import { renderAccessibilityBootstrap } from './accessibility-bootstrap.js';
 import { renderHero } from './render-hero.js';
 import { renderFooter, renderHeader } from './site-chrome.js';
@@ -12,6 +13,7 @@ const esc = (value) => String(value).replace(/[&<>"]/g, (char) => ({
 }[char]));
 
 export function renderPage(page) {
+  const canonicalUrl = new URL(page.file === 'index.html' ? '/' : page.file, `${SITE_ORIGIN}/`).href;
   const robots = page.noindex
     ? '<meta name="robots" content="noindex, follow">'
     : '<meta name="robots" content="index, follow">';
@@ -20,6 +22,7 @@ export function renderPage(page) {
     '@type': 'Dentist',
     name: CLINIC.shortLegalName,
     legalName: CLINIC.legalName,
+    url: `${SITE_ORIGIN}/`,
     address: {
       '@type': 'PostalAddress',
       streetAddress: 'ул. Макаренко, д. 1г',
@@ -56,6 +59,7 @@ export function renderPage(page) {
   return [
     '<!doctype html><html class="no-js" lang="ru"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">',
     robots,
+    `<link rel="canonical" href="${esc(canonicalUrl)}"><meta property="og:url" content="${esc(canonicalUrl)}">`,
     `<title>${esc(page.title)} — ${esc(CLINIC.shortLegalName)}</title><meta name="description" content="${esc(page.description)}">`,
     `<meta property="og:type" content="website"><meta property="og:title" content="${esc(page.title)}"><meta property="og:description" content="${esc(page.description)}">`,
     `${renderAccessibilityBootstrap()}<link rel="stylesheet" href="/src/styles/main.css">`,

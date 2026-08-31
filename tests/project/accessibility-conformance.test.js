@@ -64,7 +64,8 @@ describe('generated-page accessibility conformance', () => {
       expect([...document.querySelectorAll('[tabindex]')].filter((element) => Number(element.getAttribute('tabindex')) > 0), file).toEqual([]);
       expect([...document.images].filter((image) => !image.hasAttribute('alt')), file).toEqual([]);
 
-      for (const element of document.querySelectorAll('script[src], link[href], img[src], source[src], iframe[src], audio[src], video[src], [srcset]')) {
+      // Canonical is page metadata, not a fetched runtime asset.
+      for (const element of document.querySelectorAll('script[src], link[href]:not([rel="canonical"]), img[src], source[src], iframe[src], audio[src], video[src], [srcset]')) {
         const references = [element.getAttribute('src'), element.getAttribute('href'), element.getAttribute('srcset')]
           .filter(Boolean);
         for (const reference of references) {
