@@ -13,7 +13,7 @@ const documents = () => PAGES.map((page) => ({
 
 describe('generated-page accessibility conformance', () => {
   it('publishes consent-gated MIS booking relationships on all 22 pages', () => {
-    expect(PAGES).toHaveLength(22);
+    expect(PAGES).toHaveLength(20);
     for (const { file, document } of documents()) {
       const dialog = document.querySelector('#appointment-dialog');
       expect(dialog?.getAttribute('aria-describedby'), file).toBe('appointment-description');
@@ -25,7 +25,7 @@ describe('generated-page accessibility conformance', () => {
   });
 
   it('renders one compact toolbar and one semantically related advanced dialog on all 22 pages', () => {
-    expect(PAGES).toHaveLength(22);
+    expect(PAGES).toHaveLength(20);
 
     for (const { file, document } of documents()) {
       expect(document.querySelectorAll('#accessibility-panel[data-accessibility-panel]'), file).toHaveLength(1);

@@ -29,11 +29,11 @@ describe('documents centre', () => {
     }
   });
 
-  it('keeps the price and labour originals downloadable and the missing contract absent', () => {
+  it('keeps the price, labour and supplied contract originals downloadable', () => {
     const document = new JSDOM(renderPage(DOCUMENTS_PAGE)).window.document;
     expect(document.querySelector('a[href="documents/price-list-2026-05-05.pdf"][download]')).not.toBeNull();
     expect(document.querySelector('a[href="documents/sout-summary-2024.pdf"][download]')).not.toBeNull();
-    expect(document.body.textContent).not.toMatch(/образец договора/i);
+    expect(document.querySelector('a[href="documents/paid-services-contract-2026-09-01.pdf"][download]')).not.toBeNull();
   });
 
   it('names local, internal, and external actions by their real destination', () => {

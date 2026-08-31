@@ -23,13 +23,11 @@ const approvedFiles = [
   'license.html',
   'payment.html',
   'benefits.html',
-  'waiting-periods.html',
   'oms.html',
   'informed-consent.html',
   'guarantees.html',
   'complaints.html',
   'standards.html',
-  'personal-data-consent.html',
   'privacy.html',
   'cookies.html',
 ];
@@ -50,7 +48,7 @@ describe('public page manifest', () => {
 
     const legalModulePath = 'src/content/legal-pages.js';
     expect(existsSync(legalModulePath)).toBe(true);
-    expect(LEGAL_PAGES).toHaveLength(13);
+    expect(LEGAL_PAGES).toHaveLength(11);
     expect(Object.isFrozen(LEGAL_PAGES)).toBe(true);
     expect(PAGES.filter((page) => page === DOCUMENTS_PAGE)).toHaveLength(1);
   });

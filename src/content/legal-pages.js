@@ -5,7 +5,6 @@ import {
   GUARANTEES,
   OFFICIAL_SOURCES,
   PAID_SERVICES_DATE_NOTICE,
-  PERSONAL_DATA_SAMPLE,
   REGULATORS,
 } from '../data/legal.js';
 import { renderIcon } from '../templates/icons.js';
@@ -32,7 +31,6 @@ const PATIENT_LINK_GROUPS = Object.freeze([
       Object.freeze({ href: 'services.html', label: 'Медицинская деятельность и услуги', description: 'Направления помощи в пределах действующей лицензии.', icon: 'tooth' }),
       Object.freeze({ href: 'payment.html', label: 'Оплата услуг', description: 'Наличный и безналичный расчёт по выбору пациента.', icon: 'ruble' }),
       Object.freeze({ href: 'benefits.html', label: 'Льготы и скидки клиники', description: 'Скидки, предоставляемые по приказу клиники.', icon: 'shield' }),
-      Object.freeze({ href: 'waiting-periods.html', label: 'Сроки ожидания', description: 'Максимальный и фактический сроки после записи.', icon: 'clock' }),
       Object.freeze({ href: 'oms.html', label: 'Участие в программе ОМС', description: 'Официальный статус участия клиники в программе.', icon: 'info' }),
     ]),
   }),
@@ -40,6 +38,7 @@ const PATIENT_LINK_GROUPS = Object.freeze([
     title: 'Документы и гарантии',
     links: Object.freeze([
       Object.freeze({ href: 'documents.html', label: 'Документы клиники', description: 'Прайс-лист, лицензия, нормативные акты и охрана труда.', icon: 'document' }),
+      Object.freeze({ href: PUBLIC_DOCUMENTS.paidServicesContract2026, label: 'Договор на платные медицинские услуги', description: 'Форма с 1 сентября 2026 года. Согласие на обработку данных — в приложении № 5.', icon: 'document' }),
       Object.freeze({ href: 'license.html', label: 'Лицензия и регистрационные документы', description: 'Лицензия, ОГРН и предоставленные оригиналы.', icon: 'document' }),
       Object.freeze({ href: 'informed-consent.html', label: 'Информированное добровольное согласие', description: 'Порядок оформления согласия до вмешательства.', icon: 'document' }),
       Object.freeze({ href: 'guarantees.html', label: 'Гарантийные сроки', description: 'Условия, гарантийные сроки и сроки службы.', icon: 'shield' }),
@@ -50,7 +49,6 @@ const PATIENT_LINK_GROUPS = Object.freeze([
     title: 'Права и персональные данные',
     links: Object.freeze([
       Object.freeze({ href: 'complaints.html', label: 'Обращения и жалобы', description: 'Контакты клиники и территориальных ведомств.', icon: 'mail' }),
-      Object.freeze({ href: 'personal-data-consent.html', label: 'Образец согласия на обработку данных', description: 'Информационный образец для возможной будущей формы.', icon: 'document' }),
       Object.freeze({ href: 'privacy.html', label: 'Политика конфиденциальности', description: 'Фактическая обработка данных на текущем сайте.', icon: 'shield' }),
       Object.freeze({ href: 'cookies.html', label: 'Технические настройки и cookies', description: 'Локальные технические предпочтения браузера.', icon: 'info' }),
     ]),
@@ -193,14 +191,6 @@ export const LEGAL_PAGES = Object.freeze([
     body: `<section class="section"><div class="container">${patientNotice('Условия предоставления', '<p>Это скидки, предоставляемые клиникой по её приказу от 13 января 2025 года, а не универсальные установленные законом скидки. Принадлежность к льготной категории и возможность применения скидки необходимо подтвердить в клинике до лечения.</p>', 'shield')}<h2>Категории пациентов</h2><ul class="benefit-list">${benefitsList}</ul></div></section>`,
   }),
   makePage({
-    file: 'waiting-periods.html',
-    title: 'Сроки ожидания медицинских услуг',
-    description: 'Предельный и фактический сроки ожидания услуг после записи в клинику.',
-    heading: 'Сроки ожидания',
-    lead: 'Максимальный срок отсчитывается от момента записи.',
-    body: `<section class="section"><div class="container">${patientNotice('Максимальный срок', '<p>Максимальный срок ожидания составляет 30 дней с момента записи на приём.</p>', 'clock')}<h2>От чего зависит фактический срок</h2><p>Фактический срок зависит от выбранной услуги, клинической ситуации и других обстоятельств, указанных в документе клиники. Уточнить доступную дату можно по официальным телефонам.</p></div></section>`,
-  }),
-  makePage({
     file: 'oms.html',
     title: 'Участие клиники в программе ОМС',
     description: 'Официальное уведомление об участии ООО «Стоматология Ваша улыбка» в территориальной программе.',
@@ -231,7 +221,7 @@ export const LEGAL_PAGES = Object.freeze([
     heading: 'Обращения и жалобы',
     lead: 'Контакты клиники и территориальных надзорных органов.',
     heroImage: 'contacts',
-    body: `<section class="section"><div class="container">${patientNotice('Обращение в клинику', `<p>Почтовый адрес: ${escapeHtml(CLINIC.complaintsPostalAddress)}.</p><p>Электронная почта: <a href="${escapeHtml(CONTACTS.emailHref)}">${escapeHtml(CONTACTS.email)}</a>.</p><p>Если способ направления обращения не предусмотрен, потребитель или заказчик может направить жалобу в любой форме и любым способом.</p>`, 'mail')}</div></section><section class="section"><div class="container info-grid">${regulatorCards}</div></section>`,
+    body: `<section class="section"><div class="container">${patientNotice('Обращение в клинику', `<p>Почтовый адрес: ${escapeHtml(CLINIC.complaintsPostalAddress)}.</p><p>Электронная почта: <a href="${escapeHtml(CONTACTS.emailHref)}">${escapeHtml(CONTACTS.email)}</a>.</p><p>Телефоны клиники:</p><p class="contact-actions">${CONTACTS.phones.map((phone) => `<a class="button button-secondary" href="${escapeHtml(phone.href)}">${escapeHtml(phone.label)}</a>`).join('')}</p><p>Если способ направления обращения не предусмотрен, потребитель или заказчик может направить жалобу в любой форме и любым способом.</p>`, 'mail')}</div></section><section class="section"><div class="container info-grid">${regulatorCards}</div></section>`,
   }),
   makePage({
     file: 'standards.html',
@@ -240,14 +230,6 @@ export const LEGAL_PAGES = Object.freeze([
     heading: 'Стандарты и нормативные источники',
     lead: 'Ссылки на официальные публикации, актуальные на 11 августа 2026 года.',
     body: `<section class="section"><div class="container split"><article><h2>Платные медицинские услуги</h2><p>${escapeHtml(PAID_SERVICES_DATE_NOTICE)}</p><ul><li><a href="${escapeHtml(OFFICIAL_SOURCES.paidServices736)}">Официальная публикация постановления № 736</a></li><li><a href="${escapeHtml(OFFICIAL_SOURCES.paidServices659)}">Официальная публикация постановления № 659</a></li></ul><h2>Информация для независимой оценки качества</h2><p><a href="${escapeHtml(OFFICIAL_SOURCES.order118n)}">Приказ Минздрава России от 13 марта 2025 года № 118н</a> регулирует предоставление информации для проведения независимой оценки качества условий оказания услуг медицинскими организациями и устанавливает требования к содержанию и форме информации о медицинских организациях, размещаемой на официальных сайтах.</p><h2>Официальные базы</h2><ul><li><a href="${escapeHtml(OFFICIAL_SOURCES.legalInformation)}">Официальный интернет-портал правовой информации</a></li><li><a href="${escapeHtml(OFFICIAL_SOURCES.clinicalRecommendations)}">Рубрикатор клинических рекомендаций Минздрава России</a></li></ul></article><aside class="card legal-qr"><h2>QR-код на ресурсы</h2><img src="${escapeHtml(PUBLIC_DOCUMENTS.legalResourcesQr)}" alt="QR-код со ссылками на официальные правовые ресурсы и клинические рекомендации" width="512" height="512"></aside></div></section>`,
-  }),
-  makePage({
-    file: 'personal-data-consent.html',
-    title: 'Образец согласия на обработку персональных данных',
-    description: 'Информационный образец будущего согласия для записи на приём без действующей веб-формы.',
-    heading: 'Образец согласия на обработку данных',
-    lead: 'Только информационный образец для возможной будущей формы.',
-    body: `<section class="section"><div class="container">${patientNotice('Статус образца', '<p>Этот информационный образец не является акцептом или принятием согласия. Он не применяется к форме МИС 32top, которая содержит собственные тексты согласия и политики поставщика.</p>', 'document')}<h2>Параметры информационного образца</h2><dl class="definition-list"><div><dt>Категории данных</dt><dd>${PERSONAL_DATA_SAMPLE.categories.map(escapeHtml).join(', ')}</dd></div><div><dt>Цель</dt><dd>${escapeHtml(PERSONAL_DATA_SAMPLE.purpose)}</dd></div><div><dt>Допустимые операции</dt><dd>${PERSONAL_DATA_SAMPLE.operations.map(escapeHtml).join(', ')}</dd></div><div><dt>Срок хранения по образцу</dt><dd>До окончания обработки запроса, а при подтверждении записи — до заключения договора.</dd></div><div><dt>Отзыв</dt><dd>Отзыв согласия направляется оператору письменным заявлением.</dd></div></dl><p>Для действующей онлайн-записи ознакомьтесь с <a href="${escapeHtml(ONLINE_BOOKING.consentUrl)}">согласием 32top</a> и <a href="${escapeHtml(ONLINE_BOOKING.privacyUrl)}">политикой поставщика</a>.</p></div></section>`,
   }),
   makePage({
     file: 'privacy.html',

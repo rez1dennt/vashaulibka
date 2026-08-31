@@ -52,21 +52,3 @@ export const REGULATORS = Object.freeze([
     url: 'https://31reg.roszdravnadzor.gov.ru/',
   }),
 ]);
-
-export const PERSONAL_DATA_SAMPLE = Object.freeze({
-  categories: Object.freeze(['имя', 'телефон', 'электронная почта']),
-  purpose: 'запись на приём',
-  operations: Object.freeze([
-    'сбор',
-    'запись',
-    'систематизация',
-    'накопление',
-    'хранение',
-    'уточнение',
-    'извлечение',
-    'использование',
-    'блокирование',
-    'удаление',
-    'уничтожение',
-  ]),
-});

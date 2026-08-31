@@ -74,7 +74,7 @@ const staffAndPricesSection = [
 const patientLinks = [
   { href: 'payment.html', label: 'Оплата услуг', icon: 'ruble' },
   { href: 'benefits.html', label: 'Льготы и скидки', icon: 'shield' },
-  { href: 'waiting-periods.html', label: 'Сроки ожидания', icon: 'clock' },
+  { href: PUBLIC_DOCUMENTS.paidServicesContract2026, label: 'Договор на платные услуги', icon: 'document' },
   { href: 'guarantees.html', label: 'Гарантийные сроки', icon: 'shield' },
   { href: 'complaints.html', label: 'Обращения и жалобы', icon: 'mail' },
   { href: 'standards.html', label: 'Стандарты и рекомендации', icon: 'document' },

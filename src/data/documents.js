@@ -10,8 +10,17 @@ export const PUBLIC_DOCUMENTS = Object.freeze({
   licenseRegistryExtract: 'documents/license-registry-extract.pdf',
   ogrnCertificate: 'documents/ogrn-certificate.pdf',
   priceList2026: 'documents/price-list-2026-05-05.pdf',
+  paidServicesContract2026: 'documents/paid-services-contract-2026-09-01.pdf',
   soutSummary2024: 'documents/sout-summary-2024.pdf',
   legalResourcesQr: 'assets/qr/legal-resources.png',
+});
+
+export const PAID_SERVICES_CONTRACT = Object.freeze({
+  title: 'Договор на оказание платных медицинских услуг',
+  effectiveFrom: '2026-09-01',
+  pageCount: 12,
+  href: PUBLIC_DOCUMENTS.paidServicesContract2026,
+  sourceSha256: '0378CB3D931401901896045225655B65B903F68AE86D9287CC2A5C7D5707EEEF',
 });
 
 export const PRICE_LIST = Object.freeze({
@@ -93,6 +102,17 @@ export const DOCUMENT_GROUPS = Object.freeze([
         meta: `Утверждён ${PRICE_LIST.approvedLabel} · ${PRICE_LIST.pageCount} страниц`,
         status: 'Утверждён',
         statusTone: 'success',
+        localPdf: true,
+        download: true,
+      },
+      {
+        id: 'paid-services-contract',
+        title: PAID_SERVICES_CONTRACT.title,
+        kind: 'PDF',
+        href: PAID_SERVICES_CONTRACT.href,
+        meta: `Договор с приложениями · ${PAID_SERVICES_CONTRACT.pageCount} страниц. Согласие на обработку персональных данных — приложение № 5 (страница 11).`,
+        status: 'С 01.09.2026',
+        statusTone: 'neutral',
         localPdf: true,
         download: true,
       },
@@ -264,32 +284,12 @@ export const DOCUMENT_GROUPS = Object.freeze([
         download: false,
       },
       {
-        id: 'personal-data-consent',
-        title: 'Образец согласия на обработку персональных данных',
-        kind: 'Страница сайта',
-        href: 'personal-data-consent.html',
-        meta: 'Информационный образец сайта',
-        status: 'Информация клиники',
-        statusTone: 'neutral',
-        download: false,
-      },
-      {
         id: 'cookies',
         title: 'Технические настройки и cookies',
         kind: 'Страница сайта',
         href: 'cookies.html',
         meta: 'Локальные настройки и разрешение онлайн-записи',
         status: 'Информация сайта',
-        statusTone: 'neutral',
-        download: false,
-      },
-      {
-        id: 'waiting-periods',
-        title: 'Сроки ожидания медицинских услуг',
-        kind: 'Страница сайта',
-        href: 'waiting-periods.html',
-        meta: 'Максимальный и фактический сроки ожидания',
-        status: 'Информация клиники',
         statusTone: 'neutral',
         download: false,
       },

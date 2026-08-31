@@ -14,13 +14,11 @@ const legalFiles = [
   'license.html',
   'payment.html',
   'benefits.html',
-  'waiting-periods.html',
   'oms.html',
   'informed-consent.html',
   'guarantees.html',
   'complaints.html',
   'standards.html',
-  'personal-data-consent.html',
   'privacy.html',
   'cookies.html',
 ];
@@ -60,10 +58,10 @@ const pageDocument = (file) => {
 const normalizedText = (document) => document.body.textContent.replace(/\s+/g, ' ').trim();
 
 describe('patient and legal page manifest', () => {
-  it('contains all 13 patient routes exactly once and exposes them from the patient hub', () => {
+  it('contains all 11 patient routes exactly once and exposes them from the patient hub', () => {
     expect(LEGAL_PAGES.map((page) => page.file)).toEqual(legalFiles);
     expect(new Set(LEGAL_PAGES.map((page) => page.file))).toHaveLength(legalFiles.length);
-    expect(PAGES).toHaveLength(22);
+    expect(PAGES).toHaveLength(20);
 
     const hub = pageDocument('patients.html');
     for (const target of legalFiles.filter((file) => file !== 'patients.html')) {
@@ -84,9 +82,9 @@ describe('patient and legal page manifest', () => {
       'Документы и гарантии',
       'Права и персональные данные',
     ]);
-    expect(cards).toHaveLength(14);
+    expect(cards).toHaveLength(13);
     expect(cards.every((card) => card.querySelector('.ui-icon') && card.querySelector('.patient-link-card__arrow'))).toBe(true);
-    expect(new Set(cards.map((card) => card.getAttribute('href'))).size).toBe(14);
+    expect(new Set(cards.map((card) => card.getAttribute('href'))).size).toBe(13);
   });
 
   it('uses one editorial layout and related navigation across every patient route', () => {
@@ -103,7 +101,7 @@ describe('patient and legal page manifest', () => {
   });
 
   it('adds a decorative SVG marker to every highlighted patient notice', () => {
-    for (const file of ['payment.html', 'benefits.html', 'waiting-periods.html', 'oms.html', 'guarantees.html', 'complaints.html', 'personal-data-consent.html']) {
+    for (const file of ['payment.html', 'benefits.html', 'oms.html', 'guarantees.html', 'complaints.html']) {
       const document = pageDocument(file);
       const notices = [...document.querySelectorAll('.patient-notice')];
 
@@ -128,10 +126,9 @@ describe('patient and legal page manifest', () => {
     expect(existsSync('public/assets/qr/legal-resources.png')).toBe(true);
   });
 
-  it('states the exact payment, waiting-period, OMS, benefit, and informed-consent boundaries', () => {
+  it('states the exact payment, OMS, benefit, and informed-consent boundaries', () => {
     const paymentDocument = pageDocument('payment.html');
     const payment = normalizedText(paymentDocument);
-    const waiting = normalizedText(pageDocument('waiting-periods.html'));
     const oms = normalizedText(pageDocument('oms.html'));
     const benefitsDocument = pageDocument('benefits.html');
     const benefits = normalizedText(benefitsDocument);
@@ -147,8 +144,6 @@ describe('patient and legal page manifest', () => {
     for (const notice of PRICE_LIST.notices) expect(payment).toContain(notice);
     expect(payment).not.toMatch(/прейскурант.*пока не опубликован/i);
     expect(payment).not.toContain('CONTENT_CHECKLIST.md');
-    expect(waiting).toContain('30 дней');
-    expect(waiting).toMatch(/фактическ.*зависит.*услуг.*клиническ.*ситуац/i);
     expect(oms).toContain('ООО «Стоматология Ваша улыбка» не участвует в реализации территориальной программы государственных гарантий бесплатного оказания гражданам медицинской помощи.');
     expect(consent).toMatch(/стать[еи] 20.*323-ФЗ/i);
     expect(consent).toMatch(/метод.*риск.*альтернатив.*последств.*ожидаем/i);
@@ -223,20 +218,10 @@ describe('patient and legal page manifest', () => {
   });
 
   it('describes only actual personal-data and browser-storage behavior', () => {
-    const sampleDocument = pageDocument('personal-data-consent.html');
-    const sample = normalizedText(sampleDocument);
     const privacy = normalizedText(pageDocument('privacy.html'));
     const cookieDocument = pageDocument('cookies.html');
     const cookies = normalizedText(cookieDocument);
 
-    expect(sample).toMatch(/информационн.*образец/i);
-    expect(sample).toMatch(/не.*акцепт|не.*принят/i);
-    expect(sample).toMatch(/нет.*действующ.*форм|форм.*не.*использ/i);
-    for (const value of ['имя', 'телефон', 'электронная почта', 'запись на приём', 'сбор', 'запись', 'систематизация', 'накопление', 'хранение', 'уточнение', 'извлечение', 'использование', 'блокирование', 'удаление', 'уничтожение']) {
-      expect(sample.toLowerCase()).toContain(value);
-    }
-    expect(sample).toMatch(/до окончания обработки запроса.*до заключения договора/i);
-    expect(sample).toMatch(/отзыв.*письменн.*заявлен/i);
 
     expect(privacy).toContain(CLINIC.legalName);
     expect(privacy).toContain(CONTACTS.email);

@@ -7,7 +7,7 @@ import { REGULATORY_DOCUMENTS } from '../../src/data/regulatory-documents.js';
 const sha256 = (path) => createHash('sha256').update(readFileSync(path)).digest('hex').toUpperCase();
 
 describe('published clinic documents', () => {
-  it('describes the approved price list without inventing a contract', () => {
+  it('describes the approved price list without inventing price items', () => {
     expect(PRICE_LIST).toMatchObject({
       approvedAt: '2026-05-05',
       approvedLabel: '5 мая 2026 года',
@@ -17,7 +17,7 @@ describe('published clinic documents', () => {
     expect(PRICE_LIST).not.toHaveProperty('itemCount');
     expect(PRICE_LIST.notices.join(' ')).toContain('не является публичной офертой');
     expect(PRICE_LIST.notices.join(' ')).toContain('после консультации и составления плана лечения');
-    expect(JSON.stringify(DOCUMENT_GROUPS)).not.toMatch(/образец договора/i);
+    expect(DOCUMENT_GROUPS.flatMap((group) => group.items).find((item) => item.id === 'paid-services-contract')?.href).toBe(PUBLIC_DOCUMENTS.paidServicesContract2026);
   });
 
   it('keeps the supplied PDFs byte-identical', () => {
