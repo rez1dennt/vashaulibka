@@ -1,33 +1,33 @@
 .page-hero--home {
-  --hero-image: image-set(url("/assets/images/hero-home.avif") type("image/avif"), url("/assets/images/hero-home.webp") type("image/webp"));
+  --hero-image: image-set(url("/assets/images/clinic-home.avif") type("image/avif"), url("/assets/images/clinic-home.webp") type("image/webp"));
 }
 
 .page-hero--about {
-  --hero-image: image-set(url("/assets/images/hero-about.avif") type("image/avif"), url("/assets/images/hero-about.webp") type("image/webp"));
+  --hero-image: image-set(url("/assets/images/clinic-about.avif") type("image/avif"), url("/assets/images/clinic-about.webp") type("image/webp"));
 }
 
 .page-hero--services {
-  --hero-image: image-set(url("/assets/images/hero-services.avif") type("image/avif"), url("/assets/images/hero-services.webp") type("image/webp"));
+  --hero-image: image-set(url("/assets/images/clinic-services.avif") type("image/avif"), url("/assets/images/clinic-services.webp") type("image/webp"));
 }
 
 .page-hero--prices {
-  --hero-image: image-set(url("/assets/images/hero-prices.avif") type("image/avif"), url("/assets/images/hero-prices.webp") type("image/webp"));
+  --hero-image: image-set(url("/assets/images/clinic-prices.avif") type("image/avif"), url("/assets/images/clinic-prices.webp") type("image/webp"));
 }
 
 .page-hero--specialists {
-  --hero-image: image-set(url("/assets/images/hero-specialists.avif") type("image/avif"), url("/assets/images/hero-specialists.webp") type("image/webp"));
+  --hero-image: image-set(url("/assets/images/clinic-specialists.avif") type("image/avif"), url("/assets/images/clinic-specialists.webp") type("image/webp"));
 }
 
 .page-hero--reviews {
-  --hero-image: image-set(url("/assets/images/hero-reviews.avif") type("image/avif"), url("/assets/images/hero-reviews.webp") type("image/webp"));
+  --hero-image: image-set(url("/assets/images/clinic-reviews.avif") type("image/avif"), url("/assets/images/clinic-reviews.webp") type("image/webp"));
 }
 
 .page-hero--vacancies {
-  --hero-image: image-set(url("/assets/images/hero-vacancies.avif") type("image/avif"), url("/assets/images/hero-vacancies.webp") type("image/webp"));
+  --hero-image: image-set(url("/assets/images/clinic-vacancies.avif") type("image/avif"), url("/assets/images/clinic-vacancies.webp") type("image/webp"));
 }
 
 .page-hero--contacts {
-  --hero-image: image-set(url("/assets/images/hero-contacts.avif") type("image/avif"), url("/assets/images/hero-contacts.webp") type("image/webp"));
+  --hero-image: image-set(url("/assets/images/clinic-contacts.avif") type("image/avif"), url("/assets/images/clinic-contacts.webp") type("image/webp"));
 }
 
 .split,
@@ -2323,10 +2323,6 @@
   inline-size: 100%;
   block-size: 100%;
   object-fit: cover;
-}
-
-.about-gallery figcaption {
-  inset: auto var(--space-3) var(--space-3) auto;
 }
 
 .about-services,

@@ -86,14 +86,14 @@ describe('premium light homepage', () => {
     expect(document.querySelector('.home-contact__break')).toBeNull();
   });
 
-  it('uses only verified clinic facts and explicitly labels generated interiors', () => {
+  it('uses verified clinic facts and real photographs instead of generated interiors', () => {
     const document = render();
 
     expect(document.body.textContent).toContain(CLINIC.legalName);
     expect(document.body.textContent).toContain(LICENSE.number);
     expect(document.body.textContent).toContain(CLINIC.activityAddress);
-    expect(document.querySelectorAll('.hero-visualization-label')).toHaveLength(3);
-    expect([...document.querySelectorAll('.hero-visualization-label')].every((node) => node.textContent === 'Визуализация интерьера')).toBe(true);
+    expect(document.querySelectorAll('.hero-visualization-label')).toHaveLength(0);
+    expect([...document.querySelectorAll('img[src*="assets/images/clinic-"]')].every((node) => node.alt.length > 10)).toBe(true);
   });
 
   it('keeps the agreed editorial section sequence and one page heading', () => {

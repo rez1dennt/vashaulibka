@@ -44,7 +44,7 @@ describe('release handoff contract', () => {
     expect(readme).toContain('`src/templates/site-chrome.js`');
     expect(readme).toContain('`src/templates/icons.js`');
     expect(readme).toContain('`public/assets/documents/`');
-    expect(readme).toContain('«Визуализация интерьера»');
+    expect(readme).toContain('реальные фотографии клиники');
   });
 
   it('keeps site search queries local and memory-only', () => {

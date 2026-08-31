@@ -1,3 +1,4 @@
+import { CLINIC_PHOTOS } from '../data/clinic-photos.js';
 import { CLINIC, CONTACTS, HOURS, LICENSE } from '../data/clinic.js';
 import { PRICE_LIST, PUBLIC_DOCUMENTS } from '../data/documents.js';
 import { SERVICES } from '../data/services.js';
@@ -12,10 +13,9 @@ const escapeHtml = (value) => String(value).replace(/[&<>\"]/g, (character) => (
   '"': '&quot;',
 }[character]));
 
-const renderInteriorFigure = (name, className) => [
+const renderClinicFigure = (name, className) => [
   `<figure class="${className}">`,
-  `<picture><source srcset="assets/images/hero-${name}.avif" type="image/avif"><img src="assets/images/hero-${name}.webp" alt="" width="1920" height="1080" loading="lazy"></picture>`,
-  '<figcaption class="hero-visualization-label">Визуализация интерьера</figcaption>',
+  `<picture><source srcset="assets/images/clinic-${name}.avif" type="image/avif"><img src="assets/images/clinic-${name}.webp" alt="${escapeHtml(CLINIC_PHOTOS[name].alt)}" width="1280" height="720" loading="lazy"></picture>`,
   '</figure>',
 ].join('');
 
@@ -39,7 +39,7 @@ const quickLinksSection = [
 const aboutSection = [
   '<section class="home-section home-about">',
   '<div class="container home-about__grid">',
-  renderInteriorFigure('about', 'home-about__media'),
+  renderClinicFigure('about', 'home-about__media'),
   '<div class="home-about__content"><p class="eyebrow">О клинике</p><h2>Проверенные сведения о стоматологии</h2>',
   `<p>${escapeHtml(CLINIC.legalName)} зарегистрировано ${escapeHtml(CLINIC.registeredSince)}.</p>`,
   `<p>Клиника оказывает помощь по лицензии ${escapeHtml(LICENSE.number)}. В лицензии указаны ${SERVICES.length} направления медицинской деятельности.</p>`,
@@ -118,7 +118,7 @@ const contactsSection = [
   `<div class="home-contact__row home-contact__schedule">${renderIcon('clock')}<dl class="home-contact__hours">${hours}</dl></div>`,
   `<a class="button button-primary" href="${CONTACTS.phones[0].href}" data-appointment-open>${renderIcon('calendar', 'button-icon')}Записаться на приём</a>`,
   '</div>',
-  renderInteriorFigure('contacts', 'home-contact__media'),
+  renderClinicFigure('contacts', 'home-contact__media'),
   '</div></section>',
 ].join('');
 

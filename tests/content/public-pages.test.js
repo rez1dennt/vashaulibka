@@ -32,8 +32,6 @@ const approvedFiles = [
   'cookies.html',
 ];
 
-const HERO_VISUALIZATION_LABEL = 'Визуализация интерьера';
-
 const renderedPages = () => PAGES.map((page) => ({
   page,
   html: renderPage(page),
@@ -53,12 +51,12 @@ describe('public page manifest', () => {
     expect(PAGES.filter((page) => page === DOCUMENTS_PAGE)).toHaveLength(1);
   });
 
-  it('publishes a compact visualization label in every generated page', () => {
+  it('removes visualization labels from every generated page', () => {
     for (const file of approvedFiles) {
       const document = new JSDOM(readFileSync(file, 'utf8')).window.document;
       const note = document.querySelector('main > section:first-child .hero-visualization-label');
 
-      expect(note?.textContent, file).toBe(HERO_VISUALIZATION_LABEL);
+      expect(note, file).toBeNull();
     }
   });
 
@@ -245,7 +243,7 @@ describe('public page accessibility and safety', () => {
     expect(css).toMatch(/--layout-services-disclosures-display:\s*grid/);
     expect(css).toMatch(/@media\s*\(min-width:\s*48rem\)[\s\S]*--layout-services-tabs-display:\s*grid/);
     expect(css).toMatch(/@media\s*\(min-width:\s*48rem\)[\s\S]*--layout-services-disclosures-display:\s*none/);
-    expect(css).toContain('hero-prices.avif');
-    expect(css).toContain('hero-prices.webp');
+    expect(css).toContain('clinic-prices.avif');
+    expect(css).toContain('clinic-prices.webp');
   });
 });

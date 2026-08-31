@@ -1,3 +1,4 @@
+import { CLINIC_PHOTOS } from '../data/clinic-photos.js';
 import { CONTACTS, LICENSE } from '../data/clinic.js';
 import { renderHomeDecoration } from './home-decoration.js';
 import { renderIcon } from './icons.js';
@@ -27,13 +28,12 @@ export function renderHero(page) {
       `<p class="home-hero__trust">${renderIcon('shield', 'ui-icon')}<span>Лицензия ${escapeHtml(LICENSE.number)}. Статус: ${escapeHtml(LICENSE.status)}.</span></p>`,
       '</div>',
       '<figure class="home-hero__media">',
-      '<picture><source srcset="assets/images/hero-home.avif" type="image/avif"><img src="assets/images/hero-home.webp" alt="" width="1920" height="1080" fetchpriority="high"></picture>',
-      '<figcaption class="hero-visualization-label">Визуализация интерьера</figcaption>',
+      `<picture><source srcset="assets/images/clinic-home.avif" type="image/avif"><img src="assets/images/clinic-home.webp" alt="${escapeHtml(CLINIC_PHOTOS.home.alt)}" width="1280" height="720" fetchpriority="high"></picture>`,
       '</figure>',
       '</div>',
       '</section>',
     ].join('');
   }
 
-  return `<section class="page-hero page-hero--${escapeHtml(page.heroImage)}"><div class="container"><nav aria-label="Хлебные крошки"><a href="index.html">Главная</a><span aria-hidden="true">/</span><span>${escapeHtml(page.heading)}</span></nav><h1>${escapeHtml(page.heading)}</h1>${page.lead ? `<p>${escapeHtml(page.lead)}</p>` : ''}<span class="hero-visualization-label">Визуализация интерьера</span></div></section>`;
+  return `<section class="page-hero page-hero--${escapeHtml(page.heroImage)}"><div class="container"><nav aria-label="Хлебные крошки"><a href="index.html">Главная</a><span aria-hidden="true">/</span><span>${escapeHtml(page.heading)}</span></nav><h1>${escapeHtml(page.heading)}</h1>${page.lead ? `<p>${escapeHtml(page.lead)}</p>` : ''}</div></section>`;
 }

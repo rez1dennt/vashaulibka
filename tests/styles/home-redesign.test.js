@@ -73,8 +73,8 @@ describe('premium light visual contract', () => {
     expect(pages).toMatch(/\.quick-links__grid\s*{[^}]*grid-template-columns:/s);
   });
 
-  it('uses a compact micro-label rather than the removed large pill', () => {
-    expect(layout).toMatch(/\.hero-visualization-label\s*{[^}]*font-size:\s*var\(--text-caption-size\)/s);
+  it('does not retain generated-interior labels after replacement', () => {
+    expect(layout).not.toContain('.hero-visualization-label');
     expect(layout).not.toContain('.hero-illustration-note');
     expect(components).not.toContain('.hero-illustration-note');
   });

@@ -26,7 +26,7 @@ const HOME_DECORATIONS = [
 ];
 const DECOR_ROOT = 'public/assets/decor';
 
-const imagePath = (name, format) => `${IMAGE_ROOT}/hero-${name}.${format}`;
+const imagePath = (name, format) => `${IMAGE_ROOT}/clinic-${name}.${format}`;
 const sha256 = (file) => createHash('sha256').update(readFileSync(file)).digest('hex');
 
 describe('original clinic visual assets', () => {
@@ -49,7 +49,7 @@ describe('original clinic visual assets', () => {
     expect(avif.subarray(8, 32).toString('ascii')).toMatch(/avif|avis|mif1/);
   });
 
-  it.each(['webp', 'avif'])('keeps all eight %s compositions distinct', (format) => {
+  it.each(['webp', 'avif'])('keeps all eight %s photo crops distinct', (format) => {
     const hashes = HERO_NAMES.map((name) => sha256(imagePath(name, format)));
 
     expect(new Set(hashes).size).toBe(HERO_NAMES.length);
@@ -77,7 +77,7 @@ describe('original clinic visual assets', () => {
 
     for (const name of HERO_NAMES) {
       for (const format of ['avif', 'webp']) {
-        const publicPath = `/assets/images/hero-${name}.${format}`;
+        const publicPath = `/assets/images/clinic-${name}.${format}`;
 
         expect(css).toContain(`url("${publicPath}") type("image/${format}")`);
         expect(existsSync(`public${publicPath}`), `${publicPath} should resolve`).toBe(true);

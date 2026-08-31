@@ -253,21 +253,14 @@ describe('design system contract', () => {
 
     expect(css).toMatch(/\.page-hero[^{]*{[^}]*(min-block-size|aspect-ratio):/s);
     for (const name of ['home', 'about', 'services', 'specialists', 'prices', 'reviews', 'vacancies', 'contacts']) {
-      expect(css).toContain(`hero-${name}.avif`);
-      expect(css).toContain(`hero-${name}.webp`);
+      expect(css).toContain(`clinic-${name}.avif`);
+      expect(css).toContain(`clinic-${name}.webp`);
     }
   });
 
-  it('keeps the hero visualization label contained and readable in accessibility mode', () => {
-    const layout = readStyle('layout');
-    const components = readStyle('components');
-
-    expect(layout).toMatch(/\.hero-visualization-label\s*{[^}]*display:\s*inline-flex/s);
-    expect(layout).toMatch(/\.hero-visualization-label\s*{[^}]*max-inline-size:\s*100%/s);
-    expect(layout).toMatch(/\.hero-visualization-label\s*{[^}]*overflow-wrap:\s*anywhere/s);
-    expect(layout).toMatch(/\.hero-visualization-label\s*{[^}]*background:\s*var\(--color-surface-raised\)/s);
-    expect(layout).toMatch(/\.hero-visualization-label\s*{[^}]*font-size:\s*var\(--text-caption-size\)/s);
-    expect(components).toMatch(/\[data-accessibility-enabled="true"\]\s+\.hero-visualization-label\s*{[^}]*border-width:\s*var\(--border-width-strong\)/s);
+  it('removes obsolete visualization label styling after the real-photo replacement', () => {
+    expect(readStyle('layout')).not.toContain('.hero-visualization-label');
+    expect(readStyle('components')).not.toContain('.hero-visualization-label');
   });
 
   it('provides a reduced-motion mode without removing focus treatment', () => {

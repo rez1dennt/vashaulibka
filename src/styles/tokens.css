@@ -361,6 +361,13 @@
 
   /* Component aliases */
   --hero-image: none;
+  --hero-photo-inline-size: 100%;
+  --hero-photo-aspect: auto;
+  --hero-photo-layer: var(--primitive-z-decor);
+  --hero-content-layer: var(--primitive-z-decor-content);
+  --hero-mobile-photo-max-inline-size: 40rem;
+  --hero-mobile-photo-mask: linear-gradient(90deg, transparent 0%, #000 4%, #000 96%, transparent 100%), linear-gradient(0deg, transparent 0%, #000 8%, #000 92%, transparent 100%);
+  --hero-photo-mask: linear-gradient(90deg, transparent 0%, #000 24%, #000 96%, transparent 100%), linear-gradient(0deg, transparent 0%, #000 12%, #000 90%, transparent 100%);
   --button-primary-background: var(--color-primary-strong);
   --button-primary-background-hover: var(--color-primary-active);
   --button-primary-background-active: var(--color-primary-active);
@@ -562,7 +569,9 @@
     --layout-navigation-z-index: auto;
     --layout-footer-columns: 1.15fr repeat(3, minmax(var(--space-0), 1fr));
     --layout-hero-min-block-size: var(--primitive-size-hero-desktop);
-    --layout-hero-scrim: linear-gradient(90deg, var(--color-surface-page) 0 42%, rgb(255 253 251 / 28%) 72%);
+    --hero-photo-inline-size: auto;
+    --hero-photo-aspect: 16 / 9;
+    --layout-hero-scrim: linear-gradient(90deg, var(--color-surface-page) 0%, rgb(255 253 251 / 18%) 36%);
     --layout-card-columns: repeat(3, minmax(var(--space-0), 1fr));
     --layout-feature-columns: repeat(3, minmax(var(--space-0), 1fr));
   }

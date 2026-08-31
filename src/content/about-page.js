@@ -1,3 +1,4 @@
+import { CLINIC_PHOTOS } from '../data/clinic-photos.js';
 import { CLINIC, CONTACTS, HOURS, LICENSE } from '../data/clinic.js';
 import { SERVICES } from '../data/services.js';
 import { STAFF } from '../data/staff.js';
@@ -12,8 +13,8 @@ const escapeHtml = (value) => String(value)
 
 const renderPicture = (name, className) => [
   `<picture class="${className}">`,
-  `<source srcset="assets/images/hero-${name}.avif" type="image/avif">`,
-  `<img src="assets/images/hero-${name}.webp" alt="" width="1920" height="1080" loading="lazy">`,
+  `<source srcset="assets/images/clinic-${name}.avif" type="image/avif">`,
+  `<img src="assets/images/clinic-${name}.webp" alt="${escapeHtml(CLINIC_PHOTOS[name].alt)}" width="1280" height="720" loading="lazy">`,
   '</picture>',
 ].join('');
 
@@ -75,7 +76,7 @@ const body = [
   '<section class="about-section about-space"><div class="container about-space__grid"><div class="about-space__copy"><p class="eyebrow">Клиника в Белгороде</p><h2>Вся информация для визита собрана заранее</h2>',
   `<ul class="about-checklist"><li>${escapeHtml(CLINIC.activityAddress)}</li><li>${escapeHtml(HOURS.weekdays.label)}: ${escapeHtml(HOURS.weekdays.value)}</li><li>${escapeHtml(HOURS.saturday.label)}: ${escapeHtml(HOURS.saturday.value)}</li></ul>`,
   `<div class="about-actions"><a class="button button-primary" href="${CONTACTS.phones[0].href}" data-appointment-open>${renderIcon('calendar', 'button-icon')}Записаться на приём</a><a class="button button-secondary" href="contacts.html">Контакты</a></div></div>`,
-  `<figure class="about-gallery">${renderPicture('services', 'about-gallery__item about-gallery__item--primary')}${renderPicture('home', 'about-gallery__item')}${renderPicture('contacts', 'about-gallery__item')}<figcaption class="hero-visualization-label">Визуализация интерьера</figcaption></figure></div></section>`,
+  `<figure class="about-gallery">${renderPicture('services', 'about-gallery__item about-gallery__item--primary')}${renderPicture('home', 'about-gallery__item')}${renderPicture('contacts', 'about-gallery__item')}</figure></div></section>`,
   `<section class="about-section about-services"><div class="container"><div class="about-section__heading"><div><p class="eyebrow">Направления помощи</p><h2>Стоматологическая помощь по действующей лицензии</h2></div><a class="text-link" href="services.html">Все услуги${renderIcon('arrow', 'button-icon')}</a></div><div class="about-services__grid">${servicesMarkup}</div></div></section>`,
   `<section class="about-section about-team"><div class="container"><div class="about-section__heading"><div><p class="eyebrow">Команда</p><h2>Сотрудники клиники</h2></div><a class="text-link" href="specialists.html">Сведения о специалистах${renderIcon('arrow', 'button-icon')}</a></div><div class="about-team__list">${staffMarkup}</div><p class="about-team__notice">Сведения опубликованы по документам, предоставленным клиникой.</p></div></section>`,
   '<section class="about-section about-license"><div class="container about-license__grid">',

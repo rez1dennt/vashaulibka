@@ -50,15 +50,15 @@ describe('patient-oriented about page', () => {
     expect(document.querySelector('.about-team img')).toBeNull();
   });
 
-  it('uses three local visualizations with one honest caption', () => {
+  it('uses three real clinic photographs with descriptive alt text', () => {
     const document = render();
     expect([...document.querySelectorAll('.about-gallery img')].map((node) => node.getAttribute('src'))).toEqual([
-      'assets/images/hero-services.webp',
-      'assets/images/hero-home.webp',
-      'assets/images/hero-contacts.webp',
+      'assets/images/clinic-services.webp',
+      'assets/images/clinic-home.webp',
+      'assets/images/clinic-contacts.webp',
     ]);
-    expect(document.querySelectorAll('.about-gallery figcaption')).toHaveLength(1);
-    expect(document.querySelector('.about-gallery figcaption')?.textContent).toBe('Визуализация интерьера');
+    expect(document.querySelectorAll('.about-gallery figcaption')).toHaveLength(0);
+    expect([...document.querySelectorAll('.about-gallery img')].every((img) => img.alt.length > 10)).toBe(true);
   });
 
   it('links the approved license and registration documents', () => {

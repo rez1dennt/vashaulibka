@@ -352,19 +352,38 @@ body {
 }
 
 .page-hero {
+  position: relative;
   min-block-size: var(--layout-hero-min-block-size);
   display: grid;
   align-items: center;
   isolation: isolate;
   border-block-end: var(--border-width) solid var(--color-border);
-  background-color: var(--color-surface-brand-soft);
+  background-color: var(--color-surface-page);
+}
+
+.page-hero::before {
+  content: "";
+  position: absolute;
+  inset-block: var(--space-0);
+  inset-inline-end: var(--space-0);
+  z-index: var(--hero-photo-layer);
+  inline-size: var(--hero-photo-inline-size);
+  max-inline-size: 100%;
+  block-size: 100%;
+  aspect-ratio: var(--hero-photo-aspect);
+  pointer-events: none;
   background-image: var(--layout-hero-scrim), var(--hero-image, none);
   background-position: center;
   background-size: cover;
+  background-repeat: no-repeat;
+  mask-image: var(--hero-photo-mask);
+  mask-composite: intersect;
+  mask-repeat: no-repeat;
 }
 
 .page-hero .container {
   position: relative;
+  z-index: var(--hero-content-layer);
   min-inline-size: 0;
   padding-block: var(--space-16);
 }
@@ -393,22 +412,31 @@ body {
   font-size: var(--hero-lead-font-size);
 }
 
-.hero-visualization-label {
-  position: absolute;
-  inset-inline-end: var(--space-3);
-  inset-block-end: var(--space-3);
-  max-inline-size: 100%;
-  display: inline-flex;
-  padding: var(--space-1) var(--space-2);
-  border: var(--border-width) solid var(--color-border);
-  border-radius: var(--radius-sm);
-  overflow-wrap: anywhere;
-  color: var(--color-text-muted);
-  background: var(--color-surface-raised);
-  font-size: var(--text-caption-size);
-  font-weight: var(--text-label-weight);
-  line-height: var(--brand-line-height);
+@media (width < 75rem) {
+  .page-hero {
+    min-block-size: var(--space-0);
+    grid-template-columns: minmax(var(--space-0), 1fr);
+  }
+
+  .page-hero::before {
+    position: relative;
+    inset: auto;
+    grid-row: 2;
+    justify-self: center;
+    inline-size: 100%;
+    max-inline-size: var(--hero-mobile-photo-max-inline-size);
+    block-size: auto;
+    aspect-ratio: 16 / 9;
+    background-image: var(--hero-image, none);
+    mask-image: var(--hero-mobile-photo-mask);
+  }
+
+  .page-hero .container {
+    grid-row: 1;
+    padding-block: var(--space-8) var(--space-6);
+  }
 }
+
 
 .site-footer {
   padding-block-start: var(--space-16);

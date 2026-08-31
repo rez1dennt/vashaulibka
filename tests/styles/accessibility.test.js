@@ -279,7 +279,7 @@ describe('responsive accessibility visual system', () => {
       const values = new Map([...declarations(tokensCss), ...themeTokens]);
       const color = (name) => resolveToken(values, name);
 
-      expect(layoutCss).toMatch(/\.page-hero\s*\{[^}]*background-image:\s*var\(--layout-hero-scrim\),\s*var\(--hero-image, none\)/s);
+      expect(layoutCss).toMatch(/\.page-hero::before\s*\{[^}]*background-image:\s*var\(--layout-hero-scrim\),\s*var\(--hero-image, none\)/s);
       expect(themeTokens.get('--layout-hero-scrim')).toBe('linear-gradient(var(--color-surface-page), var(--color-surface-page))');
       expect(contrastRatio(color('--color-text'), color('--color-surface-page'))).toBeGreaterThanOrEqual(4.5);
       expect(contrastRatio(color('--color-text-muted'), color('--color-surface-page'))).toBeGreaterThanOrEqual(4.5);

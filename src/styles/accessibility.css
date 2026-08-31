@@ -666,6 +666,20 @@ html[data-accessibility-enabled="true"][data-accessibility-scale="200"][data-acc
   }
 }
 
+html[data-accessibility-enabled="true"][data-accessibility-images="hidden"] :where(.home-hero__media, .home-about__media, .home-contact__media, .home-hero__media picture, .home-about__media picture, .home-contact__media picture, .about-gallery__item) {
+  aspect-ratio: auto;
+  block-size: auto;
+  overflow: visible;
+}
+
+html[data-accessibility-enabled="true"][data-accessibility-images="hidden"] .about-gallery {
+  grid-template-columns: minmax(var(--space-0), 1fr);
+}
+
+html[data-accessibility-enabled="true"][data-accessibility-images="hidden"] .page-hero::before {
+  display: none;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .accessibility-panel {
     animation: none;

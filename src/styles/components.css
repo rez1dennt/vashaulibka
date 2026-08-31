@@ -462,9 +462,6 @@ button.card:active {
   box-shadow: none;
 }
 
-[data-accessibility-enabled="true"] .hero-visualization-label {
-  border-width: var(--border-width-strong);
-}
 
 [data-accessibility-enabled="true"] .home-decor {
   opacity: var(--home-decor-opacity-accessibility);

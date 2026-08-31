@@ -14,7 +14,6 @@ const page = {
   noindex: false,
 };
 
-const HERO_VISUALIZATION_LABEL = 'Визуализация интерьера';
 
 describe('renderPage', () => {
   it('uses only the official legal identity and no unsupported favicon', () => {
@@ -307,13 +306,13 @@ describe('renderPage', () => {
     expect(html).not.toContain('работает в Белгороде с 2012 года');
   });
 
-  it('labels every generated interior without the rejected large disclaimer', () => {
+  it('does not label real clinic photographs as generated interiors', () => {
     for (const publicPage of PAGES) {
       const html = renderPage(publicPage);
       const document = new JSDOM(html).window.document;
 
-      expect(document.querySelectorAll('main > section:first-child .hero-visualization-label')).toHaveLength(1);
-      expect(document.querySelector('main > section:first-child .hero-visualization-label')?.textContent).toBe(HERO_VISUALIZATION_LABEL);
+      expect(document.querySelectorAll('main > section:first-child .hero-visualization-label')).toHaveLength(0);
+      expect(html).not.toContain('Визуализация интерьера');
       expect(html).not.toContain('Иллюстративное изображение — не фотография помещений клиники.');
     }
   });
