@@ -27,7 +27,7 @@ describe('published clinic documents', () => {
 
   it('labels current, future, and archived government acts exactly', () => {
     const documents = DOCUMENT_GROUPS.flatMap((group) => group.items);
-    expect(documents.find(({ id }) => id === 'paid-services-736')?.status).toBe('Действует до 31.08.2026');
+    expect(documents.some(({ id }) => id === 'paid-services-736')).toBe(false);
     expect(documents.find(({ id }) => id === 'paid-services-659')?.status).toBe('С 01.09.2026');
     expect(documents.find(({ id }) => id === 'state-guarantees-2188')?.status).toBe('Действует');
     expect(documents.find(({ id }) => id === 'state-guarantees-1940')?.status).toBe('Архив');
@@ -40,9 +40,9 @@ describe('published clinic documents', () => {
     expect(OFFICIAL_DOCUMENT_URLS.healthLaw323).toBe('https://government.ru/docs/all/100186/');
   });
 
-  it('connects every supplied regulation to its local PDF and official fallback', () => {
+  it('connects every listed regulation to its local PDF and official fallback', () => {
     const documents = DOCUMENT_GROUPS.flatMap((group) => group.items);
-    for (const regulation of REGULATORY_DOCUMENTS) {
+    for (const regulation of REGULATORY_DOCUMENTS.filter(({ id }) => id !== 'paid-services-736')) {
       expect(documents.find(({ id }) => id === regulation.id)).toMatchObject({
         href: regulation.href,
         officialHref: regulation.officialHref,

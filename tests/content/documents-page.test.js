@@ -9,6 +9,13 @@ import { renderFooter } from '../../src/templates/site-chrome.js';
 import { renderPage } from '../../src/templates/render-page.js';
 
 describe('documents centre', () => {
+  it('omits the removed 736 card and keeps the replacement 659 document', () => {
+    const document = new JSDOM(renderPage(DOCUMENTS_PAGE)).window.document;
+    expect(document.querySelectorAll('#document-paid-services-736')).toHaveLength(0);
+    expect(document.querySelectorAll('a[href="documents/regulations/paid-services-736.pdf"]')).toHaveLength(0);
+    expect(document.querySelector('#document-paid-services-659 a[href="documents/regulations/paid-services-659.pdf"]')).not.toBeNull();
+  });
+
   it('does not emit whitespace-only lines for optional document actions', () => {
     expect(renderPage(DOCUMENTS_PAGE)).not.toMatch(/^[\t ]+$/m);
   });
@@ -50,9 +57,9 @@ describe('documents centre', () => {
     expect(officialResource?.querySelector('.button')?.textContent).toBe('Перейти к официальному ресурсу');
   });
 
-  it('opens, downloads, and preserves the official source for every local regulation', () => {
+  it('opens, downloads, and preserves the official source for every listed local regulation', () => {
     const document = new JSDOM(renderPage(DOCUMENTS_PAGE)).window.document;
-    for (const regulation of REGULATORY_DOCUMENTS) {
+    for (const regulation of REGULATORY_DOCUMENTS.filter(({ id }) => id !== 'paid-services-736')) {
       const row = document.querySelector(`#document-${regulation.id}`);
       expect(row?.querySelector(`a[href="${regulation.href}"]:not([download])`)?.textContent).toContain('Открыть PDF');
       expect(row?.querySelector(`a[href="${regulation.href}"][download]`)?.textContent).toContain('Скачать PDF');

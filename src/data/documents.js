@@ -153,15 +153,6 @@ export const DOCUMENT_GROUPS = Object.freeze([
     title: 'Правила и права пациентов',
     items: [
       {
-        id: 'paid-services-736',
-        title: 'Постановление Правительства РФ от 11.05.2023 № 736',
-        kind: 'Официальная публикация',
-        ...localRegulation('paid-services-736'),
-        meta: 'Правила предоставления платных медицинских услуг',
-        status: 'Действует до 31.08.2026',
-        statusTone: 'warning',
-      },
-      {
         id: 'paid-services-659',
         title: 'Постановление Правительства РФ от 30.05.2026 № 659',
         kind: 'Официальная публикация',
