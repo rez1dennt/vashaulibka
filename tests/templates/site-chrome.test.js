@@ -4,6 +4,19 @@ import { CLINIC, CONTACTS, HOURS, LICENSE } from '../../src/data/clinic.js';
 import { NAV_ITEMS, renderFooter, renderHeader } from '../../src/templates/site-chrome.js';
 
 describe('premium light site chrome', () => {
+  it('shows the clinic INN, original license date and a non-interactive age badge in the footer', () => {
+    const document = new JSDOM(`<body>${renderFooter()}</body>`).window.document;
+    const brand = document.querySelector('.footer-brand');
+    expect(brand.textContent).toContain(`ИНН ${CLINIC.inn}`);
+    expect(brand.textContent).toContain(`Лицензия ${LICENSE.number}`);
+    expect(brand.textContent).toContain(`от ${LICENSE.grantedAt}`);
+    expect(brand.querySelector('time')?.getAttribute('datetime')).toBe('2012-11-16');
+    const badge = brand.querySelector('.footer-age-badge');
+    expect(badge?.textContent).toBe('18+');
+    expect(badge?.closest('button, a')).toBeNull();
+    expect(badge?.hasAttribute('tabindex')).toBe(false);
+  });
+
   it('renders three spacious header bands and preserves mobile interaction hooks', () => {
     const document = new JSDOM(`<body>${renderHeader('services.html')}</body>`).window.document;
 

@@ -3,6 +3,10 @@ import { describe, expect, it } from 'vitest';
 
 const readStyle = (name) => readFileSync(`src/styles/${name}.css`, 'utf8');
 
+it('allows the footer title and age badge row to shrink at enlarged text sizes', () => {
+  expect(readStyle('layout')).toMatch(/\.footer-brand__heading\s*\{[^}]*min-inline-size:\s*var\(--space-0\)/s);
+});
+
 const tokenValues = (css) => new Map(
   [...css.matchAll(/(--[a-z0-9-]+):\s*([^;]+);/g)].map((match) => [match[1], match[2].trim()]),
 );

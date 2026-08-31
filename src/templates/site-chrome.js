@@ -66,6 +66,7 @@ export function renderHeader(activeFile) {
 }
 
 export function renderFooter() {
+  const licenseDateIso = LICENSE.grantedAt.split('.').reverse().join('-');
   const navigationLinks = NAV_ITEMS
     .filter(({ href }) => !['index.html', 'patients.html', 'vacancies.html'].includes(href))
     .map(({ href, label }) => `<a href="${href}">${label}</a>`)
@@ -80,7 +81,7 @@ export function renderFooter() {
   return [
     '<footer class="site-footer">',
     '<div class="container footer-grid">',
-    `<section class="footer-brand"><h2>${escapeHtml(CLINIC.shortLegalName)}</h2><p>Стоматологическая помощь в пределах действующей лицензии.</p><p>Лицензия ${escapeHtml(LICENSE.number)}<br>ОГРН ${escapeHtml(CLINIC.ogrn)}</p></section>`,
+    `<section class="footer-brand"><div class="footer-brand__heading"><h2>${escapeHtml(CLINIC.shortLegalName)}</h2><span class="footer-age-badge" role="img" aria-label="Возрастная маркировка: 18+">18+</span></div><p>Стоматологическая помощь в пределах действующей лицензии.</p><p>ИНН ${escapeHtml(CLINIC.inn)}<br>ОГРН ${escapeHtml(CLINIC.ogrn)}</p><p>Лицензия ${escapeHtml(LICENSE.number)}<br>от <time datetime="${escapeHtml(licenseDateIso)}">${escapeHtml(LICENSE.grantedAt)}</time></p></section>`,
     `<section><h2>Навигация</h2>${navigationLinks}</section>`,
     `<section><h2>Пациентам</h2>${patientLinks}</section>`,
     `<section class="footer-contacts"><h2>Контакты</h2><p>${renderIcon('pin', 'footer-icon')}${escapeHtml(CLINIC.activityAddress)}</p>${phoneLinks}<a href="${CONTACTS.emailHref}">${renderIcon('mail', 'footer-icon')}${escapeHtml(CONTACTS.email)}</a><p>${renderIcon('clock', 'footer-icon')}${escapeHtml(HOURS.weekdays.label)}: ${escapeHtml(HOURS.weekdays.value)}<br>${escapeHtml(HOURS.saturday.label)}: ${escapeHtml(HOURS.saturday.value)}<br>${escapeHtml(HOURS.sunday.label)}: ${escapeHtml(HOURS.sunday.value)}</p><button class="button button-secondary" type="button" data-appointment-open>Запись на приём</button></section>`,

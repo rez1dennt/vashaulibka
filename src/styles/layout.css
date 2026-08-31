@@ -499,6 +499,39 @@ body {
   max-inline-size: var(--text-heading-measure);
 }
 
+.footer-brand__heading {
+  display: flex;
+  min-inline-size: var(--space-0);
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-3);
+  inline-size: 100%;
+}
+
+.footer-brand__heading h2 {
+  flex: 1;
+  min-inline-size: var(--space-0);
+  margin-block-end: var(--space-0);
+}
+
+.footer-age-badge {
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-0-5) var(--space-2);
+  border: var(--border-width) solid var(--color-border-strong);
+  border-radius: var(--radius-pill);
+  color: var(--color-text-muted);
+  font-size: var(--text-small-size);
+  line-height: var(--brand-line-height);
+  white-space: nowrap;
+}
+
+.footer-brand time {
+  white-space: nowrap;
+}
+
 .footer-contacts p {
   display: flex;
   align-items: flex-start;
